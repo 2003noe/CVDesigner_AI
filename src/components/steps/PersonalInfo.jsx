@@ -1,10 +1,49 @@
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { removeAvatar, uploadAvatar, useAvatarUrl, validateAvatar } from "../../lib/avatars";
 
 export default function PersonalInfo({ data, onChange }) {
   const [showOptional, setShowOptional] = useState(false);
+  const { user } = useAuth();
+  const photoUrl = useAvatarUrl(data.photoPath);
+  const [uploading, setUploading] = useState(false);
+  const [photoError, setPhotoError] = useState("");
 
   function set(field, value) {
     onChange({ ...data, [field]: value });
+  }
+
+  async function handlePhotoChange(e) {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // permet de re-sélectionner le même fichier ensuite
+    if (!file) return;
+
+    setPhotoError("");
+    const problem = validateAvatar(file);
+    if (problem) {
+      setPhotoError(problem);
+      return;
+    }
+
+    setUploading(true);
+    const { path, error } = await uploadAvatar(user.id, file);
+    setUploading(false);
+    if (error) {
+      setPhotoError(`Upload failed: ${error.message}`);
+      return;
+    }
+
+    const oldPath = data.photoPath;
+    // Forme "fonction" : on part de l'état le plus récent (l'utilisateur a pu taper pendant l'envoi)
+    onChange((previous) => ({ ...previous, photoPath: path }));
+    if (oldPath) removeAvatar(oldPath); // supprime l'ancienne photo du stockage
+  }
+
+  function handleRemovePhoto() {
+    const oldPath = data.photoPath;
+    setPhotoError("");
+    onChange((previous) => ({ ...previous, photoPath: "" }));
+    if (oldPath) removeAvatar(oldPath);
   }
 
   return (
@@ -75,19 +114,41 @@ export default function PersonalInfo({ data, onChange }) {
               gap: 8,
               width: "100%",
               aspectRatio: "1",
-              border: "1px dashed var(--color-border)",
+              border: photoUrl ? "1px solid var(--color-border)" : "1px dashed var(--color-border)",
               borderRadius: 12,
-              cursor: "pointer",
+              overflow: "hidden",
+              cursor: uploading ? "wait" : "pointer",
               color: "var(--color-primary)",
               fontSize: 13,
               fontWeight: 600,
             }}
           >
-            <span style={{ fontSize: 22 }}>👤</span>
-            Upload photo
-            <input type="file" accept="image/*" style={{ display: "none" }} />
+            {photoUrl ? (
+              <img src={photoUrl} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              <>
+                <span style={{ fontSize: 22 }}>👤</span>
+                {uploading ? "Uploading…" : "Upload photo"}
+              </>
+            )}
+            <input
+              type="file"
+              accept="image/jpeg,image/png"
+              style={{ display: "none" }}
+              onChange={handlePhotoChange}
+              disabled={uploading}
+            />
           </label>
-          <p className="hint">Optional. Max size 5MB. JPG or PNG.</p>
+          {data.photoPath && (
+            <button className="link-btn" type="button" onClick={handleRemovePhoto} style={{ marginTop: 8 }}>
+              Remove photo
+            </button>
+          )}
+          {photoError ? (
+            <p className="hint" style={{ color: "var(--color-danger)" }}>{photoError}</p>
+          ) : (
+            <p className="hint">Optional. Max size 5MB. JPG or PNG.</p>
+          )}
         </div>
       </div>
 
@@ -127,4 +188,5 @@ export const emptyPersonalInfo = {
   portfolio: "",
   age: "",
   address: "",
+  photoPath: "", // chemin du fichier dans le bucket "avatars"
 };

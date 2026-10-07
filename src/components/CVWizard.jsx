@@ -12,6 +12,8 @@ import Experience, { emptyExperienceEntries } from "./steps/Experience";
 import Skills, { emptySkills } from "./steps/Skills";
 import Languages, { emptyLanguagesData } from "./steps/Languages";
 import TemplatePage from "./templates/TemplatePage";
+import { useAuth } from "../context/AuthContext";
+import { useCvAutosave } from "../hooks/useCvAutosave";
 
 function initialFormData() {
   return {
@@ -26,6 +28,14 @@ function initialFormData() {
   };
 }
 
+// Fusionne une section sauvegardée avec ses valeurs par défaut
+// (si on ajoute un champ plus tard, les anciens CV restent valides)
+function mergeSection(defaults, saved) {
+  if (saved === undefined || saved === null) return defaults;
+  if (Array.isArray(defaults) || typeof defaults !== "object") return saved;
+  return { ...defaults, ...saved };
+}
+
 export default function CVWizard({ onNavigate, isAuthed }) {
   const [stepIndex, setStepIndex] = useState(-1); // -1 = intro screen
   const [form, setForm] = useState(initialFormData);
@@ -35,6 +45,36 @@ export default function CVWizard({ onNavigate, isAuthed }) {
   const [templateId, setTemplateId] = useState("modern-focus");
   const [templateName, setTemplateName] = useState("Modern Focus");
   const [templateDesigns, setTemplateDesigns] = useState({});
+  const [everFinished, setEverFinished] = useState(false);
+  const { user } = useAuth();
+
+  // Tout ce qui doit être sauvegardé dans la table "cvs"
+  const snapshot = {
+    templateId,
+    status: everFinished ? "complete" : "draft",
+    content: { form, templateName, templateDesigns, lastStep: stepIndex },
+  };
+
+  // Appelée une fois quand un CV existant est lu dans Supabase
+  function handleLoaded(row) {
+    const content = row.content ?? {};
+    const saved = content.form ?? {};
+    const defaults = initialFormData();
+    setForm(
+      Object.fromEntries(Object.entries(defaults).map(([key, value]) => [key, mergeSection(value, saved[key])]))
+    );
+    if (row.template_id) setTemplateId(row.template_id);
+    if (content.templateName) setTemplateName(content.templateName);
+    if (content.templateDesigns) setTemplateDesigns(content.templateDesigns);
+    setEverFinished(row.status === "complete");
+    if (typeof content.lastStep === "number") setStepIndex(content.lastStep); // reprend où l'utilisateur s'est arrêté
+  }
+
+  const { loading, loadError, retryLoad, saveStatus, saveNow } = useCvAutosave({
+    userId: user.id,
+    snapshot,
+    onLoaded: handleLoaded,
+  });
 
   const isLastStep = stepIndex === WIZARD_STEPS.length - 1;
 
@@ -58,6 +98,39 @@ export default function CVWizard({ onNavigate, isAuthed }) {
     }
   }
 
+  async function handleSaveProgress() {
+    const { ok } = await saveNow();
+    if (ok) onNavigate("landing");
+  }
+
+  if (loadError) {
+    return (
+      <div className="app-shell">
+        <TopNav onNavigate={onNavigate} isAuthed={isAuthed} />
+        <div className="wizard-body">
+          <div className="wizard-card" style={{ textAlign: "center" }}>
+            <h1>Couldn’t load your CV</h1>
+            <p className="subtitle">{loadError}</p>
+            <button className="btn btn-primary" type="button" onClick={retryLoad}>
+              Try again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="app-shell">
+        <TopNav onNavigate={onNavigate} isAuthed={isAuthed} />
+        <div className="wizard-body">
+          <p style={{ textAlign: "center" }}>Loading your CV…</p>
+        </div>
+      </div>
+    );
+  }
+
   if (choosingTemplate) {
     return (
       <TemplatePage
@@ -73,6 +146,7 @@ export default function CVWizard({ onNavigate, isAuthed }) {
           setTemplateDesigns((previous) => ({ ...previous, [chosenTemplateId]: design }));
           setChoosingTemplate(false);
           setFinished(true);
+          setEverFinished(true);
         }}
       />
     );
@@ -129,7 +203,13 @@ export default function CVWizard({ onNavigate, isAuthed }) {
         <div className="wizard-body">
           <div className="wizard-card">
             {stepIndex === 0 && (
-              <PersonalInfo data={form.personalInfo} onChange={(v) => setForm((f) => ({ ...f, personalInfo: v }))} />
+              <PersonalInfo
+                data={form.personalInfo}
+                // v peut être un objet, ou une fonction (état précédent) => nouvel état
+                onChange={(v) =>
+                  setForm((f) => ({ ...f, personalInfo: typeof v === "function" ? v(f.personalInfo) : v }))
+                }
+              />
             )}
             {stepIndex === 1 && (
               <CareerGoal data={form.careerGoal} onChange={(v) => setForm((f) => ({ ...f, careerGoal: v }))} />
@@ -156,7 +236,8 @@ export default function CVWizard({ onNavigate, isAuthed }) {
         </div>
         <WizardFooter
           onBack={handleBack}
-          onSave={() => onNavigate("landing")}
+          onSave={handleSaveProgress}
+          saveStatus={saveStatus}
           onSkip={!isLastStep ? () => handleContinue() : undefined}
           onContinue={handleContinue}
           continueLabel={isLastStep ? "Choose a template" : "Continue"}
