@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 const FILTERS = ["All templates", "Professional", "Modern", "Creative", "ATS-friendly"];
 
 const TEMPLATES = [
-  { id: "modern-focus", name: "Modern Focus", tag: "Clean", category: "Modern", accent: true },
+  { id: "modern-focus", name: "Mercury Flow", tag: "Clean", category: "Modern", accent: true },
   { id: "executive", name: "Executive", tag: "Professional", category: "Professional" },
   { id: "minimal-grid", name: "Minimal Grid", tag: "Minimal", category: "Modern" },
   { id: "creative-edge", name: "Creative Edge", tag: "Creative", category: "Creative" },

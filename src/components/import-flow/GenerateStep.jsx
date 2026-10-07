@@ -6,7 +6,7 @@ const SUGGESTIONS = [
   "Shorten the education details",
 ];
 
-export default function GenerateStep({ onOpenEditor, templateName = "Modern Focus" }) {
+export default function GenerateStep({ onOpenEditor, templateName = "Mercury Flow" }) {
   const [applied, setApplied] = useState([]);
 
   const allApplied = applied.length === SUGGESTIONS.length;

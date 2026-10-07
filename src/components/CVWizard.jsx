@@ -43,7 +43,7 @@ export default function CVWizard({ onNavigate, isAuthed }) {
   const [finished, setFinished] = useState(false);
   const [choosingTemplate, setChoosingTemplate] = useState(false);
   const [templateId, setTemplateId] = useState("modern-focus");
-  const [templateName, setTemplateName] = useState("Modern Focus");
+  const [templateName, setTemplateName] = useState("Mercury Flow");
   const [templateDesigns, setTemplateDesigns] = useState({});
   const [everFinished, setEverFinished] = useState(false);
   const { user } = useAuth();

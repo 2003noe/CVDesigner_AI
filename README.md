@@ -72,3 +72,10 @@ Puis ouvrez l'URL indiquée (en général http://localhost:5173).
   Template → Generate → Edit → Export, avec son propre indicateur d'étapes
   (`IMPORT_STEPS` dans `StepIndicator.jsx`, désormais générique via la prop
   `steps`).
+
+
+## Template library
+
+The CV template experience now includes 12 editable React/CSS designs: Atlantic Blue, Mercury Flow, Steady Form, Classic Serif, Leaves, Executive, Nova Minimal, Horizon, Monochrome, Corporate Pro, Creative Edge and Tech Focus. The gallery supports filtering, search, sorting, live previews, template customization, typography, spacing, page size, accent colors and optional profile photos.
+
+`node_modules` and the previous build output are intentionally excluded from the project archive. Run `npm install` before starting the project.

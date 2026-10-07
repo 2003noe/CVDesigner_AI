@@ -18,7 +18,7 @@ export default function ImportFlow({ onNavigate, onBack }) {
   const [stepIndex, setStepIndex] = useState(0);
   const [validateData, setValidateData] = useState(initialValidateData);
   const [templateId, setTemplateId] = useState(DEFAULT_TEMPLATE_ID);
-  const [templateName, setTemplateName] = useState("Modern Focus");
+  const [templateName, setTemplateName] = useState("Mercury Flow");
   const [templateDesigns, setTemplateDesigns] = useState({});
 
   const currentKey = STEP_KEYS[stepIndex];

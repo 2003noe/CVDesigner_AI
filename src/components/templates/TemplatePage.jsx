@@ -4,121 +4,221 @@ import StepIndicator, { IMPORT_STEPS } from "../StepIndicator";
 
 const TEMPLATES = [
   {
-    id: "modern-focus",
-    name: "Modern Focus",
-    style: "Modern",
-    layout: "Single column",
-    description: "Crisp sans typography, a compact contact masthead and restrained color for a focused first impression.",
-    badge: "Recommended for you",
-    details: "Matches your technology industry, modern visual style and single-column preference. Clear section labels give a mid-career product design profile a confident structure.",
-    features: ["Compact contact masthead", "Subtle section labels", "Aligned, easy-to-scan content"],
-    variant: "modern",
-    typography: "Inter",
-    spacing: "Balanced",
-  },
-  {
-    id: "compact-ats",
-    name: "Compact ATS",
-    style: "Text-first",
-    layout: "Single column",
-    description: "A simple, text-first single-column CV with conventional headings and high legibility.",
-    badge: "Text-first · compact",
-    details: "Fits a single-column preference when content should do the talking. Straightforward headings and compact spacing favor a plain presentation; this is not a certification of ATS performance.",
-    features: ["Conventional text-only sections", "No decorative graphs or rating bars", "Compact spacing, clear reading order"],
-    variant: "compact",
-    typography: "Inter",
-    spacing: "Compact",
-  },
-  {
-    id: "classic-professional",
-    name: "Classic Professional",
-    style: "Classic",
-    layout: "Single column",
-    description: "A timeless single-column CV with serif headings, fine rules and a clear chronological story.",
-    badge: "Classic · formal",
-    details: "A strong starting point for established organizations and a traditional professional style. The familiar reading order keeps experience easy to follow.",
-    features: ["Disciplined, ruled sections", "Centered serif masthead", "One clear reading column"],
-    variant: "classic",
+    id: "atlantic-blue",
+    name: "Atlantic Blue",
+    style: "Professional",
+    category: "Professional",
+    layout: "Two columns",
+    variant: "atlantic",
+    description: "A confident two-column layout with a deep blue sidebar and a strong executive hierarchy.",
+    badge: "Corporate classic",
     typography: "Georgia + Inter",
     spacing: "Balanced",
+    accent: "#173b4d",
+    tags: ["Business", "Finance", "Management"],
   },
   {
-    id: "minimal-grid",
-    name: "Minimal Grid",
-    style: "Minimal",
-    layout: "Two columns",
-    description: "Quiet sans typography, generous whitespace and a precisely aligned two-column grid.",
-    badge: "Minimal · structured",
-    details: "A natural choice for a minimal professional style and a two-column layout. Profile, skills and education sit alongside a dedicated experience and project column.",
-    features: ["Precisely aligned two-column grid", "Dedicated skills and profile column", "Quiet typography with room to breathe"],
-    variant: "grid",
+    id: "modern-focus",
+    name: "Mercury Flow",
+    style: "Modern",
+    category: "Modern",
+    layout: "Single column",
+    variant: "mercury",
+    description: "Clean, airy and contemporary. A polished choice for product, marketing and business roles.",
+    badge: "Modern favorite",
     typography: "Inter",
-    spacing: "Relaxed",
+    spacing: "Balanced",
+    accent: "#64748b",
+    tags: ["Modern", "Marketing", "Product"],
+  },
+  {
+    id: "steady-form",
+    name: "Steady Form",
+    style: "Corporate",
+    category: "Professional",
+    layout: "Single column",
+    variant: "steady",
+    description: "Structured and information-rich, designed for engineering, operations and established companies.",
+    badge: "Structured",
+    typography: "Inter",
+    spacing: "Compact",
+    accent: "#1f2937",
+    tags: ["Engineering", "Operations", "Corporate"],
+  },
+  {
+    id: "classic-serif",
+    name: "Classic Serif",
+    style: "Classic",
+    category: "Classic",
+    layout: "Single column",
+    variant: "classic",
+    description: "An elegant serif-led resume with refined rules and a timeless editorial rhythm.",
+    badge: "Timeless",
+    typography: "Georgia + Inter",
+    spacing: "Balanced",
+    accent: "#30343b",
+    tags: ["Law", "Academia", "Executive"],
+  },
+  {
+    id: "leaves",
+    name: "Leaves",
+    style: "Creative",
+    category: "Creative",
+    layout: "Two columns",
+    variant: "leaves",
+    description: "A distinctive organic sidebar brings personality without sacrificing professional readability.",
+    badge: "Creative",
+    typography: "Inter",
+    spacing: "Balanced",
+    accent: "#315b50",
+    tags: ["Design", "Creative", "Communications"],
   },
   {
     id: "executive",
     name: "Executive",
-    style: "Editorial",
+    style: "Premium",
+    category: "Professional",
     layout: "Single column",
-    description: "An editorial, serif-led hierarchy with monochrome sophistication and achievements in the foreground.",
-    badge: "Editorial · impact-led",
-    details: "For a refined, achievement-led presentation. Its experience-first organization suits professionals who want their contribution to lead the story without implying a more senior job title.",
-    features: ["Experience and impact first", "Generous editorial name treatment", "Sophisticated monochrome palette"],
-    variant: "editorial",
+    variant: "executive",
+    description: "A premium monochrome presentation built around leadership, achievements and credibility.",
+    badge: "Executive",
     typography: "Georgia + Inter",
     spacing: "Relaxed",
+    accent: "#24272c",
+    tags: ["Leadership", "Director", "Consulting"],
   },
   {
-    id: "creative-profile",
-    name: "Creative Profile",
-    style: "Creative",
-    layout: "Sidebar",
-    description: "A distinctive, polished sidebar layout for portfolios, creative roles and visual storytelling.",
-    badge: "Creative · portfolio-ready",
-    details: "A structured color sidebar gives contact information and skills their own space while keeping achievements readable.",
-    features: ["Color-accented profile sidebar", "Prominent portfolio and contact details", "Clear experience hierarchy"],
-    variant: "creative",
+    id: "nova-minimal",
+    name: "Nova Minimal",
+    style: "Minimal",
+    category: "Minimal",
+    layout: "Single column",
+    variant: "nova",
+    description: "Minimalist typography, generous whitespace and a subtle accent for a modern first impression.",
+    badge: "Minimal",
+    typography: "Inter",
+    spacing: "Relaxed",
+    accent: "#2563eb",
+    tags: ["Startup", "Product", "General"],
+  },
+  {
+    id: "horizon",
+    name: "Horizon",
+    style: "Modern",
+    category: "Modern",
+    layout: "Two columns",
+    variant: "horizon",
+    description: "A modern split layout with a compact identity block and clear visual grouping.",
+    badge: "Contemporary",
     typography: "Inter",
     spacing: "Balanced",
+    accent: "#7c3aed",
+    tags: ["Tech", "Marketing", "Product"],
   },
   {
-    id: "technical-focus",
-    name: "Technical Focus",
-    style: "Technical",
+    id: "monochrome-ats",
+    name: "Monochrome",
+    style: "ATS-friendly",
+    category: "ATS-friendly",
     layout: "Single column",
-    description: "A precise, information-dense layout for engineering, data and technology roles.",
-    badge: "Technical · skills-forward",
-    details: "Technical strengths are easy to locate, with a compact header and consistent hierarchy for project and experience details.",
-    features: ["Skills-forward section order", "Compact technical project entries", "Simple, readable typography"],
-    variant: "technical",
+    variant: "mono",
+    description: "Text-first and highly legible, with conventional headings and no distracting decoration.",
+    badge: "ATS-ready layout",
+    typography: "Arial",
+    spacing: "Compact",
+    accent: "#111827",
+    tags: ["ATS", "Engineering", "Applications"],
+  },
+  {
+    id: "corporate-pro",
+    name: "Corporate Pro",
+    style: "Corporate",
+    category: "Professional",
+    layout: "Two columns",
+    variant: "corporate",
+    description: "A sharp business template with a compact profile column and achievement-focused experience.",
+    badge: "Business",
     typography: "Inter",
     spacing: "Compact",
+    accent: "#0f766e",
+    tags: ["Finance", "Consulting", "Business"],
   },
   {
-    id: "warm-profile",
-    name: "Warm Profile",
-    style: "Personal",
-    layout: "Single column",
-    description: "A welcoming, human-centered layout with soft accents and room for a professional portrait.",
-    badge: "Personal · portrait-friendly",
-    details: "A balanced layout with a photo-ready masthead for roles where personal presentation is useful. The portrait is always optional.",
-    features: ["Portrait-ready contact masthead", "Soft, restrained accent color", "Comfortable section spacing"],
-    variant: "warm",
-    typography: "Georgia + Inter",
+    id: "creative-edge",
+    name: "Creative Edge",
+    style: "Creative",
+    category: "Creative",
+    layout: "Sidebar",
+    variant: "creative",
+    description: "A bold but polished layout for designers, communicators and portfolio-led candidates.",
+    badge: "Portfolio-ready",
+    typography: "Inter",
     spacing: "Balanced",
+    accent: "#be5b45",
+    tags: ["Design", "Brand", "Media"],
+  },
+  {
+    id: "tech-focus",
+    name: "Tech Focus",
+    style: "Technical",
+    category: "ATS-friendly",
+    layout: "Single column",
+    variant: "technical",
+    description: "A dense, precise layout that gives projects, technologies and measurable results priority.",
+    badge: "For tech roles",
+    typography: "Inter",
+    spacing: "Compact",
+    accent: "#0f4c81",
+    tags: ["Software", "Data", "IT"],
   },
 ];
 
+const FILTERS = ["All", "Professional", "Modern", "Classic", "Minimal", "Creative", "ATS-friendly"];
 const ACCENTS = [
-  { name: "Slate", color: "#344256" },
+  { name: "Atlantic", color: "#173b4d" },
   { name: "Blue", color: "#2563eb" },
-  { name: "Teal", color: "#39756f" },
+  { name: "Teal", color: "#0f766e" },
   { name: "Charcoal", color: "#24272c" },
-  { name: "Burgundy", color: "#8b3d50" },
-  { name: "Forest", color: "#357256" },
+  { name: "Purple", color: "#7c3aed" },
+  { name: "Terracotta", color: "#be5b45" },
+  { name: "Forest", color: "#315b50" },
 ];
 
-const INITIAL_PREFERENCES = {
+const SAMPLE = {
+  name: "John Doe",
+  role: "Product Designer",
+  location: "San Francisco, CA",
+  email: "john.doe@email.com",
+  phone: "+1 415 555 0182",
+  website: "linkedin.com/in/johndoe",
+  summary:
+    "Product Designer with 4+ years of experience creating intuitive digital products, scalable design systems and measurable user experiences.",
+  experience: [
+    {
+      company: "Figma",
+      role: "Product Designer",
+      dates: "2022 — Present",
+      bullets: [
+        "Led end-to-end product design and increased workspace retention by 24%.",
+        "Built reusable patterns that accelerated engineering handoff.",
+      ],
+    },
+    {
+      company: "Northstar Studio",
+      role: "UX Designer",
+      dates: "2020 — 2022",
+      bullets: [
+        "Translated research into accessible workflows used by 12k+ monthly users.",
+        "Partnered with product and engineering teams on new product launches.",
+      ],
+    },
+  ],
+  education: "B.Sc. Cognitive Science — University of California, Berkeley",
+  skills: "Figma · UX Research · Prototyping · Design Systems · Accessibility · Product Strategy",
+  languages: "English · Spanish",
+};
+
+const DEFAULT_DESIGN = {
   typography: "Inter",
   spacing: "Balanced",
   pageSize: "A4 · 210 × 297 mm",
@@ -127,140 +227,189 @@ const INITIAL_PREFERENCES = {
   photoPosition: "Right",
 };
 
-const EXPERIENCE = [
-  "Led end-to-end product design and increased workspace retention by 24%.",
-  "Built reusable patterns that accelerated engineering handoff.",
-  "Partnered with product managers and engineers to turn research into clear, accessible workflows.",
-];
-
 function makeInitialDesigns() {
   return Object.fromEntries(
     TEMPLATES.map((template) => [
       template.id,
       {
-        ...INITIAL_PREFERENCES,
+        ...DEFAULT_DESIGN,
         typography: template.typography,
         spacing: template.spacing,
-        accent: template.variant === "editorial" || template.variant === "classic" ? "#344256" : "#2563eb",
+        accent: template.accent,
       },
     ]),
   );
 }
 
-function ResumeDocument({ template, design }) {
+function ResumeDocument({ template, design, preview = false }) {
   const hasPhoto = Boolean(design.photo);
   const resumeStyle = {
     "--resume-accent": design.accent,
-    "--resume-font": design.typography === "Georgia + Inter" ? 'Georgia, "Times New Roman", serif' : "Inter, Arial, sans-serif",
-    "--resume-gap": design.spacing === "Compact" ? "9px" : design.spacing === "Relaxed" ? "20px" : "14px",
-    "--resume-page-width": design.pageSize.startsWith("Letter") ? "430px" : "420px",
+    "--resume-font":
+      design.typography === "Georgia + Inter"
+        ? 'Georgia, "Times New Roman", serif'
+        : design.typography === "Arial"
+          ? "Arial, Helvetica, sans-serif"
+          : 'Inter, Arial, sans-serif',
+    "--resume-gap":
+      design.spacing === "Compact" ? "8px" : design.spacing === "Relaxed" ? "18px" : "12px",
   };
+
+  const secondary = (
+    <aside className="resume-secondary">
+      <section>
+        <h3>Profile</h3>
+        <p>{SAMPLE.summary}</p>
+      </section>
+      <section>
+        <h3>Skills</h3>
+        <p>{SAMPLE.skills}</p>
+      </section>
+      <section>
+        <h3>Education</h3>
+        <strong>{SAMPLE.education}</strong>
+      </section>
+      <section>
+        <h3>Languages</h3>
+        <p>{SAMPLE.languages}</p>
+      </section>
+    </aside>
+  );
+
+  const experience = (
+    <section className="resume-section">
+      <h3>Professional Experience</h3>
+      {SAMPLE.experience.map((job) => (
+        <div className="resume-job" key={`${job.company}-${job.role}`}>
+          <div className="resume-job-heading">
+            <strong>{job.role}</strong>
+            <span>{job.dates}</span>
+          </div>
+          <b>{job.company}</b>
+          <ul>
+            {job.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
+          </ul>
+        </div>
+      ))}
+    </section>
+  );
+
+  const header = (
+    <header className="resume-header">
+      {hasPhoto ? (
+        <img className="resume-photo" src={design.photo} alt="" />
+      ) : (
+        <div className="resume-avatar" aria-hidden="true">JD</div>
+      )}
+      <div className="resume-heading">
+        <span>{SAMPLE.role}</span>
+        <h2>{SAMPLE.name}</h2>
+        <p>{SAMPLE.location} · {SAMPLE.email} · {SAMPLE.website}</p>
+        <small>{SAMPLE.phone}</small>
+      </div>
+    </header>
+  );
 
   return (
     <article
-      className={`resume-document resume-document-${template.variant} resume-document-spacing-${design.spacing.toLowerCase()}`}
+      className={`resume-document resume-${template.variant} ${preview ? "resume-preview" : ""}`}
       style={resumeStyle}
     >
-      <header className={`resume-document-header resume-photo-${design.photoPosition.toLowerCase()}`}>
-        {hasPhoto && (
-          <img className="resume-profile-photo" src={design.photo} alt="Profile portrait" />
-        )}
-        <div className="resume-identity">
-          <span className="resume-occupation">PRODUCT DESIGNER</span>
-          <h2>John Doe</h2>
-          <p>San Francisco · john.doe@email.com · linkedin.com/in/johndoe</p>
-        </div>
-      </header>
+      {template.variant === "atlantic" && (
+        <>
+          <div className="resume-sidebar">
+            {hasPhoto ? <img className="resume-sidebar-photo" src={design.photo} alt="" /> : <div className="resume-sidebar-avatar">JD</div>}
+            <h2>{SAMPLE.name}</h2>
+            <span>{SAMPLE.role}</span>
+            <div className="resume-sidebar-contact">{SAMPLE.location}<br />{SAMPLE.email}<br />{SAMPLE.phone}<br />{SAMPLE.website}</div>
+            <h4>Languages</h4><p>{SAMPLE.languages}</p>
+            <h4>Skills</h4><p>{SAMPLE.skills}</p>
+          </div>
+          <main className="resume-main">
+            <section className="resume-section"><h3>Summary</h3><p>{SAMPLE.summary}</p></section>
+            {experience}
+            <section className="resume-section"><h3>Education</h3><p>{SAMPLE.education}</p></section>
+          </main>
+        </>
+      )}
 
-      <div className="resume-document-layout">
-        <aside className="resume-column resume-column-secondary">
-          <section className="resume-document-section">
-            <h3>Profile</h3>
-            <p>Product Designer with 4+ years of experience creating intuitive SaaS workflows and scalable design systems.</p>
-          </section>
-          <section className="resume-document-section">
-            <h3>Expertise</h3>
-            <p>User Research · Interaction Design · Figma · Prototyping · Design Systems</p>
-          </section>
-          <section className="resume-document-section">
-            <h3>Education</h3>
-            <b>B.Sc. Cognitive Science</b>
-            <p>University of California, Berkeley · 2022</p>
-          </section>
-        </aside>
+      {template.variant === "leaves" && (
+        <>
+          <div className="resume-leaves-strip"><span>LEAVES</span></div>
+          <main className="resume-leaves-main">
+            {header}
+            {experience}
+            <section className="resume-section"><h3>Education</h3><p>{SAMPLE.education}</p></section>
+          </main>
+          <aside className="resume-leaves-side">{secondary}</aside>
+        </>
+      )}
 
-        <div className="resume-column resume-column-primary">
-          {template.variant === "editorial" && (
-            <section className="resume-document-section">
-              <h3>Experience &amp; impact</h3>
-              <b>Product Designer — Figma</b>
-              <p>2022–Present</p>
-              <ul>{EXPERIENCE.map((item) => <li key={item}>{item}</li>)}</ul>
+      {template.variant === "creative" && (
+        <>
+          <aside className="resume-creative-side">
+            <div className="creative-mark">JD</div>
+            <h2>{SAMPLE.name}</h2>
+            <span>{SAMPLE.role}</span>
+            <div>{SAMPLE.location}</div><div>{SAMPLE.email}</div><div>{SAMPLE.website}</div>
+            <h4>Core skills</h4><p>{SAMPLE.skills}</p>
+            <h4>Languages</h4><p>{SAMPLE.languages}</p>
+          </aside>
+          <main className="resume-main resume-creative-main">
+            <div className="creative-title"><span>Selected profile</span><h2>{SAMPLE.name}</h2><p>{SAMPLE.summary}</p></div>
+            {experience}
+            <section className="resume-section"><h3>Education</h3><p>{SAMPLE.education}</p></section>
+          </main>
+        </>
+      )}
+
+      {!["atlantic", "leaves", "creative"].includes(template.variant) && (
+        <>
+          {header}
+          <div className="resume-body">
+            {template.variant === "horizon" && <div className="horizon-rule" />}
+            {template.variant === "executive" && <div className="executive-intro"><span>PROFILE</span><p>{SAMPLE.summary}</p></div>}
+            {template.variant === "nova" && <div className="nova-intro"><p>{SAMPLE.summary}</p></div>}
+            {template.variant === "mono" && <div className="mono-contact">{SAMPLE.location} · {SAMPLE.email} · {SAMPLE.phone}</div>}
+            {template.variant === "technical" && (
+              <section className="resume-section tech-skills"><h3>Technical Skills</h3><p>{SAMPLE.skills}</p></section>
+            )}
+            {experience}
+            <section className="resume-section">
+              <h3>{template.variant === "executive" ? "Education & Credentials" : "Education"}</h3>
+              <p>{SAMPLE.education}</p>
             </section>
-          )}
-          {template.variant !== "editorial" && (
-            <section className="resume-document-section">
-              <h3>Experience</h3>
-              <b>Product Designer — Figma</b>
-              <p>2022–Present</p>
-              <ul>{EXPERIENCE.map((item) => <li key={item}>{item}</li>)}</ul>
-            </section>
-          )}
-          <section className="resume-document-section">
-            <h3>Selected project</h3>
-            <b>Workspace onboarding</b>
-            <p>Product design project · 2023</p>
-            <ul>
-              <li>Mapped onboarding journeys through user interviews and usability testing.</li>
-              <li>Created interactive prototypes and documented patterns for a consistent first-use experience.</li>
-            </ul>
-          </section>
-          {template.variant === "editorial" && (
-            <section className="resume-document-section">
-              <h3>Professional profile</h3>
-              <p>Product Designer with 4+ years of experience creating intuitive SaaS workflows and scalable design systems.</p>
-            </section>
-          )}
-          {template.variant !== "grid" && template.variant !== "creative" && (
-            <section className="resume-document-section resume-main-education">
-              <h3>Education</h3>
-              <b>B.Sc. Cognitive Science — University of California, Berkeley</b>
-              <p>Graduated 2022</p>
-            </section>
-          )}
-          {template.variant === "technical" && (
-            <section className="resume-document-section">
-              <h3>Technical skills</h3>
-              <p>Figma · Prototyping · Design Systems · Accessibility · User Research</p>
-            </section>
-          )}
-        </div>
-      </div>
-      <small className="resume-document-page">John Doe · 1</small>
+            {template.variant === "steady" && <section className="resume-section"><h3>Core Competencies</h3><p>Product Strategy · Stakeholder Management · Design Systems · Agile Delivery</p></section>}
+          </div>
+        </>
+      )}
+      <small className="resume-page-number">John Doe · 01</small>
     </article>
   );
 }
 
-function TemplateCard({ template, selected, onChoose }) {
-  const design = template.initialDesign;
+function TemplateCard({ template, design, selected, onPreview }) {
   return (
-    <article className={`design-card ${selected ? "design-card-selected" : ""}`}>
-      <div className="design-card-preview">
-        <ResumeDocument template={template} design={design} />
-      </div>
-      <div className="design-card-details">
-        <span className="design-recommendation">{selected ? "Recommended · selected" : template.badge}</span>
-        <h3>{template.name}</h3>
-        <span className="design-style">{template.style} style · {template.layout.toLowerCase()}</span>
-        <p>{template.description}</p>
-        <div className="design-card-actions">
-          <button className="btn btn-secondary" type="button" onClick={() => onChoose(template.id, true)}>
-            Preview
-          </button>
-          <button className="btn btn-primary" type="button" onClick={() => onChoose(template.id, false)}>
-            {selected ? "Edit chosen" : "Choose"}
-          </button>
+    <article className={`gallery-card ${selected ? "is-selected" : ""}`}>
+      <button className="gallery-preview" type="button" onClick={() => onPreview(template.id)} aria-label={`Preview ${template.name}`}>
+        <ResumeDocument template={template} design={design} preview />
+        <span className="gallery-overlay">Preview</span>
+      </button>
+      <div className="gallery-card-body">
+        <div className="gallery-card-heading">
+          <div>
+            <span className="gallery-badge">{selected ? "Selected" : template.badge}</span>
+            <h3>{template.name}</h3>
+          </div>
+          {selected && <span className="selected-check">✓</span>}
         </div>
+        <p>{template.description}</p>
+        <div className="gallery-tags">
+          <span>{template.style}</span><span>{template.layout}</span>
+        </div>
+        <button className="btn btn-primary gallery-use" type="button" onClick={() => onPreview(template.id)}>
+          Customize template
+        </button>
       </div>
     </article>
   );
@@ -268,7 +417,6 @@ function TemplateCard({ template, selected, onChoose }) {
 
 function TemplateDesigner({ template, design, onDesignChange, onBack, onChoose }) {
   const [photoError, setPhotoError] = useState("");
-  const isTwoColumn = template.variant === "grid" || template.variant === "creative";
 
   function updateDesign(key, value) {
     onDesignChange({ ...design, [key]: value });
@@ -280,169 +428,85 @@ function TemplateDesigner({ template, design, onDesignChange, onBack, onChoose }
     setPhotoError("");
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      setPhotoError("Choisissez un fichier image (JPG, PNG ou WebP).");
+      setPhotoError("Please choose a JPG, PNG or WebP image.");
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      setPhotoError("La photo doit faire 5 Mo maximum.");
+      setPhotoError("The photo must be 5 MB or smaller.");
       return;
     }
-
     const reader = new FileReader();
     reader.onload = () => {
-      if (typeof reader.result !== "string") {
-        setPhotoError("Impossible de lire cette image. Essayez un autre fichier.");
-        return;
-      }
-      updateDesign("photo", reader.result);
+      if (typeof reader.result === "string") updateDesign("photo", reader.result);
+      else setPhotoError("Could not read this image.");
     };
-    reader.onerror = () => setPhotoError("Impossible de lire cette image. Essayez un autre fichier.");
+    reader.onerror = () => setPhotoError("Could not read this image.");
     reader.readAsDataURL(file);
   }
 
   return (
-    <main className="template-designer">
-      <div className="designer-topline">
-        <button className="designer-back-link" type="button" onClick={onBack}>‹ Back to template gallery</button>
+    <main className="template-designer-v2">
+      <div className="designer-v2-top">
+        <button className="designer-back-link" type="button" onClick={onBack}>‹ Back to templates</button>
+        <span>{template.layout} · A4</span>
       </div>
-      <header className="designer-title">
+
+      <header className="designer-v2-title">
         <div>
+          <span className="gallery-badge">{template.badge}</span>
           <h1>{template.name}</h1>
           <p>{template.description}</p>
         </div>
-        <span className="designer-page-badge">{template.layout} · {design.pageSize.split(" · ")[0]}</span>
+        <button className="btn btn-primary" type="button" onClick={onChoose}>Use this template</button>
       </header>
 
-      <div className="designer-workspace">
-        <section className="designer-preview-panel" aria-label={`${template.name} editable CV preview`}>
-          <div className="designer-preview-caption">
-            <span>SAMPLE CONTENT · JOHN DOE</span>
-            <span>Full page · 100%</span>
-          </div>
-          <div className="designer-paper-wrap">
+      <div className="designer-v2-workspace">
+        <section className="designer-v2-preview">
+          <div className="designer-v2-caption"><span>LIVE PREVIEW</span><span>John Doe · 1 page</span></div>
+          <div className="designer-v2-paper">
             <ResumeDocument template={template} design={design} />
           </div>
-          <div className="designer-preview-footnote">Page 1 of 1 · Editable text preview</div>
         </section>
 
-        <aside className="designer-controls">
-          <section className="designer-info-card">
-            <span className="designer-badge">{template.badge}</span>
-            <h2>Designed for your next step</h2>
-            <p>{template.details}</p>
-            <ul>{template.features.map((feature) => <li key={feature}>{feature}</li>)}</ul>
-          </section>
+        <aside className="designer-v2-controls">
+          <div className="designer-control-card">
+            <h2>Customize</h2>
+            <label><span>Typography</span><select value={design.typography} onChange={(e) => updateDesign("typography", e.target.value)}><option>Inter</option><option>Georgia + Inter</option><option>Arial</option><option>Georgia</option></select></label>
+            <label><span>Spacing</span><select value={design.spacing} onChange={(e) => updateDesign("spacing", e.target.value)}><option>Compact</option><option>Balanced</option><option>Relaxed</option></select></label>
+            <label><span>Page size</span><select value={design.pageSize} onChange={(e) => updateDesign("pageSize", e.target.value)}><option>A4 · 210 × 297 mm</option><option>Letter · 8.5 × 11 in</option></select></label>
 
-          <section className="designer-settings-card">
-            <h2>Make it yours</h2>
-            <div className="designer-photo-setting">
-              <div className="designer-photo-copy">
-                {design.photo ? (
-                  <img className="designer-photo-thumbnail" src={design.photo} alt="Profile photo preview" />
-                ) : (
-                  <span className="designer-photo-placeholder" aria-hidden="true">+</span>
-                )}
-                <span>
-                  <b>Profile photo</b>
-                  <small>Optional · shown in the CV header</small>
-                </span>
-              </div>
-              <label className="photo-upload-button">
-                {design.photo ? "Change" : "Add photo"}
-                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={handlePhoto} />
-              </label>
-              {design.photo && (
-                <button className="remove-photo-button" type="button" onClick={() => updateDesign("photo", "")}>
-                  Remove photo
-                </button>
-              )}
-              {design.photo && (
-                <label className="designer-setting photo-position-setting">
-                  <span>Photo position</span>
-                  <select value={design.photoPosition} onChange={(event) => updateDesign("photoPosition", event.target.value)}>
-                    <option>Right</option>
-                    <option>Left</option>
-                  </select>
-                </label>
-              )}
-              {photoError && <span className="photo-error" role="alert">{photoError}</span>}
-            </div>
-            <label className="designer-setting">
-              <span>Typography</span>
-              <select value={design.typography} onChange={(event) => updateDesign("typography", event.target.value)}>
-                <option>Inter</option>
-                <option>Georgia + Inter</option>
-                <option>Arial</option>
-                <option>Georgia</option>
-              </select>
-            </label>
-            <label className="designer-setting">
-              <span>Spacing</span>
-              <select value={design.spacing} onChange={(event) => updateDesign("spacing", event.target.value)}>
-                <option>Compact</option>
-                <option>Balanced</option>
-                <option>Relaxed</option>
-              </select>
-            </label>
-            <label className="designer-setting">
-              <span>Page size</span>
-              <select value={design.pageSize} onChange={(event) => updateDesign("pageSize", event.target.value)}>
-                <option>A4 · 210 × 297 mm</option>
-                <option>Letter · 8.5 × 11 in</option>
-              </select>
-            </label>
-
-            <fieldset className="designer-accent-setting">
+            <fieldset>
               <legend>Accent color</legend>
-              <div className="designer-accent-options">
-                {ACCENTS.map((option) => (
-                  <button
-                    className={design.accent === option.color ? "active" : ""}
-                    key={option.color}
-                    type="button"
-                    aria-label={option.name}
-                    aria-pressed={design.accent === option.color}
-                    onClick={() => updateDesign("accent", option.color)}
-                  >
-                    <span style={{ backgroundColor: option.color }} />
+              <div className="designer-v2-colors">
+                {ACCENTS.map((color) => (
+                  <button key={color.color} className={design.accent === color.color ? "active" : ""} type="button" aria-label={color.name} onClick={() => updateDesign("accent", color.color)}>
+                    <span style={{ background: color.color }} />
                   </button>
                 ))}
-                <label className="custom-accent-picker" title="Choose a custom accent color">
-                  <input
-                    aria-label="Choose a custom accent color"
-                    type="color"
-                    value={design.accent}
-                    onChange={(event) => updateDesign("accent", event.target.value)}
-                  />
-                </label>
+                <label className="custom-color"><input type="color" value={design.accent} onChange={(e) => updateDesign("accent", e.target.value)} /></label>
               </div>
-              <small>{ACCENTS.find((option) => option.color === design.accent)?.name || "Custom"} · headings only</small>
             </fieldset>
 
-            <p className="designer-layout-note">
-              {isTwoColumn ? "Two-column layout is part of this template." : "Single-column layout is part of this template."}
-              {" "}Your content stays editable.
-            </p>
-            <button className="btn btn-primary designer-confirm-button" type="button" onClick={onChoose}>
-              Choose this template
-            </button>
-          </section>
+            <div className="designer-photo-v2">
+              <div>
+                {design.photo ? <img src={design.photo} alt="" /> : <span>+</span>}
+                <div><strong>Profile photo</strong><small>Optional</small></div>
+              </div>
+              <label className="photo-button">{design.photo ? "Change" : "Add photo"}<input type="file" accept="image/png,image/jpeg,image/webp" onChange={handlePhoto} /></label>
+              {design.photo && <button type="button" onClick={() => updateDesign("photo", "")}>Remove</button>}
+            </div>
+            {photoError && <p className="photo-error">{photoError}</p>}
 
-          <p className="designer-sample-note">
-            Same sample profile in every preview. Choosing a template changes the design, not your information.
-          </p>
+            <div className="designer-features">
+              <strong>Included in this template</strong>
+              <span>✓ Professional typography hierarchy</span>
+              <span>✓ Editable content structure</span>
+              <span>✓ A4 / Letter page support</span>
+            </div>
+          </div>
+          <button className="btn btn-primary btn-full" type="button" onClick={onChoose}>Use {template.name}</button>
         </aside>
       </div>
-      <footer className="designer-footer">
-        <div>
-          <button className="btn btn-secondary" type="button" onClick={onBack}>Back to templates</button>
-          <button className="link-btn" type="button" onClick={onBack}>Save progress</button>
-        </div>
-        <div>
-          <span>{template.name} · 1 page</span>
-          <button className="btn btn-primary" type="button" onClick={onChoose}>Choose this template</button>
-        </div>
-      </footer>
     </main>
   );
 }
@@ -456,50 +520,49 @@ export default function TemplatePage({
   embedded = false,
   isAuthed,
 }) {
-  const [selectedId, setSelectedId] = useState(initialSelectedId);
+  const normalizedInitial = TEMPLATES.some((template) => template.id === initialSelectedId)
+    ? initialSelectedId
+    : TEMPLATES[0].id;
+  const [selectedId, setSelectedId] = useState(normalizedInitial);
   const [editingId, setEditingId] = useState(null);
   const [designs, setDesigns] = useState(() => ({ ...makeInitialDesigns(), ...initialDesigns }));
-  const [industry, setIndustry] = useState("Technology & SaaS");
-  const [careerStage, setCareerStage] = useState("Mid-career · 3–7 years");
-  const [visualStyle, setVisualStyle] = useState("Modern");
-  const [layout, setLayout] = useState("Single column");
-  const [recommendationsUpdated, setRecommendationsUpdated] = useState(false);
+  const [filter, setFilter] = useState("All");
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState("Recommended");
 
-  const recommendations = useMemo(() => {
-    return [...TEMPLATES].sort((first, second) => {
-      function score(template) {
-        let total = Number(template.style === visualStyle) * 3 + Number(template.layout === layout);
-        if (industry === "Technology & SaaS" && template.variant === "technical") total += 2;
-        if (industry === "Design & Creative" && ["creative", "editorial", "warm"].includes(template.variant)) total += 2;
-        if (industry === "Business & Finance" && ["classic", "editorial"].includes(template.variant)) total += 2;
-        if (industry === "Healthcare" && ["classic", "compact"].includes(template.variant)) total += 2;
-        if (industry === "Education" && ["classic", "modern"].includes(template.variant)) total += 2;
-        if (careerStage === "Executive" && template.variant === "editorial") total += 3;
-        if (careerStage === "Senior · 8+ years" && ["editorial", "classic"].includes(template.variant)) total += 1;
-        if (careerStage === "Early career · 0–2 years" && ["compact", "modern"].includes(template.variant)) total += 1;
-        return total;
-      }
-
-      const firstScore = score(first);
-      const secondScore = score(second);
-      return secondScore - firstScore;
+  const visibleTemplates = useMemo(() => {
+    const search = query.trim().toLowerCase();
+    const filtered = TEMPLATES.filter((template) => {
+      const matchesFilter = filter === "All" || template.category === filter;
+      const haystack = `${template.name} ${template.style} ${template.description} ${template.tags.join(" ")}`.toLowerCase();
+      return matchesFilter && (!search || haystack.includes(search));
     });
-  }, [careerStage, industry, layout, visualStyle]);
+    if (sort === "A–Z") return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === "Style") return [...filtered].sort((a, b) => a.style.localeCompare(b.style));
+    return filtered;
+  }, [filter, query, sort]);
 
   function updateDesign(templateId, design) {
     setDesigns((previous) => ({ ...previous, [templateId]: design }));
   }
 
+  function openTemplate(id) {
+    setSelectedId(id);
+    setEditingId(id);
+  }
+
   function chooseTemplate() {
+    const template = TEMPLATES.find((item) => item.id === editingId);
+    if (!template) return;
+    setSelectedId(template.id);
     if (onConfirm) {
       onConfirm({
-        templateId: editingId,
-        templateName: editingTemplate.name,
-        design: designs[editingId],
+        templateId: template.id,
+        templateName: template.name,
+        design: designs[template.id],
       });
       return;
     }
-    setSelectedId(editingId);
     setEditingId(null);
   }
 
@@ -508,8 +571,9 @@ export default function TemplatePage({
   return (
     <div className="app-shell template-app">
       <TopNav onNavigate={onNavigate} isAuthed={isAuthed} />
-      <div className="template-wizard">
+      <div className="template-wizard-v2">
         <StepIndicator steps={IMPORT_STEPS} currentIndex={3} interactive={false} />
+
         {editingTemplate ? (
           <TemplateDesigner
             template={editingTemplate}
@@ -520,150 +584,64 @@ export default function TemplatePage({
           />
         ) : (
           <>
-            <main className="template-selection">
-              <header className="template-selection-header">
+            <main className="template-gallery-v2">
+              <header className="gallery-header-v2">
                 <div>
-                  <h1>Find the right look for your next role</h1>
-                  <p>Tell us what feels like you. Compare professional designs with the same sample profile.</p>
+                  <span className="gallery-eyebrow">CV DESIGN LIBRARY</span>
+                  <h1>Choose a template that feels like you.</h1>
+                  <p>Professional, modern and creative layouts — all built as real editable React templates.</p>
                 </div>
-                <span className="template-step-badge">Step 4 of 7 · Template</span>
+                <div className="gallery-count"><strong>{TEMPLATES.length}</strong><span>professional designs</span></div>
               </header>
 
-              <div className="template-selection-layout">
-                <aside className="template-preferences">
-                  <h2>Your preferences</h2>
-                  <p className="preferences-hint">A starting point, not a rule. You can always change any template.</p>
-
-                  <label className="preference-field">
-                    <span>Target industry</span>
-                    <select value={industry} onChange={(event) => setIndustry(event.target.value)}>
-                      <option>Technology &amp; SaaS</option>
-                      <option>Business &amp; Finance</option>
-                      <option>Design &amp; Creative</option>
-                      <option>Healthcare</option>
-                      <option>Education</option>
-                    </select>
+              <div className="gallery-toolbar">
+                <div className="gallery-filters">
+                  {FILTERS.map((item) => (
+                    <button key={item} type="button" className={filter === item ? "active" : ""} onClick={() => setFilter(item)}>
+                      {item}
+                    </button>
+                  ))}
+                </div>
+                <div className="gallery-tools">
+                  <label className="gallery-search">
+                    <span>⌕</span>
+                    <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search templates" />
                   </label>
-                  <label className="preference-field">
-                    <span>Career stage</span>
-                    <select value={careerStage} onChange={(event) => setCareerStage(event.target.value)}>
-                      <option>Early career · 0–2 years</option>
-                      <option>Mid-career · 3–7 years</option>
-                      <option>Senior · 8+ years</option>
-                      <option>Executive</option>
-                    </select>
-                  </label>
+                  <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort templates">
+                    <option>Recommended</option>
+                    <option>A–Z</option>
+                    <option>Style</option>
+                  </select>
+                </div>
+              </div>
 
-                  <fieldset className="preference-group">
-                    <legend>Preferred visual style</legend>
-                    {["Modern", "Classic", "Minimal", "Editorial", "Creative", "Technical", "Personal"].map((style) => (
-                      <label className={`style-choice ${visualStyle === style ? "active" : ""}`} key={style}>
-                        <input
-                          type="radio"
-                          name="visual-style"
-                          value={style}
-                          checked={visualStyle === style}
-                          onChange={() => setVisualStyle(style)}
-                        />
-                        <span><b>{style}</b></span>
-                      </label>
-                    ))}
-                  </fieldset>
+              <div className="gallery-selected-banner">
+                <div><span className="selected-dot" /><strong>{TEMPLATES.find((t) => t.id === selectedId)?.name}</strong><span>is selected</span></div>
+                <button type="button" onClick={() => openTemplate(selectedId)}>Customize selected template →</button>
+              </div>
 
-                  <fieldset className="preference-group">
-                    <legend>Document layout</legend>
-                    <div className="layout-choice">
-                      {["Single column", "Two columns"].map((option) => (
-                        <button
-                          className={layout === option ? "active" : ""}
-                          key={option}
-                          type="button"
-                          aria-pressed={layout === option}
-                          onClick={() => setLayout(option)}
-                        >
-                          {layout === option ? "✓ " : ""}{option === "Single column" ? "One column" : "Two columns"}
-                        </button>
-                      ))}
-                    </div>
-                  </fieldset>
-
-                  <button
-                    className="btn btn-primary update-recommendations"
-                    type="button"
-                    onClick={() => setRecommendationsUpdated(true)}
-                  >
-                    Update recommendations
-                  </button>
-                  {recommendationsUpdated && (
-                    <p className="recommendation-status" role="status">
-                      Recommendations updated for {industry} · {careerStage}.
-                    </p>
-                  )}
-                  <button
-                    className="reset-preferences"
-                    type="button"
-                    onClick={() => {
-                      setIndustry("Technology & SaaS");
-                      setCareerStage("Mid-career · 3–7 years");
-                      setVisualStyle("Modern");
-                      setLayout("Single column");
-                      setRecommendationsUpdated(false);
-                    }}
-                  >
-                    Reset preferences
-                  </button>
-                  <div className="design-note">
-                    <b>A design match, not a score</b>
-                    <span>Recommendations reflect your style and layout choices. They do not predict hiring outcomes or certify ATS performance.</span>
-                  </div>
-                </aside>
-
-                <section className="template-recommendations" aria-label="Recommended CV templates">
-                  <div className="recommendations-heading">
-                    <div>
-                      <h2>Recommended for you</h2>
-                      <p>{industry} · {visualStyle} · {layout} · Customizable colors</p>
-                    </div>
-                    <span>{TEMPLATES.length} professional designs</span>
-                  </div>
-                  <div className="sample-content">
-                    <b>Sample content</b>
-                    <span>John Doe, Product Designer · identical content in every preview</span>
-                  </div>
-                  <div className="design-grid">
-                    {recommendations.map((template) => (
-                      <TemplateCard
-                        key={template.id}
-                        template={{ ...template, initialDesign: designs[template.id] }}
-                        selected={template.id === selectedId}
-                        onChoose={(id) => {
-                          setEditingId(id);
-                          if (template.id === selectedId) setSelectedId(id);
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <p className="template-disclaimer">
-                    Choose a design to customize its typography, spacing, color and optional profile photo before use.
-                  </p>
+              {visibleTemplates.length ? (
+                <section className="gallery-grid-v2">
+                  {visibleTemplates.map((template) => (
+                    <TemplateCard
+                      key={template.id}
+                      template={template}
+                      design={designs[template.id]}
+                      selected={template.id === selectedId}
+                      onPreview={openTemplate}
+                    />
+                  ))}
                 </section>
-              </div>
+              ) : (
+                <div className="gallery-empty"><h2>No templates found</h2><p>Try another category or search term.</p><button className="btn btn-secondary" type="button" onClick={() => { setFilter("All"); setQuery(""); }}>Clear filters</button></div>
+              )}
+
+              <p className="gallery-disclaimer">Templates are editable designs. Visual style does not guarantee ATS compatibility or hiring outcomes.</p>
             </main>
-            <footer className="template-selection-footer">
-              <div className="template-footer-left">
-                <button className="btn btn-secondary" type="button" onClick={onBack}>
-                  {embedded ? "Back to questionnaire" : "Back"}
-                </button>
-                {!embedded && (
-                  <button className="link-btn" type="button" onClick={onBack}>Save progress</button>
-                )}
-              </div>
-              <div className="template-footer-right">
-                <span aria-live="polite">{TEMPLATES.find((template) => template.id === selectedId)?.name} selected</span>
-                <button className="btn btn-primary" type="button" onClick={() => setEditingId(selectedId)}>
-                  {embedded ? "Customize selected template" : "Edit selected template"}
-                </button>
-              </div>
+
+            <footer className="template-gallery-footer">
+              <button className="btn btn-secondary" type="button" onClick={onBack}>{embedded ? "Back to questionnaire" : "Back"}</button>
+              <div><span>{TEMPLATES.find((t) => t.id === selectedId)?.name} selected</span><button className="btn btn-primary" type="button" onClick={() => openTemplate(selectedId)}>Customize &amp; continue</button></div>
             </footer>
           </>
         )}
