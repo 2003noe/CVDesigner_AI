@@ -6,8 +6,10 @@ import SignUp from "./components/SignUp";
 import ImportFlow from "./components/ImportFlow";
 import CVWizard from "./components/CVWizard";
 import TemplatePage from "./components/templates/TemplatePage";
+import ResetPassword from "./components/ResetPassword";
+import { useAuth } from "./context/AuthContext";
 
-const PAGES = ["landing", "templates", "signin", "signup", "import", "wizard"];
+const PAGES = ["landing", "templates", "signin", "signup", "reset-password", "import", "wizard"];
 
 function pageFromLocation() {
   const requestedPage = window.location.hash.slice(1);
@@ -18,7 +20,7 @@ export default function App() {
   const [page, setPage] = useState(pageFromLocation);
   const [visitedPages, setVisitedPages] = useState(() => new Set([pageFromLocation()]));
   const historyIndex = useRef(0);
-  const [user, setUser] = useState(null);
+  const { user, loading, passwordRecovery } = useAuth();
 
   useEffect(() => {
     window.history.replaceState({ appPage: page, appIndex: 0 }, "", `#${page}`);
@@ -35,15 +37,33 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  function navigate(nextPage) {
+  // replace = true : remplace la page courante dans l'historique (utile pour les redirections
+  // automatiques, afin que le bouton "retour" ne boucle pas)
+  function navigate(nextPage, { replace = false } = {}) {
     if (!PAGES.includes(nextPage) || nextPage === page) return;
-    const nextIndex = historyIndex.current + 1;
-    historyIndex.current = nextIndex;
-    window.history.pushState({ appPage: nextPage, appIndex: nextIndex }, "", `#${nextPage}`);
+    if (replace) {
+      window.history.replaceState({ appPage: nextPage, appIndex: historyIndex.current }, "", `#${nextPage}`);
+    } else {
+      const nextIndex = historyIndex.current + 1;
+      historyIndex.current = nextIndex;
+      window.history.pushState({ appPage: nextPage, appIndex: nextIndex }, "", `#${nextPage}`);
+    }
     setPage(nextPage);
     setVisitedPages((visited) => new Set(visited).add(nextPage));
     window.scrollTo(0, 0);
   }
+
+  // Redirections automatiques selon l'état de connexion
+  useEffect(() => {
+    if (loading) return;
+    if (passwordRecovery && page !== "reset-password") {
+      navigate("reset-password", { replace: true }); // lien "mot de passe oublié" cliqué
+    } else if (!user && page === "wizard") {
+      navigate("signin", { replace: true });          // page protégée
+    } else if (user && (page === "signin" || page === "signup")) {
+      navigate("wizard", { replace: true });          // déjà connecté
+    }
+  }, [loading, user, passwordRecovery, page]);
 
   function navigateBack(fallbackPage = "landing") {
     if (historyIndex.current > 0) {
@@ -59,9 +79,11 @@ export default function App() {
   function renderPage(route) {
     switch (route) {
       case "signin":
-        return <SignIn onNavigate={navigate} onSignedIn={(u) => { setUser(u); navigate("wizard"); }} />;
+        return <SignIn onNavigate={navigate} />;
       case "signup":
-        return <SignUp onNavigate={navigate} onSignedUp={(u) => { setUser(u); navigate("wizard"); }} />;
+        return <SignUp onNavigate={navigate} />;
+      case "reset-password":
+        return <ResetPassword onNavigate={navigate} />;
       case "import":
         return <ImportFlow onNavigate={navigate} onBack={() => navigateBack()} />;
       case "templates":
@@ -73,7 +95,7 @@ export default function App() {
           />
         );
       case "wizard":
-        return <CVWizard onNavigate={navigate} isAuthed={Boolean(user)} />;
+        return user ? <CVWizard onNavigate={navigate} isAuthed /> : null;
       case "landing":
       default:
         return <LandingPage onNavigate={navigate} />;
