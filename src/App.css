@@ -4029,6 +4029,850 @@ body {
   padding: 33px 25px 30px 0;
 }
 
+/* Andrade Blue */
+.resume-andrade {
+  display: grid;
+  grid-template-columns: 32% minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+}
+
+.resume-andrade-sidebar {
+  min-width: 0;
+  min-height: 594px;
+  padding: 18px 13px 28px;
+  background: var(--resume-accent);
+  color: white;
+}
+
+.resume-andrade-photo,
+.resume-andrade-avatar {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 17px;
+  border: 3px solid white;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.resume-andrade-photo {
+  display: block;
+}
+
+.resume-andrade-avatar {
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, .16);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.resume-andrade-sidebar-section {
+  margin: 0 0 15px;
+}
+
+.resume-andrade-sidebar-section h3 {
+  width: 82%;
+  margin: 0 auto 8px;
+  padding: 4px 7px;
+  border-radius: 20px;
+  background: white;
+  color: var(--resume-accent);
+  font-size: 6.5px;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.resume-andrade-sidebar-section p,
+.resume-andrade-sidebar-section li {
+  margin: 0 0 4px;
+  color: rgba(255, 255, 255, .9);
+  font-size: 5.8px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.resume-andrade-sidebar-section ul {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding-left: 10px;
+}
+
+.resume-andrade-main {
+  min-width: 0;
+  padding: 30px 18px 34px;
+}
+
+.resume-andrade-header {
+  margin-bottom: 17px;
+}
+
+.resume-andrade-header > span {
+  display: block;
+  margin-bottom: 3px;
+  color: #293c5c;
+  font-size: 7px;
+  letter-spacing: .04em;
+}
+
+.resume-andrade-header h2 {
+  margin: 0;
+  color: #223b60;
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.05;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.resume-andrade-section {
+  margin-bottom: 13px;
+}
+
+.resume-andrade-section h3 {
+  display: inline-block;
+  margin: 0 0 7px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--resume-accent);
+  color: white;
+  font-size: 6.8px;
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+
+.resume-andrade-section > p,
+.resume-andrade-section .resume-job {
+  padding: 8px 9px;
+  border-radius: 8px;
+  background: #f1f5fb;
+}
+
+.resume-andrade-section > p {
+  color: #657083;
+  font-size: 6px;
+  line-height: 1.55;
+}
+
+.resume-andrade-section .resume-job {
+  margin-bottom: 7px;
+}
+
+.resume-andrade-section .resume-job-heading strong {
+  color: #304c73;
+}
+
+.resume-andrade-section .resume-job > b {
+  color: #525f72;
+}
+
+.resume-andrade-section .resume-job ul {
+  padding-left: 9px;
+}
+
+/* Parvati Classic */
+.resume-parvati {
+  display: block;
+  padding: 30px 32px 40px;
+}
+
+.resume-parvati-header {
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.resume-parvati-header h2 {
+  margin: 0;
+  color: #252a32;
+  font-size: 23px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.resume-parvati-header > span {
+  display: block;
+  margin: 1px 0 13px;
+  color: #606771;
+  font-size: 7px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.resume-parvati-header > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid #9ba0a7;
+  border-bottom: 1px solid #9ba0a7;
+  color: #535a64;
+  font-size: 6px;
+}
+
+.resume-parvati-section {
+  margin-bottom: 13px;
+}
+
+.resume-parvati-section h3 {
+  margin: 0 0 7px;
+  padding: 0 0 4px;
+  border: 0;
+  border-bottom: 1px solid #92979e;
+  color: #292e35;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.resume-parvati-section > p {
+  color: #555c65;
+  font-size: 6.3px;
+  line-height: 1.55;
+}
+
+.resume-parvati-section .resume-job {
+  display: grid;
+  grid-template-columns: 23% minmax(0, 1fr);
+  column-gap: 10px;
+  margin: 0 0 9px;
+}
+
+.resume-parvati-section .resume-job-heading {
+  display: block;
+  grid-row: span 3;
+}
+
+.resume-parvati-section .resume-job-heading strong,
+.resume-parvati-section .resume-job-heading span {
+  display: block;
+  white-space: normal;
+  font-size: 6px;
+}
+
+.resume-parvati-section .resume-job > b {
+  margin: 0 0 3px;
+  color: #505761;
+}
+
+.resume-parvati-section .resume-job ul {
+  padding-left: 10px;
+}
+
+.resume-parvati-skills {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3px 12px;
+  margin: 0;
+  padding-left: 10px;
+  color: #555c65;
+}
+
+.resume-parvati-skills li {
+  font-size: 6.2px;
+}
+
+/* Takahashi */
+.resume-takahashi {
+  display: grid;
+  grid-template-columns: 40% minmax(0, 1fr);
+  grid-template-rows: 116px minmax(594px, auto);
+  gap: 0;
+  padding: 0;
+}
+
+.resume-takahashi-header {
+  position: relative;
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 12px 24px 12px 115px;
+  background: var(--resume-accent);
+  color: white;
+}
+
+.resume-takahashi-photo,
+.resume-takahashi-avatar {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  width: 92px;
+  height: 92px;
+  border: 4px solid white;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.resume-takahashi-avatar {
+  display: grid;
+  place-items: center;
+  background: #5d4b3b;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.resume-takahashi-identity {
+  width: 58%;
+}
+
+.resume-takahashi-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.08;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.resume-takahashi-header span {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, .9);
+  font-size: 7px;
+  text-transform: uppercase;
+}
+
+.resume-takahashi-sidebar {
+  min-width: 0;
+  padding: 24px 14px 30px;
+  background: color-mix(in srgb, var(--resume-accent) 70%, #211a14);
+  color: white;
+}
+
+.resume-takahashi-section {
+  margin-bottom: 16px;
+}
+
+.resume-takahashi-section h3 {
+  margin: 0 0 8px;
+  color: white;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.resume-takahashi-section p,
+.resume-takahashi-section li {
+  margin: 0 0 5px;
+  color: rgba(255, 255, 255, .9);
+  font-size: 6px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.resume-takahashi-section ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resume-takahashi-section li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 30px;
+  align-items: center;
+  gap: 6px;
+}
+
+.resume-takahashi-section li i {
+  display: block;
+  height: 4px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, .9);
+}
+
+.resume-takahashi-education {
+  margin: 0 -14px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--resume-accent) 82%, white);
+}
+
+.resume-takahashi-main {
+  min-width: 0;
+  padding: 20px 19px 34px;
+}
+
+.resume-takahashi-section h3 {
+  margin: 0 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #a9a29b;
+  color: #3c3935;
+  font-size: 7.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.resume-takahashi-section > p {
+  color: #62605d;
+  font-size: 6.2px;
+  line-height: 1.55;
+}
+
+.resume-takahashi-section .resume-job {
+  margin-bottom: 11px;
+}
+
+/* Paterson Minimal */
+.resume-paterson {
+  display: grid;
+  grid-template-columns: 36% minmax(0, 1fr);
+  gap: 0;
+  padding: 26px 27px 38px;
+}
+
+.resume-paterson-sidebar {
+  min-width: 0;
+  padding-right: 14px;
+}
+
+.resume-paterson-photo,
+.resume-paterson-avatar {
+  display: block;
+  width: 100%;
+  height: 98px;
+  margin: 0 0 15px;
+  object-fit: cover;
+}
+
+.resume-paterson-avatar {
+  display: grid;
+  place-items: center;
+  background: #eceef0;
+  color: var(--resume-accent);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.resume-paterson-section {
+  margin-bottom: 15px;
+}
+
+.resume-paterson-section h3 {
+  margin: 0 0 7px;
+  padding: 0 0 4px;
+  border: 0;
+  border-bottom: 1px solid #b5b8bc;
+  color: #373b40;
+  font-size: 7px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.resume-paterson-section > p,
+.resume-paterson-section li {
+  margin: 0 0 5px;
+  color: #535961;
+  font-size: 6px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.resume-paterson-section ul {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding-left: 10px;
+}
+
+.resume-paterson-languages {
+  padding: 0 !important;
+  list-style: none;
+}
+
+.resume-paterson-languages li {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3px;
+}
+
+.resume-paterson-languages li span {
+  width: 78%;
+  height: 2px;
+  background: var(--resume-accent);
+}
+
+.resume-paterson-main {
+  min-width: 0;
+  padding-left: 17px;
+  border-left: 1px solid #aeb2b8;
+}
+
+.resume-paterson-header {
+  min-height: 98px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.resume-paterson-header h2 {
+  margin: 0;
+  color: #30343a;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.06;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.resume-paterson-header span {
+  margin-top: 4px;
+  color: #676d75;
+  font-size: 7px;
+  font-style: italic;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.resume-paterson-section h3 {
+  margin: 0 0 7px;
+  padding: 0 0 4px;
+  border: 0;
+  color: #393d43;
+  font-size: 7px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.resume-paterson-section > p {
+  color: #5a6068;
+  font-size: 6.1px;
+  line-height: 1.5;
+}
+
+.resume-paterson-section .resume-job {
+  margin-bottom: 9px;
+}
+
+.resume-paterson-section .resume-job-heading strong {
+  color: #373c43;
+}
+
+/* Marchesi Editorial */
+.resume-marchesi {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 92px;
+  gap: 0;
+  padding: 0;
+  background: #f9f9f6;
+}
+
+.resume-marchesi-main {
+  min-width: 0;
+  padding: 17px 0 12px 22px;
+}
+
+.resume-marchesi-topline {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 15px 9px 0;
+  border-bottom: 1px solid #b8b8b3;
+  color: #30302e;
+  font-size: 7px;
+  text-transform: uppercase;
+}
+
+.resume-marchesi-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34%;
+  min-height: 150px;
+  border-bottom: 1px solid #b8b8b3;
+}
+
+.resume-marchesi-about {
+  padding: 18px 13px 14px 0;
+}
+
+.resume-marchesi-about h3,
+.resume-marchesi-section h3,
+.resume-marchesi-bottom h3 {
+  margin: 0 0 8px;
+  color: #30302e;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.resume-marchesi-about p {
+  margin: 0;
+  color: #555650;
+  font-size: 6.5px;
+  line-height: 1.55;
+}
+
+.resume-marchesi-photo,
+.resume-marchesi-photo-placeholder {
+  width: 100%;
+  height: 135px;
+  align-self: center;
+  object-fit: cover;
+  border: 5px solid white;
+  box-shadow: 0 0 0 1px #deded9;
+}
+
+.resume-marchesi-photo-placeholder {
+  display: grid;
+  place-items: center;
+  background: #e7e6e0;
+  color: #44443f;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.resume-marchesi-section {
+  padding: 14px 15px 12px 0;
+  margin: 0;
+  border-bottom: 1px solid #b8b8b3;
+}
+
+.resume-marchesi-section h3 {
+  margin-bottom: 11px;
+}
+
+.resume-marchesi-entry {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+  color: #373833;
+  font-size: 6.2px;
+}
+
+.resume-marchesi-entry div {
+  display: grid;
+  gap: 2px;
+}
+
+.resume-marchesi-entry span {
+  color: #5b5c57;
+}
+
+.resume-marchesi-entry time {
+  flex: 0 0 auto;
+  color: #454640;
+  font-weight: 700;
+}
+
+.resume-marchesi-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px 15px 12px 0;
+  border-bottom: 1px solid #b8b8b3;
+}
+
+.resume-marchesi-bottom p {
+  margin: 0;
+  color: #51524d;
+  font-size: 6px;
+  line-height: 1.55;
+}
+
+.resume-marchesi-contact {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 13px 15px 0 0;
+  color: #4d4e49;
+  font-size: 5.5px;
+  overflow-wrap: anywhere;
+}
+
+.resume-marchesi-contact span:last-child {
+  text-align: right;
+}
+
+.resume-marchesi-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 18px 8px;
+  border-left: 1px solid #b8b8b3;
+  color: #181918;
+  font-size: 28px;
+  font-weight: 900;
+  line-height: .95;
+  text-align: center;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  overflow-wrap: anywhere;
+}
+
+/* Feig Noir */
+.resume-feig {
+  display: grid;
+  grid-template-columns: 46% minmax(0, 1fr);
+  grid-template-rows: 210px 170px minmax(230px, auto);
+  gap: 0;
+  padding: 0;
+  background: #292929;
+  color: #f4f4f2;
+}
+
+.resume-feig-profile {
+  display: grid;
+  grid-template-rows: 132px 1fr;
+  min-width: 0;
+  background: #292929;
+}
+
+.resume-feig-photo,
+.resume-feig-photo-placeholder {
+  display: block;
+  width: 100%;
+  height: 132px;
+  object-fit: cover;
+}
+
+.resume-feig-photo-placeholder {
+  display: grid;
+  place-items: center;
+  background: #454545;
+  color: white;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.resume-feig-identity {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 11px 17px;
+  background: #f8f8f6;
+  color: #242424;
+}
+
+.resume-feig-identity h2 {
+  margin: 0;
+  font-size: 25px;
+  font-weight: 900;
+  line-height: .95;
+  overflow-wrap: anywhere;
+  text-transform: uppercase;
+}
+
+.resume-feig-identity span {
+  margin-top: 5px;
+  font-size: 8px;
+}
+
+.resume-feig-contact,
+.resume-feig-about,
+.resume-feig-education,
+.resume-feig-experience {
+  min-width: 0;
+  padding: 16px 17px;
+  background: #292929;
+  color: #ededeb;
+}
+
+.resume-feig-contact {
+  display: grid;
+  align-content: center;
+  gap: 7px;
+}
+
+.resume-feig-contact h3,
+.resume-feig-about h3,
+.resume-feig-education h3,
+.resume-feig-experience h3 {
+  margin: 0 0 8px;
+  color: #e7e7e4;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.resume-feig-contact p {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  font-size: 6.2px;
+  overflow-wrap: anywhere;
+}
+
+.resume-feig-contact p strong {
+  color: #bcbcb8;
+  font-size: 6px;
+  text-transform: uppercase;
+}
+
+.resume-feig-about {
+  grid-column: 2;
+  grid-row: 2;
+  border-top: 1px solid #636363;
+}
+
+.resume-feig-about p,
+.resume-feig-education p,
+.resume-feig-experience p,
+.resume-feig-experience span {
+  margin: 0;
+  color: #d3d3d0;
+  font-size: 6px;
+  line-height: 1.5;
+}
+
+.resume-feig-education {
+  grid-column: 1;
+  grid-row: 2 / 4;
+  border-top: 1px solid #636363;
+}
+
+.resume-feig-education > p {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 18px;
+}
+
+.resume-feig-education > p span,
+.resume-feig-experience > div span {
+  color: #bdbdb9;
+  font-size: 5.8px;
+}
+
+.resume-feig-education > p strong,
+.resume-feig-experience > div strong {
+  color: #f1f1ef;
+  font-size: 6.2px;
+}
+
+.resume-feig-education ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resume-feig-education li {
+  color: #d3d3d0;
+  font-size: 6px;
+}
+
+.resume-feig-experience {
+  grid-column: 2;
+  grid-row: 3;
+  border-top: 1px solid #636363;
+}
+
+.resume-feig-experience > div {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 12px;
+}
+
+.resume-feig-experience > h3:not(:first-child) {
+  margin-top: 16px;
+}
+
 /* Mercury Flow */
 .resume-mercury .resume-header {
   align-items: flex-start;

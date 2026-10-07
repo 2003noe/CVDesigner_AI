@@ -18,6 +18,90 @@ const TEMPLATES = [
     tags: ["Business", "Finance", "Management"],
   },
   {
+    id: "andrade-blue",
+    name: "Andrade Blue",
+    style: "Professional",
+    category: "Professional",
+    layout: "Two columns",
+    variant: "andrade",
+    description: "A polished two-column profile with a blue sidebar, circular photo and softly highlighted experience.",
+    badge: "Profile focused",
+    typography: "Inter",
+    spacing: "Balanced",
+    accent: "#506789",
+    tags: ["Marketing", "Management", "Business"],
+  },
+  {
+    id: "parvati-classic",
+    name: "Parvati Classic",
+    style: "Classic",
+    category: "Classic",
+    layout: "Single column",
+    variant: "parvati",
+    description: "A clean, formal layout with centered identity, compact contact details and clearly ruled sections.",
+    badge: "Classic format",
+    typography: "Arial",
+    spacing: "Compact",
+    accent: "#30343b",
+    tags: ["Management", "Business", "ATS-friendly"],
+  },
+  {
+    id: "takahashi-brown",
+    name: "Takahashi",
+    style: "Creative",
+    category: "Creative",
+    layout: "Two columns",
+    variant: "takahashi",
+    description: "A warm editorial design with an overlapping profile photo, rich brown sidebar and clear work history.",
+    badge: "Warm editorial",
+    typography: "Inter",
+    spacing: "Balanced",
+    accent: "#80674f",
+    tags: ["Design", "Creative", "Marketing"],
+  },
+  {
+    id: "paterson-minimal",
+    name: "Paterson Minimal",
+    style: "Professional",
+    category: "Professional",
+    layout: "Two columns",
+    variant: "paterson",
+    description: "A crisp professional layout with a photo and contact column beside a spacious experience profile.",
+    badge: "Clean & focused",
+    typography: "Arial",
+    spacing: "Balanced",
+    accent: "#30343b",
+    tags: ["Business", "Consulting", "Management"],
+  },
+  {
+    id: "marchesi-editorial",
+    name: "Marchesi Editorial",
+    style: "Creative",
+    category: "Creative",
+    layout: "Editorial",
+    variant: "marchesi",
+    description: "A striking editorial resume with a vertical name panel, clean dividers and a profile photo.",
+    badge: "Editorial",
+    typography: "Arial",
+    spacing: "Balanced",
+    accent: "#252525",
+    tags: ["Design", "Creative", "Brand"],
+  },
+  {
+    id: "feig-noir",
+    name: "Feig Noir",
+    style: "Creative",
+    category: "Creative",
+    layout: "Two columns",
+    variant: "feig",
+    description: "A bold charcoal portfolio layout with a photo-led identity block and contrasting content panels.",
+    badge: "Bold portfolio",
+    typography: "Inter",
+    spacing: "Balanced",
+    accent: "#292929",
+    tags: ["Design", "Art", "Creative"],
+  },
+  {
     id: "modern-focus",
     name: "Mercury Flow",
     style: "Modern",
@@ -277,7 +361,7 @@ function ResumeDocument({ template, design, preview = false }) {
   );
 
   const experience = (
-    <section className="resume-section">
+    <section className={`resume-section${["andrade", "parvati", "takahashi", "paterson"].includes(template.variant) ? ` resume-${template.variant}-section` : ""}`}>
       <h3>Professional Experience</h3>
       {SAMPLE.experience.map((job) => (
         <div className="resume-job" key={`${job.company}-${job.role}`}>
@@ -333,6 +417,264 @@ function ResumeDocument({ template, design, preview = false }) {
         </>
       )}
 
+      {template.variant === "andrade" && (
+        <>
+          <aside className="resume-andrade-sidebar">
+            {hasPhoto ? (
+              <img className="resume-andrade-photo" src={design.photo} alt="" />
+            ) : (
+              <div className="resume-andrade-avatar" aria-hidden="true">JD</div>
+            )}
+            <section className="resume-andrade-sidebar-section">
+              <h3>Contact me</h3>
+              <p>{SAMPLE.phone}</p>
+              <p>{SAMPLE.email}</p>
+              <p>{SAMPLE.location}</p>
+              <p>{SAMPLE.website}</p>
+            </section>
+            <section className="resume-andrade-sidebar-section">
+              <h3>Skills</h3>
+              <ul>{SAMPLE.skills.split(" · ").map((skill) => <li key={skill}>{skill}</li>)}</ul>
+            </section>
+            <section className="resume-andrade-sidebar-section">
+              <h3>References</h3>
+              <p>Available upon request</p>
+            </section>
+            <section className="resume-andrade-sidebar-section">
+              <h3>Language</h3>
+              <ul>{SAMPLE.languages.split(" · ").map((language) => <li key={language}>{language}</li>)}</ul>
+            </section>
+          </aside>
+          <main className="resume-andrade-main">
+            <header className="resume-andrade-header">
+              <span>{SAMPLE.role}</span>
+              <h2>{SAMPLE.name}</h2>
+            </header>
+            <section className="resume-section resume-andrade-section">
+              <h3>About me</h3>
+              <p>{SAMPLE.summary}</p>
+            </section>
+            {experience}
+            <section className="resume-section resume-andrade-section">
+              <h3>Education</h3>
+              <p>{SAMPLE.education}</p>
+            </section>
+          </main>
+        </>
+      )}
+
+      {template.variant === "parvati" && (
+        <>
+          <header className="resume-parvati-header">
+            <h2>{SAMPLE.name}</h2>
+            <span>{SAMPLE.role}</span>
+            <div>
+              <span>{SAMPLE.phone}</span>
+              <span>{SAMPLE.location}</span>
+              <span>{SAMPLE.email}</span>
+            </div>
+          </header>
+          <section className="resume-section resume-parvati-section">
+            <h3>About me</h3>
+            <p>{SAMPLE.summary}</p>
+          </section>
+          <section className="resume-section resume-parvati-section">
+            <h3>Education</h3>
+            <p>{SAMPLE.education}</p>
+          </section>
+          {experience}
+          <section className="resume-section resume-parvati-section">
+            <h3>Skills</h3>
+            <ul className="resume-parvati-skills">
+              {SAMPLE.skills.split(" · ").map((skill) => <li key={skill}>{skill}</li>)}
+            </ul>
+          </section>
+          <section className="resume-section resume-parvati-section">
+            <h3>References</h3>
+            <p>Available upon request</p>
+          </section>
+        </>
+      )}
+
+      {template.variant === "takahashi" && (
+        <>
+          <header className="resume-takahashi-header">
+            {hasPhoto ? (
+              <img className="resume-takahashi-photo" src={design.photo} alt="" />
+            ) : (
+              <div className="resume-takahashi-avatar" aria-hidden="true">JD</div>
+            )}
+            <div className="resume-takahashi-identity">
+              <h2>{SAMPLE.name}</h2>
+              <span>{SAMPLE.role}</span>
+            </div>
+          </header>
+          <aside className="resume-takahashi-sidebar">
+            <section className="resume-takahashi-section">
+              <h3>Contact me</h3>
+              <p>{SAMPLE.phone}</p>
+              <p>{SAMPLE.website}</p>
+              <p>{SAMPLE.email}</p>
+            </section>
+            <section className="resume-takahashi-section">
+              <h3>Skills</h3>
+              <ul>
+                {SAMPLE.skills.split(" · ").map((skill) => (
+                  <li key={skill}><span>{skill}</span><i /></li>
+                ))}
+              </ul>
+            </section>
+            <section className="resume-takahashi-section resume-takahashi-education">
+              <h3>Education</h3>
+              <p>{SAMPLE.education}</p>
+            </section>
+          </aside>
+          <main className="resume-takahashi-main">
+            <section className="resume-section resume-takahashi-section">
+              <h3>About me</h3>
+              <p>{SAMPLE.summary}</p>
+            </section>
+            {experience}
+          </main>
+        </>
+      )}
+
+      {template.variant === "paterson" && (
+        <>
+          <aside className="resume-paterson-sidebar">
+            {hasPhoto ? (
+              <img className="resume-paterson-photo" src={design.photo} alt="" />
+            ) : (
+              <div className="resume-paterson-avatar" aria-hidden="true">JD</div>
+            )}
+            <section className="resume-paterson-section">
+              <h3>Contact</h3>
+              <p>{SAMPLE.phone}</p>
+              <p>{SAMPLE.email}</p>
+              <p>{SAMPLE.location}</p>
+              <p>{SAMPLE.website}</p>
+            </section>
+            <section className="resume-paterson-section">
+              <h3>Expertise</h3>
+              <ul>{SAMPLE.skills.split(" · ").map((skill) => <li key={skill}>{skill}</li>)}</ul>
+            </section>
+            <section className="resume-paterson-section">
+              <h3>Language</h3>
+              <ul className="resume-paterson-languages">
+                {SAMPLE.languages.split(" · ").map((language) => <li key={language}>{language}<span /></li>)}
+              </ul>
+            </section>
+          </aside>
+          <main className="resume-paterson-main">
+            <header className="resume-paterson-header">
+              <h2>{SAMPLE.name}</h2>
+              <span>{SAMPLE.role}</span>
+            </header>
+            <section className="resume-section resume-paterson-section">
+              <h3>About me</h3>
+              <p>{SAMPLE.summary}</p>
+            </section>
+            {experience}
+            <section className="resume-section resume-paterson-section">
+              <h3>Education</h3>
+              <p>{SAMPLE.education}</p>
+            </section>
+          </main>
+        </>
+      )}
+
+      {template.variant === "marchesi" && (
+        <>
+          <main className="resume-marchesi-main">
+            <header className="resume-marchesi-topline">
+              <span>Graphic Designer</span>
+              <span>Resume</span>
+            </header>
+            <section className="resume-marchesi-intro">
+              <div className="resume-marchesi-about">
+                <h3>About</h3>
+                <p>{SAMPLE.summary}</p>
+              </div>
+              {hasPhoto ? (
+                <img className="resume-marchesi-photo" src={design.photo} alt="" />
+              ) : (
+                <div className="resume-marchesi-photo-placeholder" aria-hidden="true">JD</div>
+              )}
+            </section>
+            <section className="resume-marchesi-section">
+              <h3>Work Experiences</h3>
+              {SAMPLE.experience.map((job) => (
+                <div className="resume-marchesi-entry" key={job.company}>
+                  <div><strong>{job.company}</strong><span>{job.role}</span></div>
+                  <time>{job.dates}</time>
+                </div>
+              ))}
+            </section>
+            <section className="resume-marchesi-section">
+              <h3>Education History</h3>
+              <div className="resume-marchesi-entry">
+                <div><strong>{SAMPLE.education.split(" — ")[1]}</strong><span>{SAMPLE.education.split(" — ")[0]}</span></div>
+                <time>2018 — 2022</time>
+              </div>
+            </section>
+            <section className="resume-marchesi-bottom">
+              <div><h3>Interests</h3><p>Brand aesthetics · Visual research · Color theory</p></div>
+              <div><h3>Skills</h3><p>{SAMPLE.skills}</p></div>
+            </section>
+            <footer className="resume-marchesi-contact">
+              <span>{SAMPLE.website}<br />{SAMPLE.phone}</span>
+              <span>{SAMPLE.email}<br />{SAMPLE.location}</span>
+            </footer>
+          </main>
+          <aside className="resume-marchesi-name" aria-label={SAMPLE.name}>{SAMPLE.name}</aside>
+        </>
+      )}
+
+      {template.variant === "feig" && (
+        <>
+          <section className="resume-feig-profile">
+            {hasPhoto ? (
+              <img className="resume-feig-photo" src={design.photo} alt="" />
+            ) : (
+              <div className="resume-feig-photo-placeholder" aria-hidden="true">JD</div>
+            )}
+            <div className="resume-feig-identity">
+              <h2>{SAMPLE.name}</h2>
+              <span>{SAMPLE.role}</span>
+            </div>
+          </section>
+          <section className="resume-feig-contact">
+            <h3>Contact</h3>
+            <p><strong>Phone</strong>{SAMPLE.phone}</p>
+            <p><strong>Website</strong>{SAMPLE.website}</p>
+            <p><strong>Mail</strong>{SAMPLE.email}</p>
+            <p><strong>Address</strong>{SAMPLE.location}</p>
+          </section>
+          <section className="resume-feig-about">
+            <h3>About</h3>
+            <p>{SAMPLE.summary}</p>
+          </section>
+          <section className="resume-feig-education">
+            <h3>Education</h3>
+            <p><span>2020 — 2022</span><strong>{SAMPLE.education}</strong></p>
+            <h3>Skills</h3>
+            <ul>{SAMPLE.skills.split(" · ").map((skill) => <li key={skill}>{skill}</li>)}</ul>
+          </section>
+          <section className="resume-feig-experience">
+            <h3>Work Experience</h3>
+            {SAMPLE.experience.map((job) => (
+              <div key={job.company}>
+                <strong>{job.role}</strong>
+                <span>{job.dates} | {job.company}</span>
+                <p>{job.bullets[0]}</p>
+              </div>
+            ))}
+            <h3>Award</h3>
+            <div><span>2024 | Professional Recognition</span><strong>Outstanding Contribution</strong></div>
+          </section>
+        </>
+      )}
+
       {template.variant === "leaves" && (
         <>
           <div className="resume-leaves-strip"><span>LEAVES</span></div>
@@ -363,7 +705,7 @@ function ResumeDocument({ template, design, preview = false }) {
         </>
       )}
 
-      {!["atlantic", "leaves", "creative"].includes(template.variant) && (
+      {!["atlantic", "andrade", "parvati", "takahashi", "paterson", "marchesi", "feig", "leaves", "creative"].includes(template.variant) && (
         <>
           {header}
           <div className="resume-body">
