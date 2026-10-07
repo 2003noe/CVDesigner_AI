@@ -4873,6 +4873,335 @@ body {
   margin-top: 16px;
 }
 
+/* Kaya Graduate */
+.resume-kaya {
+  display: block;
+  padding: 24px 27px 34px;
+}
+
+.resume-kaya-header {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  padding-bottom: 13px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #b7b7b7;
+}
+
+.resume-kaya-photo,
+.resume-kaya-photo-placeholder {
+  display: block;
+  width: 82px;
+  height: 98px;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
+.resume-kaya-photo-placeholder {
+  display: grid;
+  place-items: center;
+  background: #eceef1;
+  color: #373a3f;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.resume-kaya-identity h2 {
+  margin: 0;
+  color: #202124;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.resume-kaya-identity > span {
+  display: block;
+  margin: 2px 0 9px;
+  color: #45464a;
+  font-size: 9px;
+  font-style: italic;
+}
+
+.resume-kaya-contact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px 12px;
+}
+
+.resume-kaya-contact span {
+  min-width: 0;
+  color: #34363a;
+  font-size: 6px;
+  overflow-wrap: anywhere;
+}
+
+.resume-kaya-section {
+  margin-bottom: 10px;
+}
+
+.resume-kaya-section h3 {
+  margin: 0 0 6px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #555;
+  color: #292a2c;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.resume-kaya-section > p,
+.resume-kaya-entry,
+.resume-kaya-section .resume-job {
+  color: #3f4145;
+  font-size: 6.2px;
+}
+
+.resume-kaya-section > p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.resume-kaya-section .resume-job {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 10px;
+  margin-bottom: 7px;
+}
+
+.resume-kaya-section .resume-job-heading {
+  display: contents;
+}
+
+.resume-kaya-section .resume-job-heading strong {
+  font-size: 6.4px;
+}
+
+.resume-kaya-section .resume-job-heading span {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 6px;
+}
+
+.resume-kaya-section .resume-job > b {
+  margin: 0;
+  font-size: 6px;
+  font-style: italic;
+}
+
+.resume-kaya-section .resume-job ul {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-left: 9px;
+}
+
+.resume-kaya-section .resume-job li {
+  margin-bottom: 1px;
+  font-size: 6px;
+}
+
+.resume-kaya-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3px 8px;
+}
+
+.resume-kaya-entry span:last-child {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  text-align: right;
+}
+
+.resume-kaya-rated-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resume-kaya-rated-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 7px;
+  color: #3f4145;
+  font-size: 6.2px;
+}
+
+.resume-kaya-dots {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.resume-kaya-dots i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #d5d5d5;
+}
+
+.resume-kaya-dots i.filled {
+  background: #222;
+}
+
+.resume-kaya-certificates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 14px;
+  margin: 0;
+  padding-left: 9px;
+  color: #3f4145;
+}
+
+.resume-kaya-certificates li {
+  font-size: 6px;
+}
+
+/* Herrera Sales */
+.resume-herrera {
+  display: block;
+  padding: 0;
+  background: #e7e7e7;
+  color: #292e33;
+  font-family: var(--resume-font, Georgia, serif);
+}
+
+.resume-herrera-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  gap: 18px;
+  align-items: center;
+  min-height: 118px;
+  padding: 20px 28px;
+  background: var(--resume-accent);
+  color: #f7f4ef;
+}
+
+.resume-herrera-header h2 {
+  margin: 0;
+  color: #f7f4ef;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.resume-herrera-header > div > span {
+  display: block;
+  margin: 2px 0 10px;
+  color: #e4ded4;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 9px;
+  font-style: italic;
+}
+
+.resume-herrera-header section {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px 10px;
+}
+
+.resume-herrera-header section span {
+  min-width: 0;
+  color: #f0ece6;
+  font-size: 6px;
+  overflow-wrap: anywhere;
+}
+
+.resume-herrera-photo,
+.resume-herrera-photo-placeholder {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.resume-herrera-photo-placeholder {
+  display: grid;
+  place-items: center;
+  border: 2px solid #d4cbbb;
+  background: #31546a;
+  color: white;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.resume-herrera-main {
+  padding: 19px 28px 28px;
+}
+
+.resume-herrera-section {
+  margin-bottom: 16px;
+}
+
+.resume-herrera-section h3 {
+  display: table;
+  margin: 0 0 8px;
+  padding-bottom: 4px;
+  border: 0;
+  border-bottom: 2px solid var(--resume-accent);
+  color: var(--resume-accent);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.resume-herrera-section > p {
+  margin: 0;
+  color: #33383d;
+  font-size: 6.5px;
+  line-height: 1.55;
+}
+
+.resume-herrera-section .resume-job {
+  margin-bottom: 12px;
+}
+
+.resume-herrera-section .resume-job-heading strong,
+.resume-herrera-section .resume-job > b {
+  color: #242a30;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.resume-herrera-section .resume-job > b {
+  font-style: italic;
+}
+
+.resume-herrera-section .resume-job ul {
+  padding-left: 11px;
+}
+
+.resume-herrera-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3px 8px;
+  color: #292e33;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 6.5px;
+}
+
+.resume-herrera-entry span {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.resume-herrera-entry em {
+  color: #5c6165;
+}
+
+.resume-herrera-section ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px 12px;
+  margin: 0;
+  padding-left: 11px;
+  color: #34393e;
+}
+
+.resume-herrera-section li {
+  font-size: 6.2px;
+}
+
 /* Mercury Flow */
 .resume-mercury .resume-header {
   align-items: flex-start;
@@ -5331,12 +5660,17 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  height: min(75vh, 820px);
   min-height: 650px;
+  overflow: auto;
   padding: 15px;
 }
 
 .designer-v2-paper .resume-document {
-  transform: scale(.92);
+  width: var(--resume-page-width, 794px);
+  height: var(--resume-page-height, 1123px);
+  min-height: var(--resume-page-height, 1123px);
+  transform: scale(var(--resume-zoom, .85));
   transform-origin: top center;
 }
 
@@ -5376,6 +5710,35 @@ body {
   font-size: 11px;
   font-weight: 700;
   color: #4c5666;
+}
+
+.designer-control-card > .designer-zoom-control {
+  gap: 8px;
+  margin: 17px 0;
+}
+
+.designer-zoom-control > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.designer-zoom-control output {
+  color: #4c5666;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.designer-zoom-control input {
+  width: 100%;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.designer-zoom-control small {
+  color: #7b8491;
+  font-size: 10px;
+  font-weight: 400;
 }
 
 .designer-control-card select {
@@ -5649,19 +6012,15 @@ body {
   }
 
   .designer-v2-paper {
+    height: 480px;
     min-height: 480px;
     padding: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: auto;
   }
 
   .designer-v2-paper .resume-document {
-    transform: scale(.66);
+    transform: scale(var(--resume-zoom, .85));
     transform-origin: top center;
-  }
-
-  .resume-document {
-    width: 420px;
   }
 }
 

@@ -102,6 +102,34 @@ const TEMPLATES = [
     tags: ["Design", "Art", "Creative"],
   },
   {
+    id: "kaya-graduate",
+    name: "Kaya Graduate",
+    style: "ATS-friendly",
+    category: "ATS-friendly",
+    layout: "Single column",
+    variant: "kaya",
+    description: "A clear graduate resume with a compact photo header, two-column contact details and skill ratings.",
+    badge: "Graduate ready",
+    typography: "Arial",
+    spacing: "Compact",
+    accent: "#252525",
+    tags: ["Graduate", "Engineering", "ATS"],
+  },
+  {
+    id: "herrera-sales",
+    name: "Herrera Sales",
+    style: "Professional",
+    category: "Professional",
+    layout: "Full width",
+    variant: "herrera",
+    description: "A refined sales profile with a deep blue identity banner, circular photo and elegant serif typography.",
+    badge: "Sales professional",
+    typography: "Georgia",
+    spacing: "Relaxed",
+    accent: "#073d5a",
+    tags: ["Sales", "Leadership", "Business"],
+  },
+  {
     id: "modern-focus",
     name: "Mercury Flow",
     style: "Modern",
@@ -268,6 +296,38 @@ const ACCENTS = [
   { name: "Forest", color: "#315b50" },
 ];
 
+const TYPOGRAPHIES = [
+  "Inter",
+  "Arial",
+  "Georgia",
+  "Georgia + Inter",
+  "Times New Roman",
+  "Garamond",
+  "Palatino Linotype",
+  "Trebuchet MS",
+  "Verdana",
+  "Tahoma",
+  "Courier New",
+];
+
+const FONT_FAMILIES = {
+  Inter: 'Inter, Arial, sans-serif',
+  Arial: 'Arial, Helvetica, sans-serif',
+  Georgia: 'Georgia, "Times New Roman", serif',
+  "Georgia + Inter": 'Georgia, "Times New Roman", serif',
+  "Times New Roman": '"Times New Roman", Times, serif',
+  Garamond: 'Garamond, "Times New Roman", serif',
+  "Palatino Linotype": '"Palatino Linotype", "Book Antiqua", Palatino, serif',
+  "Trebuchet MS": '"Trebuchet MS", sans-serif',
+  Verdana: 'Verdana, Geneva, sans-serif',
+  Tahoma: 'Tahoma, Geneva, sans-serif',
+  "Courier New": '"Courier New", Courier, monospace',
+};
+
+const PAGE_SIZES = [
+  { label: "A5 · 148 × 210 mm", width: "559px", height: "794px" },
+];
+
 const SAMPLE = {
   name: "John Doe",
   role: "Product Designer",
@@ -305,7 +365,8 @@ const SAMPLE = {
 const DEFAULT_DESIGN = {
   typography: "Inter",
   spacing: "Balanced",
-  pageSize: "A4 · 210 × 297 mm",
+  pageSize: PAGE_SIZES[0].label,
+  zoom: 85,
   accent: "#2563eb",
   photo: "",
   photoPosition: "Right",
@@ -327,16 +388,15 @@ function makeInitialDesigns() {
 
 function ResumeDocument({ template, design, preview = false }) {
   const hasPhoto = Boolean(design.photo);
+  const pageSize = PAGE_SIZES.find((size) => size.label === design.pageSize) || PAGE_SIZES[1];
   const resumeStyle = {
     "--resume-accent": design.accent,
-    "--resume-font":
-      design.typography === "Georgia + Inter"
-        ? 'Georgia, "Times New Roman", serif'
-        : design.typography === "Arial"
-          ? "Arial, Helvetica, sans-serif"
-          : 'Inter, Arial, sans-serif',
+    "--resume-font": FONT_FAMILIES[design.typography] || FONT_FAMILIES.Inter,
     "--resume-gap":
       design.spacing === "Compact" ? "8px" : design.spacing === "Relaxed" ? "18px" : "12px",
+    "--resume-page-width": pageSize.width,
+    "--resume-page-height": pageSize.height,
+    "--resume-zoom": Number(design.zoom || 85) / 100,
   };
 
   const secondary = (
@@ -361,7 +421,7 @@ function ResumeDocument({ template, design, preview = false }) {
   );
 
   const experience = (
-    <section className={`resume-section${["andrade", "parvati", "takahashi", "paterson"].includes(template.variant) ? ` resume-${template.variant}-section` : ""}`}>
+    <section className={`resume-section${["andrade", "parvati", "takahashi", "paterson", "kaya", "herrera"].includes(template.variant) ? ` resume-${template.variant}-section` : ""}`}>
       <h3>Professional Experience</h3>
       {SAMPLE.experience.map((job) => (
         <div className="resume-job" key={`${job.company}-${job.role}`}>
@@ -675,6 +735,110 @@ function ResumeDocument({ template, design, preview = false }) {
         </>
       )}
 
+      {template.variant === "kaya" && (
+        <>
+          <header className="resume-kaya-header">
+            {hasPhoto ? (
+              <img className="resume-kaya-photo" src={design.photo} alt="" />
+            ) : (
+              <div className="resume-kaya-photo-placeholder" aria-hidden="true">JD</div>
+            )}
+            <div className="resume-kaya-identity">
+              <h2>{SAMPLE.name}</h2>
+              <span>{SAMPLE.role}</span>
+              <div className="resume-kaya-contact">
+                <span>{SAMPLE.email}</span><span>{SAMPLE.phone}</span>
+                <span>{SAMPLE.location}</span><span>{SAMPLE.website}</span>
+                <span>github.com/johndoe</span><span>portfolio.example.com</span>
+              </div>
+            </div>
+          </header>
+          <section className="resume-section resume-kaya-section">
+            <h3>Summary</h3>
+            <p>{SAMPLE.summary}</p>
+          </section>
+          {experience}
+          <section className="resume-section resume-kaya-section">
+            <h3>Education</h3>
+            <div className="resume-kaya-entry">
+              <strong>{SAMPLE.education.split(" — ")[1]}</strong>
+              <span>{SAMPLE.education.split(" — ")[0]}</span>
+              <span>2018 — 2022 · {SAMPLE.location}</span>
+            </div>
+          </section>
+          <section className="resume-section resume-kaya-section">
+            <h3>Skills</h3>
+            <ul className="resume-kaya-rated-list">
+              {SAMPLE.skills.split(" · ").map((skill, index) => (
+                <li key={skill}><span>{skill}</span><span className="resume-kaya-dots" aria-label={`${index % 4 + 2} out of 5`}>
+                  {Array.from({ length: 5 }, (_, dot) => <i className={dot < index % 4 + 2 ? "filled" : ""} key={dot} />)}
+                </span></li>
+              ))}
+            </ul>
+          </section>
+          <section className="resume-section resume-kaya-section">
+            <h3>Languages</h3>
+            <ul className="resume-kaya-rated-list">
+              {SAMPLE.languages.split(" · ").map((language, index) => (
+                <li key={language}><span>{language}</span><span className="resume-kaya-dots" aria-label={`${index ? 4 : 5} out of 5`}>
+                  {Array.from({ length: 5 }, (_, dot) => <i className={dot < (index ? 4 : 5) ? "filled" : ""} key={dot} />)}
+                </span></li>
+              ))}
+            </ul>
+          </section>
+          <section className="resume-section resume-kaya-section">
+            <h3>Certificates</h3>
+            <ul className="resume-kaya-certificates">
+              <li>Professional Foundations Certificate</li>
+              <li>Cloud Practitioner Certificate</li>
+            </ul>
+          </section>
+        </>
+      )}
+
+      {template.variant === "herrera" && (
+        <>
+          <header className="resume-herrera-header">
+            <div>
+              <h2>{SAMPLE.name}</h2>
+              <span>{SAMPLE.role}</span>
+              <section>
+                <span>{SAMPLE.email}</span><span>{SAMPLE.phone}</span>
+                <span>{SAMPLE.location}</span><span>{SAMPLE.website}</span>
+              </section>
+            </div>
+            {hasPhoto ? (
+              <img className="resume-herrera-photo" src={design.photo} alt="" />
+            ) : (
+              <div className="resume-herrera-photo-placeholder" aria-hidden="true">JD</div>
+            )}
+          </header>
+          <main className="resume-herrera-main">
+            <section className="resume-section resume-herrera-section">
+              <h3>Summary</h3>
+              <p>{SAMPLE.summary}</p>
+            </section>
+            {experience}
+            <section className="resume-section resume-herrera-section">
+              <h3>Education</h3>
+              <div className="resume-herrera-entry">
+                <strong>Bachelor of Business Administration</strong>
+                <span>2014 — 2018</span>
+                <em>Monterrey Business University · {SAMPLE.location}</em>
+              </div>
+            </section>
+            <section className="resume-section resume-herrera-section">
+              <h3>Skills</h3>
+              <ul>{SAMPLE.skills.split(" · ").map((skill) => <li key={skill}>{skill}</li>)}</ul>
+            </section>
+            <section className="resume-section resume-herrera-section">
+              <h3>Languages</h3>
+              <ul>{SAMPLE.languages.split(" · ").map((language) => <li key={language}>{language}</li>)}</ul>
+            </section>
+          </main>
+        </>
+      )}
+
       {template.variant === "leaves" && (
         <>
           <div className="resume-leaves-strip"><span>LEAVES</span></div>
@@ -705,7 +869,7 @@ function ResumeDocument({ template, design, preview = false }) {
         </>
       )}
 
-      {!["atlantic", "andrade", "parvati", "takahashi", "paterson", "marchesi", "feig", "leaves", "creative"].includes(template.variant) && (
+      {!["atlantic", "andrade", "parvati", "takahashi", "paterson", "marchesi", "feig", "kaya", "herrera", "leaves", "creative"].includes(template.variant) && (
         <>
           {header}
           <div className="resume-body">
@@ -790,7 +954,7 @@ function TemplateDesigner({ template, design, onDesignChange, onBack, onChoose }
     <main className="template-designer-v2">
       <div className="designer-v2-top">
         <button className="designer-back-link" type="button" onClick={onBack}>‹ Back to templates</button>
-        <span>{template.layout} · A4</span>
+        <span>{template.layout} · {design.pageSize || PAGE_SIZES[0].label}</span>
       </div>
 
       <header className="designer-v2-title">
@@ -813,9 +977,22 @@ function TemplateDesigner({ template, design, onDesignChange, onBack, onChoose }
         <aside className="designer-v2-controls">
           <div className="designer-control-card">
             <h2>Customize</h2>
-            <label><span>Typography</span><select value={design.typography} onChange={(e) => updateDesign("typography", e.target.value)}><option>Inter</option><option>Georgia + Inter</option><option>Arial</option><option>Georgia</option></select></label>
+            <label><span>Typography</span><select value={design.typography} onChange={(e) => updateDesign("typography", e.target.value)}>{TYPOGRAPHIES.map((font) => <option key={font}>{font}</option>)}</select></label>
             <label><span>Spacing</span><select value={design.spacing} onChange={(e) => updateDesign("spacing", e.target.value)}><option>Compact</option><option>Balanced</option><option>Relaxed</option></select></label>
-            <label><span>Page size</span><select value={design.pageSize} onChange={(e) => updateDesign("pageSize", e.target.value)}><option>A4 · 210 × 297 mm</option><option>Letter · 8.5 × 11 in</option></select></label>
+            <label><span>Page size</span><select value={design.pageSize || PAGE_SIZES[0].label} onChange={(e) => updateDesign("pageSize", e.target.value)}>{PAGE_SIZES.map((size) => <option key={size.label}>{size.label}</option>)}</select></label>
+            <label className="designer-zoom-control">
+              <span><span>Preview size</span><output>{design.zoom || 85}%</output></span>
+              <input
+                type="range"
+                min="50"
+                max="120"
+                step="5"
+                value={design.zoom || 85}
+                onChange={(e) => updateDesign("zoom", Number(e.target.value))}
+                aria-label="Preview size"
+              />
+              <small>Adjust the preview without changing the A5 page format.</small>
+            </label>
 
             <fieldset>
               <legend>Accent color</legend>
@@ -843,7 +1020,7 @@ function TemplateDesigner({ template, design, onDesignChange, onBack, onChoose }
               <strong>Included in this template</strong>
               <span>✓ Professional typography hierarchy</span>
               <span>✓ Editable content structure</span>
-              <span>✓ A4 / Letter page support</span>
+              <span>✓ A5 · 148 × 210 mm page format</span>
             </div>
           </div>
           <button className="btn btn-primary btn-full" type="button" onClick={onChoose}>Use {template.name}</button>
