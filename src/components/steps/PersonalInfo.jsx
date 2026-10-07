@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { removeAvatar, uploadAvatar, useAvatarUrl, validateAvatar } from "../../lib/avatars";
 
-export default function PersonalInfo({ data, onChange }) {
+// hidePhoto : masque l'envoi de photo (page finale : la photo du CV se gère avec le modèle)
+export default function PersonalInfo({ data, onChange, hidePhoto = false }) {
   const [showOptional, setShowOptional] = useState(false);
   const { user } = useAuth();
   const photoUrl = useAvatarUrl(data.photoPath);
@@ -51,7 +52,7 @@ export default function PersonalInfo({ data, onChange }) {
       <h1>Personal Information</h1>
       <p className="subtitle">Enter your basic contact details so recruiters know how to reach you.</p>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 200px", gap: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: hidePhoto ? "1fr" : "1fr 200px", gap: 32 }}>
         <div>
           <div className="field">
             <label htmlFor="fullName">Full Name</label>
@@ -105,51 +106,53 @@ export default function PersonalInfo({ data, onChange }) {
           </div>
         </div>
 
-        <div>
-          <label>Profile Photo</label>
-          <label
-            style={{
-              display: "grid",
-              placeItems: "center",
-              gap: 8,
-              width: "100%",
-              aspectRatio: "1",
-              border: photoUrl ? "1px solid var(--color-border)" : "1px dashed var(--color-border)",
-              borderRadius: 12,
-              overflow: "hidden",
-              cursor: uploading ? "wait" : "pointer",
-              color: "var(--color-primary)",
-              fontSize: 13,
-              fontWeight: 600,
-            }}
-          >
-            {photoUrl ? (
-              <img src={photoUrl} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            ) : (
-              <>
-                <span style={{ fontSize: 22 }}>👤</span>
-                {uploading ? "Uploading…" : "Upload photo"}
-              </>
+        {!hidePhoto && (
+          <div>
+            <label>Profile Photo</label>
+            <label
+              style={{
+                display: "grid",
+                placeItems: "center",
+                gap: 8,
+                width: "100%",
+                aspectRatio: "1",
+                border: photoUrl ? "1px solid var(--color-border)" : "1px dashed var(--color-border)",
+                borderRadius: 12,
+                overflow: "hidden",
+                cursor: uploading ? "wait" : "pointer",
+                color: "var(--color-primary)",
+                fontSize: 13,
+                fontWeight: 600,
+              }}
+            >
+              {photoUrl ? (
+                <img src={photoUrl} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                <>
+                  <span style={{ fontSize: 22 }}>👤</span>
+                  {uploading ? "Uploading…" : "Upload photo"}
+                </>
+              )}
+              <input
+                type="file"
+                accept="image/jpeg,image/png"
+                style={{ display: "none" }}
+                onChange={handlePhotoChange}
+                disabled={uploading}
+              />
+            </label>
+            {data.photoPath && (
+              <button className="link-btn" type="button" onClick={handleRemovePhoto} style={{ marginTop: 8 }}>
+                Remove photo
+              </button>
             )}
-            <input
-              type="file"
-              accept="image/jpeg,image/png"
-              style={{ display: "none" }}
-              onChange={handlePhotoChange}
-              disabled={uploading}
-            />
-          </label>
-          {data.photoPath && (
-            <button className="link-btn" type="button" onClick={handleRemovePhoto} style={{ marginTop: 8 }}>
-              Remove photo
-            </button>
-          )}
-          {photoError ? (
-            <p className="hint" style={{ color: "var(--color-danger)" }}>{photoError}</p>
-          ) : (
-            <p className="hint">Optional. Max size 5MB. JPG or PNG.</p>
-          )}
-        </div>
+            {photoError ? (
+              <p className="hint" style={{ color: "var(--color-danger)" }}>{photoError}</p>
+            ) : (
+              <p className="hint">Optional. Max size 5MB. JPG or PNG.</p>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="collapsible" style={{ borderTop: "none", paddingTop: 8 }}>

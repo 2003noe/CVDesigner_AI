@@ -1,0 +1,203 @@
+/* ---------- Page finale du CV : aperçu + édition + export PDF ---------- */
+
+.final-cv-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 18px 32px 8px;
+}
+
+.final-cv-bar h1 {
+  margin: 0 0 4px;
+  font-size: 24px;
+}
+
+.final-cv-bar p {
+  margin: 0;
+  color: var(--color-text-muted, #5b6472);
+  font-size: 14px;
+}
+
+.final-cv-save.saved { color: #15803d; }
+.final-cv-save.error { color: #b91c1c; }
+
+.final-cv-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.final-cv-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 460px;
+  gap: 24px;
+  align-items: start;
+  padding: 12px 32px 40px;
+}
+
+.final-cv-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.final-cv-paper {
+  zoom: var(--final-zoom, 0.85);
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 4px;
+}
+
+/* L'aperçu final grandit avec le contenu au lieu de couper ce qui dépasse la page */
+.final-cv-paper .resume-document {
+  width: var(--resume-page-width, 559px);
+  height: auto;
+  min-height: var(--resume-page-height, 794px);
+  overflow: visible;
+  transform: none;
+  margin: 0 auto;
+}
+
+.final-cv-zoom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #5b6472;
+}
+
+.final-cv-zoom input { width: 180px; }
+
+.final-cv-editor {
+  position: sticky;
+  top: 12px;
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--color-border, #e2e5ea);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.final-cv-design {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border, #e2e5ea);
+}
+
+.final-cv-photo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.final-cv-photo > img,
+.final-cv-photo > span {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px dashed var(--color-border, #cbd1da);
+  color: var(--color-primary, #2563eb);
+  font-size: 22px;
+}
+
+.final-cv-photo > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.final-cv-photo > div strong { flex-basis: 100%; font-size: 14px; }
+.final-cv-photo .photo-button input { display: none; }
+
+.final-cv-design-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.final-cv-design-row label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: #5b6472;
+}
+
+.final-cv-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 14px 0;
+}
+
+.final-cv-tabs button {
+  padding: 6px 12px;
+  border: 1px solid var(--color-border, #d5dae1);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.final-cv-tabs button.active {
+  background: var(--color-primary, #2563eb);
+  border-color: var(--color-primary, #2563eb);
+  color: #fff;
+}
+
+/* Les composants du questionnaire sont réutilisés dans un panneau plus étroit */
+.final-cv-form h1 { font-size: 20px; }
+.final-cv-form .field-row { grid-template-columns: 1fr; }
+
+.creative-mark.creative-photo { object-fit: cover; }
+
+@media (max-width: 1100px) {
+  .final-cv-workspace { grid-template-columns: 1fr; }
+  .final-cv-editor { position: static; max-height: none; }
+}
+
+/* ---------- Export PDF (impression navigateur → « Enregistrer au format PDF ») ---------- */
+@page {
+  size: 148mm 210mm; /* A5, comme le modèle */
+  margin: 0;
+}
+
+@media print {
+  body { background: #fff !important; }
+
+  /* On ne garde que le CV : tout le reste de la page finale disparaît */
+  .final-cv-shell > :not(.final-cv-workspace),
+  .final-cv-editor,
+  .final-cv-zoom {
+    display: none !important;
+  }
+
+  .final-cv-shell,
+  .final-cv-workspace,
+  .final-cv-preview,
+  .final-cv-paper {
+    display: block !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    zoom: 1 !important;
+  }
+
+  .final-cv-paper .resume-document {
+    box-shadow: none !important;
+    margin: 0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact; /* garde les fonds colorés des barres latérales */
+  }
+}

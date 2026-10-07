@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import TopNav from "../TopNav";
 import StepIndicator, { IMPORT_STEPS } from "../StepIndicator";
+import { SAMPLE_CV } from "../../lib/cvData";
+import { readPhotoFile } from "../../lib/image";
 
-const TEMPLATES = [
+export const TEMPLATES = [
   {
     id: "atlantic-blue",
     name: "Atlantic Blue",
@@ -286,7 +288,7 @@ const TEMPLATES = [
 ];
 
 const FILTERS = ["All", "Professional", "Modern", "Classic", "Minimal", "Creative", "ATS-friendly"];
-const ACCENTS = [
+export const ACCENTS = [
   { name: "Atlantic", color: "#173b4d" },
   { name: "Blue", color: "#2563eb" },
   { name: "Teal", color: "#0f766e" },
@@ -296,7 +298,7 @@ const ACCENTS = [
   { name: "Forest", color: "#315b50" },
 ];
 
-const TYPOGRAPHIES = [
+export const TYPOGRAPHIES = [
   "Inter",
   "Arial",
   "Georgia",
@@ -324,43 +326,9 @@ const FONT_FAMILIES = {
   "Courier New": '"Courier New", Courier, monospace',
 };
 
-const PAGE_SIZES = [
+export const PAGE_SIZES = [
   { label: "A5 · 148 × 210 mm", width: "559px", height: "794px" },
 ];
-
-const SAMPLE = {
-  name: "John Doe",
-  role: "Product Designer",
-  location: "San Francisco, CA",
-  email: "john.doe@email.com",
-  phone: "+1 415 555 0182",
-  website: "linkedin.com/in/johndoe",
-  summary:
-    "Product Designer with 4+ years of experience creating intuitive digital products, scalable design systems and measurable user experiences.",
-  experience: [
-    {
-      company: "Figma",
-      role: "Product Designer",
-      dates: "2022 — Present",
-      bullets: [
-        "Led end-to-end product design and increased workspace retention by 24%.",
-        "Built reusable patterns that accelerated engineering handoff.",
-      ],
-    },
-    {
-      company: "Northstar Studio",
-      role: "UX Designer",
-      dates: "2020 — 2022",
-      bullets: [
-        "Translated research into accessible workflows used by 12k+ monthly users.",
-        "Partnered with product and engineering teams on new product launches.",
-      ],
-    },
-  ],
-  education: "B.Sc. Cognitive Science — University of California, Berkeley",
-  skills: "Figma · UX Research · Prototyping · Design Systems · Accessibility · Product Strategy",
-  languages: "English · Spanish",
-};
 
 const DEFAULT_DESIGN = {
   typography: "Inter",
@@ -372,7 +340,7 @@ const DEFAULT_DESIGN = {
   photoPosition: "Right",
 };
 
-function makeInitialDesigns() {
+export function makeInitialDesigns() {
   return Object.fromEntries(
     TEMPLATES.map((template) => [
       template.id,
@@ -386,9 +354,15 @@ function makeInitialDesigns() {
   );
 }
 
-function ResumeDocument({ template, design, preview = false }) {
+const has = (list) => Array.isArray(list) && list.length > 0;
+const langText = (language) => (language.level ? `${language.name} (${language.level})` : language.name);
+const educationText = (entry) =>
+  [entry.degree, entry.school].filter(Boolean).join(" — ") + (entry.dates ? ` (${entry.dates})` : "");
+const SECTION_CLASS_VARIANTS = ["andrade", "parvati", "takahashi", "paterson", "kaya", "herrera"];
+
+export function ResumeDocument({ template, design, cv = SAMPLE_CV, preview = false }) {
   const hasPhoto = Boolean(design.photo);
-  const pageSize = PAGE_SIZES.find((size) => size.label === design.pageSize) || PAGE_SIZES[1];
+  const pageSize = PAGE_SIZES.find((size) => size.label === design.pageSize) || PAGE_SIZES[0];
   const resumeStyle = {
     "--resume-accent": design.accent,
     "--resume-font": FONT_FAMILIES[design.typography] || FONT_FAMILIES.Inter,
@@ -399,60 +373,76 @@ function ResumeDocument({ template, design, preview = false }) {
     "--resume-zoom": Number(design.zoom || 85) / 100,
   };
 
+  const skills = cv.skills ?? [];
+  const languages = cv.languages ?? [];
+  const education = cv.education ?? [];
+  const certifications = cv.certifications ?? [];
+  const interests = cv.interests ?? [];
+  const skillsText = skills.join(" · ");
+  const languagesText = languages.map(langText).join(" · ");
+  const contactLine = [cv.location, cv.email, cv.website].filter(Boolean).join(" · ");
+  const firstEducation = education[0];
+
+  const educationBlock = has(education)
+    ? education.map((entry, index) => (
+        <p key={`${entry.school}-${index}`}>
+          {educationText(entry)}
+          {entry.details && <><br /><small>{entry.details}</small></>}
+        </p>
+      ))
+    : null;
+
   const secondary = (
     <aside className="resume-secondary">
-      <section>
-        <h3>Profile</h3>
-        <p>{SAMPLE.summary}</p>
-      </section>
-      <section>
-        <h3>Skills</h3>
-        <p>{SAMPLE.skills}</p>
-      </section>
-      <section>
-        <h3>Education</h3>
-        <strong>{SAMPLE.education}</strong>
-      </section>
-      <section>
-        <h3>Languages</h3>
-        <p>{SAMPLE.languages}</p>
-      </section>
+      {cv.summary && <section><h3>Profile</h3><p>{cv.summary}</p></section>}
+      {has(skills) && <section><h3>Skills</h3><p>{skillsText}</p></section>}
+      {has(education) && <section><h3>Education</h3><strong>{educationText(education[0])}</strong></section>}
+      {has(languages) && <section><h3>Languages</h3><p>{languagesText}</p></section>}
     </aside>
   );
 
-  const experience = (
-    <section className={`resume-section${["andrade", "parvati", "takahashi", "paterson", "kaya", "herrera"].includes(template.variant) ? ` resume-${template.variant}-section` : ""}`}>
+  const experience = has(cv.experience) ? (
+    <section className={`resume-section${SECTION_CLASS_VARIANTS.includes(template.variant) ? ` resume-${template.variant}-section` : ""}`}>
       <h3>Professional Experience</h3>
-      {SAMPLE.experience.map((job) => (
-        <div className="resume-job" key={`${job.company}-${job.role}`}>
+      {cv.experience.map((job, jobIndex) => (
+        <div className="resume-job" key={`${job.company}-${job.role}-${jobIndex}`}>
           <div className="resume-job-heading">
-            <strong>{job.role}</strong>
+            <strong>{job.role || job.company}</strong>
             <span>{job.dates}</span>
           </div>
-          <b>{job.company}</b>
-          <ul>
-            {job.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
-          </ul>
+          {job.role && job.company && <b>{job.company}</b>}
+          {has(job.bullets) && (
+            <ul>
+              {job.bullets.map((bullet, index) => <li key={index}>{bullet}</li>)}
+            </ul>
+          )}
         </div>
       ))}
     </section>
-  );
+  ) : null;
 
   const header = (
     <header className="resume-header">
       {hasPhoto ? (
         <img className="resume-photo" src={design.photo} alt="" />
       ) : (
-        <div className="resume-avatar" aria-hidden="true">JD</div>
+        <div className="resume-avatar" aria-hidden="true">{cv.initials}</div>
       )}
       <div className="resume-heading">
-        <span>{SAMPLE.role}</span>
-        <h2>{SAMPLE.name}</h2>
-        <p>{SAMPLE.location} · {SAMPLE.email} · {SAMPLE.website}</p>
-        <small>{SAMPLE.phone}</small>
+        <span>{cv.role}</span>
+        <h2>{cv.name}</h2>
+        <p>{contactLine}</p>
+        <small>{cv.phone}</small>
       </div>
     </header>
   );
+
+  const avatar = (className) =>
+    hasPhoto ? (
+      <img className={className.photo} src={design.photo} alt="" />
+    ) : (
+      <div className={className.placeholder} aria-hidden="true">{cv.initials}</div>
+    );
 
   return (
     <article
@@ -462,17 +452,21 @@ function ResumeDocument({ template, design, preview = false }) {
       {template.variant === "atlantic" && (
         <>
           <div className="resume-sidebar">
-            {hasPhoto ? <img className="resume-sidebar-photo" src={design.photo} alt="" /> : <div className="resume-sidebar-avatar">JD</div>}
-            <h2>{SAMPLE.name}</h2>
-            <span>{SAMPLE.role}</span>
-            <div className="resume-sidebar-contact">{SAMPLE.location}<br />{SAMPLE.email}<br />{SAMPLE.phone}<br />{SAMPLE.website}</div>
-            <h4>Languages</h4><p>{SAMPLE.languages}</p>
-            <h4>Skills</h4><p>{SAMPLE.skills}</p>
+            {avatar({ photo: "resume-sidebar-photo", placeholder: "resume-sidebar-avatar" })}
+            <h2>{cv.name}</h2>
+            <span>{cv.role}</span>
+            <div className="resume-sidebar-contact">
+              {[cv.location, cv.email, cv.phone, cv.website].filter(Boolean).map((line, index) => (
+                <span key={index}>{line}<br /></span>
+              ))}
+            </div>
+            {has(languages) && <><h4>Languages</h4><p>{languagesText}</p></>}
+            {has(skills) && <><h4>Skills</h4><p>{skillsText}</p></>}
           </div>
           <main className="resume-main">
-            <section className="resume-section"><h3>Summary</h3><p>{SAMPLE.summary}</p></section>
+            {cv.summary && <section className="resume-section"><h3>Summary</h3><p>{cv.summary}</p></section>}
             {experience}
-            <section className="resume-section"><h3>Education</h3><p>{SAMPLE.education}</p></section>
+            {has(education) && <section className="resume-section"><h3>Education</h3>{educationBlock}</section>}
           </main>
         </>
       )}
@@ -480,45 +474,44 @@ function ResumeDocument({ template, design, preview = false }) {
       {template.variant === "andrade" && (
         <>
           <aside className="resume-andrade-sidebar">
-            {hasPhoto ? (
-              <img className="resume-andrade-photo" src={design.photo} alt="" />
-            ) : (
-              <div className="resume-andrade-avatar" aria-hidden="true">JD</div>
-            )}
+            {avatar({ photo: "resume-andrade-photo", placeholder: "resume-andrade-avatar" })}
             <section className="resume-andrade-sidebar-section">
               <h3>Contact me</h3>
-              <p>{SAMPLE.phone}</p>
-              <p>{SAMPLE.email}</p>
-              <p>{SAMPLE.location}</p>
-              <p>{SAMPLE.website}</p>
+              {[cv.phone, cv.email, cv.location, cv.website, ...(cv.extraLinks ?? [])].filter(Boolean).map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
             </section>
-            <section className="resume-andrade-sidebar-section">
-              <h3>Skills</h3>
-              <ul>{SAMPLE.skills.split(" · ").map((skill) => <li key={skill}>{skill}</li>)}</ul>
-            </section>
-            <section className="resume-andrade-sidebar-section">
-              <h3>References</h3>
-              <p>Available upon request</p>
-            </section>
-            <section className="resume-andrade-sidebar-section">
-              <h3>Language</h3>
-              <ul>{SAMPLE.languages.split(" · ").map((language) => <li key={language}>{language}</li>)}</ul>
-            </section>
+            {has(skills) && (
+              <section className="resume-andrade-sidebar-section">
+                <h3>Skills</h3>
+                <ul>{skills.map((skill, index) => <li key={index}>{skill}</li>)}</ul>
+              </section>
+            )}
+            {has(languages) && (
+              <section className="resume-andrade-sidebar-section">
+                <h3>Language</h3>
+                <ul>{languages.map((language, index) => <li key={index}>{langText(language)}</li>)}</ul>
+              </section>
+            )}
           </aside>
           <main className="resume-andrade-main">
             <header className="resume-andrade-header">
-              <span>{SAMPLE.role}</span>
-              <h2>{SAMPLE.name}</h2>
+              <span>{cv.role}</span>
+              <h2>{cv.name}</h2>
             </header>
-            <section className="resume-section resume-andrade-section">
-              <h3>About me</h3>
-              <p>{SAMPLE.summary}</p>
-            </section>
+            {cv.summary && (
+              <section className="resume-section resume-andrade-section">
+                <h3>About me</h3>
+                <p>{cv.summary}</p>
+              </section>
+            )}
             {experience}
-            <section className="resume-section resume-andrade-section">
-              <h3>Education</h3>
-              <p>{SAMPLE.education}</p>
-            </section>
+            {has(education) && (
+              <section className="resume-section resume-andrade-section">
+                <h3>Education</h3>
+                {educationBlock}
+              </section>
+            )}
           </main>
         </>
       )}
@@ -526,74 +519,80 @@ function ResumeDocument({ template, design, preview = false }) {
       {template.variant === "parvati" && (
         <>
           <header className="resume-parvati-header">
-            <h2>{SAMPLE.name}</h2>
-            <span>{SAMPLE.role}</span>
+            <h2>{cv.name}</h2>
+            <span>{cv.role}</span>
             <div>
-              <span>{SAMPLE.phone}</span>
-              <span>{SAMPLE.location}</span>
-              <span>{SAMPLE.email}</span>
+              {[cv.phone, cv.location, cv.email].filter(Boolean).map((line, index) => <span key={index}>{line}</span>)}
             </div>
           </header>
-          <section className="resume-section resume-parvati-section">
-            <h3>About me</h3>
-            <p>{SAMPLE.summary}</p>
-          </section>
-          <section className="resume-section resume-parvati-section">
-            <h3>Education</h3>
-            <p>{SAMPLE.education}</p>
-          </section>
+          {cv.summary && (
+            <section className="resume-section resume-parvati-section">
+              <h3>About me</h3>
+              <p>{cv.summary}</p>
+            </section>
+          )}
+          {has(education) && (
+            <section className="resume-section resume-parvati-section">
+              <h3>Education</h3>
+              {educationBlock}
+            </section>
+          )}
           {experience}
-          <section className="resume-section resume-parvati-section">
-            <h3>Skills</h3>
-            <ul className="resume-parvati-skills">
-              {SAMPLE.skills.split(" · ").map((skill) => <li key={skill}>{skill}</li>)}
-            </ul>
-          </section>
-          <section className="resume-section resume-parvati-section">
-            <h3>References</h3>
-            <p>Available upon request</p>
-          </section>
+          {has(skills) && (
+            <section className="resume-section resume-parvati-section">
+              <h3>Skills</h3>
+              <ul className="resume-parvati-skills">
+                {skills.map((skill, index) => <li key={index}>{skill}</li>)}
+              </ul>
+            </section>
+          )}
+          {has(languages) && (
+            <section className="resume-section resume-parvati-section">
+              <h3>Languages</h3>
+              <p>{languagesText}</p>
+            </section>
+          )}
         </>
       )}
 
       {template.variant === "takahashi" && (
         <>
           <header className="resume-takahashi-header">
-            {hasPhoto ? (
-              <img className="resume-takahashi-photo" src={design.photo} alt="" />
-            ) : (
-              <div className="resume-takahashi-avatar" aria-hidden="true">JD</div>
-            )}
+            {avatar({ photo: "resume-takahashi-photo", placeholder: "resume-takahashi-avatar" })}
             <div className="resume-takahashi-identity">
-              <h2>{SAMPLE.name}</h2>
-              <span>{SAMPLE.role}</span>
+              <h2>{cv.name}</h2>
+              <span>{cv.role}</span>
             </div>
           </header>
           <aside className="resume-takahashi-sidebar">
             <section className="resume-takahashi-section">
               <h3>Contact me</h3>
-              <p>{SAMPLE.phone}</p>
-              <p>{SAMPLE.website}</p>
-              <p>{SAMPLE.email}</p>
+              {[cv.phone, cv.website, cv.email, cv.location].filter(Boolean).map((line, index) => <p key={index}>{line}</p>)}
             </section>
-            <section className="resume-takahashi-section">
-              <h3>Skills</h3>
-              <ul>
-                {SAMPLE.skills.split(" · ").map((skill) => (
-                  <li key={skill}><span>{skill}</span><i /></li>
-                ))}
-              </ul>
-            </section>
-            <section className="resume-takahashi-section resume-takahashi-education">
-              <h3>Education</h3>
-              <p>{SAMPLE.education}</p>
-            </section>
+            {has(skills) && (
+              <section className="resume-takahashi-section">
+                <h3>Skills</h3>
+                <ul>
+                  {skills.map((skill, index) => (
+                    <li key={index}><span>{skill}</span><i /></li>
+                  ))}
+                </ul>
+              </section>
+            )}
+            {has(education) && (
+              <section className="resume-takahashi-section resume-takahashi-education">
+                <h3>Education</h3>
+                {educationBlock}
+              </section>
+            )}
           </aside>
           <main className="resume-takahashi-main">
-            <section className="resume-section resume-takahashi-section">
-              <h3>About me</h3>
-              <p>{SAMPLE.summary}</p>
-            </section>
+            {cv.summary && (
+              <section className="resume-section resume-takahashi-section">
+                <h3>About me</h3>
+                <p>{cv.summary}</p>
+              </section>
+            )}
             {experience}
           </main>
         </>
@@ -602,43 +601,44 @@ function ResumeDocument({ template, design, preview = false }) {
       {template.variant === "paterson" && (
         <>
           <aside className="resume-paterson-sidebar">
-            {hasPhoto ? (
-              <img className="resume-paterson-photo" src={design.photo} alt="" />
-            ) : (
-              <div className="resume-paterson-avatar" aria-hidden="true">JD</div>
-            )}
+            {avatar({ photo: "resume-paterson-photo", placeholder: "resume-paterson-avatar" })}
             <section className="resume-paterson-section">
               <h3>Contact</h3>
-              <p>{SAMPLE.phone}</p>
-              <p>{SAMPLE.email}</p>
-              <p>{SAMPLE.location}</p>
-              <p>{SAMPLE.website}</p>
+              {[cv.phone, cv.email, cv.location, cv.website].filter(Boolean).map((line, index) => <p key={index}>{line}</p>)}
             </section>
-            <section className="resume-paterson-section">
-              <h3>Expertise</h3>
-              <ul>{SAMPLE.skills.split(" · ").map((skill) => <li key={skill}>{skill}</li>)}</ul>
-            </section>
-            <section className="resume-paterson-section">
-              <h3>Language</h3>
-              <ul className="resume-paterson-languages">
-                {SAMPLE.languages.split(" · ").map((language) => <li key={language}>{language}<span /></li>)}
-              </ul>
-            </section>
+            {has(skills) && (
+              <section className="resume-paterson-section">
+                <h3>Expertise</h3>
+                <ul>{skills.map((skill, index) => <li key={index}>{skill}</li>)}</ul>
+              </section>
+            )}
+            {has(languages) && (
+              <section className="resume-paterson-section">
+                <h3>Language</h3>
+                <ul className="resume-paterson-languages">
+                  {languages.map((language, index) => <li key={index}>{langText(language)}<span /></li>)}
+                </ul>
+              </section>
+            )}
           </aside>
           <main className="resume-paterson-main">
             <header className="resume-paterson-header">
-              <h2>{SAMPLE.name}</h2>
-              <span>{SAMPLE.role}</span>
+              <h2>{cv.name}</h2>
+              <span>{cv.role}</span>
             </header>
-            <section className="resume-section resume-paterson-section">
-              <h3>About me</h3>
-              <p>{SAMPLE.summary}</p>
-            </section>
+            {cv.summary && (
+              <section className="resume-section resume-paterson-section">
+                <h3>About me</h3>
+                <p>{cv.summary}</p>
+              </section>
+            )}
             {experience}
-            <section className="resume-section resume-paterson-section">
-              <h3>Education</h3>
-              <p>{SAMPLE.education}</p>
-            </section>
+            {has(education) && (
+              <section className="resume-section resume-paterson-section">
+                <h3>Education</h3>
+                {educationBlock}
+              </section>
+            )}
           </main>
         </>
       )}
@@ -647,90 +647,106 @@ function ResumeDocument({ template, design, preview = false }) {
         <>
           <main className="resume-marchesi-main">
             <header className="resume-marchesi-topline">
-              <span>Graphic Designer</span>
+              <span>{cv.role}</span>
               <span>Resume</span>
             </header>
             <section className="resume-marchesi-intro">
               <div className="resume-marchesi-about">
                 <h3>About</h3>
-                <p>{SAMPLE.summary}</p>
+                <p>{cv.summary}</p>
               </div>
-              {hasPhoto ? (
-                <img className="resume-marchesi-photo" src={design.photo} alt="" />
-              ) : (
-                <div className="resume-marchesi-photo-placeholder" aria-hidden="true">JD</div>
-              )}
+              {avatar({ photo: "resume-marchesi-photo", placeholder: "resume-marchesi-photo-placeholder" })}
             </section>
-            <section className="resume-marchesi-section">
-              <h3>Work Experiences</h3>
-              {SAMPLE.experience.map((job) => (
-                <div className="resume-marchesi-entry" key={job.company}>
-                  <div><strong>{job.company}</strong><span>{job.role}</span></div>
-                  <time>{job.dates}</time>
-                </div>
-              ))}
-            </section>
-            <section className="resume-marchesi-section">
-              <h3>Education History</h3>
-              <div className="resume-marchesi-entry">
-                <div><strong>{SAMPLE.education.split(" — ")[1]}</strong><span>{SAMPLE.education.split(" — ")[0]}</span></div>
-                <time>2018 — 2022</time>
-              </div>
-            </section>
+            {has(cv.experience) && (
+              <section className="resume-marchesi-section">
+                <h3>Work Experiences</h3>
+                {cv.experience.map((job, index) => (
+                  <div className="resume-marchesi-entry" key={index}>
+                    <div><strong>{job.company || job.role}</strong>{job.company && <span>{job.role}</span>}</div>
+                    <time>{job.dates}</time>
+                  </div>
+                ))}
+              </section>
+            )}
+            {has(education) && (
+              <section className="resume-marchesi-section">
+                <h3>Education History</h3>
+                {education.map((entry, index) => (
+                  <div className="resume-marchesi-entry" key={index}>
+                    <div><strong>{entry.school || entry.degree}</strong>{entry.school && <span>{entry.degree}</span>}</div>
+                    <time>{entry.dates}</time>
+                  </div>
+                ))}
+              </section>
+            )}
             <section className="resume-marchesi-bottom">
-              <div><h3>Interests</h3><p>Brand aesthetics · Visual research · Color theory</p></div>
-              <div><h3>Skills</h3><p>{SAMPLE.skills}</p></div>
+              {has(interests) && <div><h3>Interests</h3><p>{interests.join(" · ")}</p></div>}
+              {has(skills) && <div><h3>Skills</h3><p>{skillsText}</p></div>}
             </section>
             <footer className="resume-marchesi-contact">
-              <span>{SAMPLE.website}<br />{SAMPLE.phone}</span>
-              <span>{SAMPLE.email}<br />{SAMPLE.location}</span>
+              <span>{cv.website}<br />{cv.phone}</span>
+              <span>{cv.email}<br />{cv.location}</span>
             </footer>
           </main>
-          <aside className="resume-marchesi-name" aria-label={SAMPLE.name}>{SAMPLE.name}</aside>
+          <aside className="resume-marchesi-name" aria-label={cv.name}>{cv.name}</aside>
         </>
       )}
 
       {template.variant === "feig" && (
         <>
           <section className="resume-feig-profile">
-            {hasPhoto ? (
-              <img className="resume-feig-photo" src={design.photo} alt="" />
-            ) : (
-              <div className="resume-feig-photo-placeholder" aria-hidden="true">JD</div>
-            )}
+            {avatar({ photo: "resume-feig-photo", placeholder: "resume-feig-photo-placeholder" })}
             <div className="resume-feig-identity">
-              <h2>{SAMPLE.name}</h2>
-              <span>{SAMPLE.role}</span>
+              <h2>{cv.name}</h2>
+              <span>{cv.role}</span>
             </div>
           </section>
           <section className="resume-feig-contact">
             <h3>Contact</h3>
-            <p><strong>Phone</strong>{SAMPLE.phone}</p>
-            <p><strong>Website</strong>{SAMPLE.website}</p>
-            <p><strong>Mail</strong>{SAMPLE.email}</p>
-            <p><strong>Address</strong>{SAMPLE.location}</p>
+            {cv.phone && <p><strong>Phone</strong>{cv.phone}</p>}
+            {cv.website && <p><strong>Website</strong>{cv.website}</p>}
+            {cv.email && <p><strong>Mail</strong>{cv.email}</p>}
+            {cv.location && <p><strong>Address</strong>{cv.location}</p>}
           </section>
           <section className="resume-feig-about">
             <h3>About</h3>
-            <p>{SAMPLE.summary}</p>
+            <p>{cv.summary}</p>
           </section>
           <section className="resume-feig-education">
-            <h3>Education</h3>
-            <p><span>2020 — 2022</span><strong>{SAMPLE.education}</strong></p>
-            <h3>Skills</h3>
-            <ul>{SAMPLE.skills.split(" · ").map((skill) => <li key={skill}>{skill}</li>)}</ul>
+            {has(education) && (
+              <>
+                <h3>Education</h3>
+                {education.map((entry, index) => (
+                  <p key={index}><span>{entry.dates}</span><strong>{[entry.degree, entry.school].filter(Boolean).join(" — ")}</strong></p>
+                ))}
+              </>
+            )}
+            {has(skills) && (
+              <>
+                <h3>Skills</h3>
+                <ul>{skills.map((skill, index) => <li key={index}>{skill}</li>)}</ul>
+              </>
+            )}
           </section>
           <section className="resume-feig-experience">
-            <h3>Work Experience</h3>
-            {SAMPLE.experience.map((job) => (
-              <div key={job.company}>
-                <strong>{job.role}</strong>
-                <span>{job.dates} | {job.company}</span>
-                <p>{job.bullets[0]}</p>
-              </div>
-            ))}
-            <h3>Award</h3>
-            <div><span>2024 | Professional Recognition</span><strong>Outstanding Contribution</strong></div>
+            {has(cv.experience) && (
+              <>
+                <h3>Work Experience</h3>
+                {cv.experience.map((job, index) => (
+                  <div key={index}>
+                    <strong>{job.role || job.company}</strong>
+                    <span>{[job.dates, job.role && job.company].filter(Boolean).join(" | ")}</span>
+                    {has(job.bullets) && <p>{job.bullets.join(" ")}</p>}
+                  </div>
+                ))}
+              </>
+            )}
+            {cv.awards && (
+              <>
+                <h3>Award</h3>
+                <div><strong>{cv.awards}</strong></div>
+              </>
+            )}
           </section>
         </>
       )}
@@ -738,61 +754,60 @@ function ResumeDocument({ template, design, preview = false }) {
       {template.variant === "kaya" && (
         <>
           <header className="resume-kaya-header">
-            {hasPhoto ? (
-              <img className="resume-kaya-photo" src={design.photo} alt="" />
-            ) : (
-              <div className="resume-kaya-photo-placeholder" aria-hidden="true">JD</div>
-            )}
+            {avatar({ photo: "resume-kaya-photo", placeholder: "resume-kaya-photo-placeholder" })}
             <div className="resume-kaya-identity">
-              <h2>{SAMPLE.name}</h2>
-              <span>{SAMPLE.role}</span>
+              <h2>{cv.name}</h2>
+              <span>{cv.role}</span>
               <div className="resume-kaya-contact">
-                <span>{SAMPLE.email}</span><span>{SAMPLE.phone}</span>
-                <span>{SAMPLE.location}</span><span>{SAMPLE.website}</span>
-                <span>github.com/johndoe</span><span>portfolio.example.com</span>
+                {[cv.email, cv.phone, cv.location, cv.website, ...(cv.extraLinks ?? [])].filter(Boolean).map((line, index) => (
+                  <span key={index}>{line}</span>
+                ))}
               </div>
             </div>
           </header>
-          <section className="resume-section resume-kaya-section">
-            <h3>Summary</h3>
-            <p>{SAMPLE.summary}</p>
-          </section>
+          {cv.summary && (
+            <section className="resume-section resume-kaya-section">
+              <h3>Summary</h3>
+              <p>{cv.summary}</p>
+            </section>
+          )}
           {experience}
-          <section className="resume-section resume-kaya-section">
-            <h3>Education</h3>
-            <div className="resume-kaya-entry">
-              <strong>{SAMPLE.education.split(" — ")[1]}</strong>
-              <span>{SAMPLE.education.split(" — ")[0]}</span>
-              <span>2018 — 2022 · {SAMPLE.location}</span>
-            </div>
-          </section>
-          <section className="resume-section resume-kaya-section">
-            <h3>Skills</h3>
-            <ul className="resume-kaya-rated-list">
-              {SAMPLE.skills.split(" · ").map((skill, index) => (
-                <li key={skill}><span>{skill}</span><span className="resume-kaya-dots" aria-label={`${index % 4 + 2} out of 5`}>
-                  {Array.from({ length: 5 }, (_, dot) => <i className={dot < index % 4 + 2 ? "filled" : ""} key={dot} />)}
-                </span></li>
+          {has(education) && (
+            <section className="resume-section resume-kaya-section">
+              <h3>Education</h3>
+              {education.map((entry, index) => (
+                <div className="resume-kaya-entry" key={index}>
+                  <strong>{entry.school || entry.degree}</strong>
+                  {entry.school && <span>{entry.degree}</span>}
+                  {entry.dates && <span>{entry.dates}</span>}
+                </div>
               ))}
-            </ul>
-          </section>
-          <section className="resume-section resume-kaya-section">
-            <h3>Languages</h3>
-            <ul className="resume-kaya-rated-list">
-              {SAMPLE.languages.split(" · ").map((language, index) => (
-                <li key={language}><span>{language}</span><span className="resume-kaya-dots" aria-label={`${index ? 4 : 5} out of 5`}>
-                  {Array.from({ length: 5 }, (_, dot) => <i className={dot < (index ? 4 : 5) ? "filled" : ""} key={dot} />)}
-                </span></li>
-              ))}
-            </ul>
-          </section>
-          <section className="resume-section resume-kaya-section">
-            <h3>Certificates</h3>
-            <ul className="resume-kaya-certificates">
-              <li>Professional Foundations Certificate</li>
-              <li>Cloud Practitioner Certificate</li>
-            </ul>
-          </section>
+            </section>
+          )}
+          {has(skills) && (
+            <section className="resume-section resume-kaya-section">
+              <h3>Skills</h3>
+              <ul className="resume-kaya-rated-list">
+                {skills.map((skill, index) => <li key={index}><span>{skill}</span></li>)}
+              </ul>
+            </section>
+          )}
+          {has(languages) && (
+            <section className="resume-section resume-kaya-section">
+              <h3>Languages</h3>
+              <ul className="resume-kaya-rated-list">
+                {languages.map((language, index) => <li key={index}><span>{langText(language)}</span></li>)}
+              </ul>
+            </section>
+          )}
+          {has(certifications) && (
+            <section className="resume-section resume-kaya-section">
+              <h3>Certificates</h3>
+              <ul className="resume-kaya-certificates">
+                {certifications.map((certification, index) => <li key={index}>{certification}</li>)}
+              </ul>
+            </section>
+          )}
         </>
       )}
 
@@ -800,41 +815,46 @@ function ResumeDocument({ template, design, preview = false }) {
         <>
           <header className="resume-herrera-header">
             <div>
-              <h2>{SAMPLE.name}</h2>
-              <span>{SAMPLE.role}</span>
+              <h2>{cv.name}</h2>
+              <span>{cv.role}</span>
               <section>
-                <span>{SAMPLE.email}</span><span>{SAMPLE.phone}</span>
-                <span>{SAMPLE.location}</span><span>{SAMPLE.website}</span>
+                {[cv.email, cv.phone, cv.location, cv.website].filter(Boolean).map((line, index) => <span key={index}>{line}</span>)}
               </section>
             </div>
-            {hasPhoto ? (
-              <img className="resume-herrera-photo" src={design.photo} alt="" />
-            ) : (
-              <div className="resume-herrera-photo-placeholder" aria-hidden="true">JD</div>
-            )}
+            {avatar({ photo: "resume-herrera-photo", placeholder: "resume-herrera-photo-placeholder" })}
           </header>
           <main className="resume-herrera-main">
-            <section className="resume-section resume-herrera-section">
-              <h3>Summary</h3>
-              <p>{SAMPLE.summary}</p>
-            </section>
+            {cv.summary && (
+              <section className="resume-section resume-herrera-section">
+                <h3>Summary</h3>
+                <p>{cv.summary}</p>
+              </section>
+            )}
             {experience}
-            <section className="resume-section resume-herrera-section">
-              <h3>Education</h3>
-              <div className="resume-herrera-entry">
-                <strong>Bachelor of Business Administration</strong>
-                <span>2014 — 2018</span>
-                <em>Monterrey Business University · {SAMPLE.location}</em>
-              </div>
-            </section>
-            <section className="resume-section resume-herrera-section">
-              <h3>Skills</h3>
-              <ul>{SAMPLE.skills.split(" · ").map((skill) => <li key={skill}>{skill}</li>)}</ul>
-            </section>
-            <section className="resume-section resume-herrera-section">
-              <h3>Languages</h3>
-              <ul>{SAMPLE.languages.split(" · ").map((language) => <li key={language}>{language}</li>)}</ul>
-            </section>
+            {has(education) && (
+              <section className="resume-section resume-herrera-section">
+                <h3>Education</h3>
+                {education.map((entry, index) => (
+                  <div className="resume-herrera-entry" key={index}>
+                    <strong>{entry.degree || entry.school}</strong>
+                    <span>{entry.dates}</span>
+                    {entry.degree && entry.school && <em>{entry.school}</em>}
+                  </div>
+                ))}
+              </section>
+            )}
+            {has(skills) && (
+              <section className="resume-section resume-herrera-section">
+                <h3>Skills</h3>
+                <ul>{skills.map((skill, index) => <li key={index}>{skill}</li>)}</ul>
+              </section>
+            )}
+            {has(languages) && (
+              <section className="resume-section resume-herrera-section">
+                <h3>Languages</h3>
+                <ul>{languages.map((language, index) => <li key={index}>{langText(language)}</li>)}</ul>
+              </section>
+            )}
           </main>
         </>
       )}
@@ -845,7 +865,7 @@ function ResumeDocument({ template, design, preview = false }) {
           <main className="resume-leaves-main">
             {header}
             {experience}
-            <section className="resume-section"><h3>Education</h3><p>{SAMPLE.education}</p></section>
+            {has(education) && <section className="resume-section"><h3>Education</h3>{educationBlock}</section>}
           </main>
           <aside className="resume-leaves-side">{secondary}</aside>
         </>
@@ -854,17 +874,21 @@ function ResumeDocument({ template, design, preview = false }) {
       {template.variant === "creative" && (
         <>
           <aside className="resume-creative-side">
-            <div className="creative-mark">JD</div>
-            <h2>{SAMPLE.name}</h2>
-            <span>{SAMPLE.role}</span>
-            <div>{SAMPLE.location}</div><div>{SAMPLE.email}</div><div>{SAMPLE.website}</div>
-            <h4>Core skills</h4><p>{SAMPLE.skills}</p>
-            <h4>Languages</h4><p>{SAMPLE.languages}</p>
+            {hasPhoto ? (
+              <img className="creative-mark creative-photo" src={design.photo} alt="" />
+            ) : (
+              <div className="creative-mark">{cv.initials}</div>
+            )}
+            <h2>{cv.name}</h2>
+            <span>{cv.role}</span>
+            {[cv.location, cv.email, cv.phone, cv.website].filter(Boolean).map((line, index) => <div key={index}>{line}</div>)}
+            {has(skills) && <><h4>Core skills</h4><p>{skillsText}</p></>}
+            {has(languages) && <><h4>Languages</h4><p>{languagesText}</p></>}
           </aside>
           <main className="resume-main resume-creative-main">
-            <div className="creative-title"><span>Selected profile</span><h2>{SAMPLE.name}</h2><p>{SAMPLE.summary}</p></div>
+            <div className="creative-title"><span>Selected profile</span><h2>{cv.name}</h2><p>{cv.summary}</p></div>
             {experience}
-            <section className="resume-section"><h3>Education</h3><p>{SAMPLE.education}</p></section>
+            {has(education) && <section className="resume-section"><h3>Education</h3>{educationBlock}</section>}
           </main>
         </>
       )}
@@ -874,31 +898,43 @@ function ResumeDocument({ template, design, preview = false }) {
           {header}
           <div className="resume-body">
             {template.variant === "horizon" && <div className="horizon-rule" />}
-            {template.variant === "executive" && <div className="executive-intro"><span>PROFILE</span><p>{SAMPLE.summary}</p></div>}
-            {template.variant === "nova" && <div className="nova-intro"><p>{SAMPLE.summary}</p></div>}
-            {template.variant === "mono" && <div className="mono-contact">{SAMPLE.location} · {SAMPLE.email} · {SAMPLE.phone}</div>}
-            {template.variant === "technical" && (
-              <section className="resume-section tech-skills"><h3>Technical Skills</h3><p>{SAMPLE.skills}</p></section>
+            {template.variant === "executive" && cv.summary && <div className="executive-intro"><span>PROFILE</span><p>{cv.summary}</p></div>}
+            {template.variant === "nova" && cv.summary && <div className="nova-intro"><p>{cv.summary}</p></div>}
+            {template.variant === "mono" && <div className="mono-contact">{[cv.location, cv.email, cv.phone].filter(Boolean).join(" · ")}</div>}
+            {template.variant === "technical" && has(skills) && (
+              <section className="resume-section tech-skills"><h3>Technical Skills</h3><p>{skillsText}</p></section>
+            )}
+            {!["executive", "nova"].includes(template.variant) && cv.summary && (
+              <section className="resume-section"><h3>Profile</h3><p>{cv.summary}</p></section>
             )}
             {experience}
-            <section className="resume-section">
-              <h3>{template.variant === "executive" ? "Education & Credentials" : "Education"}</h3>
-              <p>{SAMPLE.education}</p>
-            </section>
-            {template.variant === "steady" && <section className="resume-section"><h3>Core Competencies</h3><p>Product Strategy · Stakeholder Management · Design Systems · Agile Delivery</p></section>}
+            {has(education) && (
+              <section className="resume-section">
+                <h3>{template.variant === "executive" ? "Education & Credentials" : "Education"}</h3>
+                {educationBlock}
+              </section>
+            )}
+            {template.variant !== "technical" && has(skills) && (
+              <section className="resume-section"><h3>Skills</h3><p>{skillsText}</p></section>
+            )}
+            {has(languages) && <section className="resume-section"><h3>Languages</h3><p>{languagesText}</p></section>}
+            {has(certifications) && <section className="resume-section"><h3>Certifications</h3><p>{certifications.join(" · ")}</p></section>}
+            {template.variant === "steady" && has(cv.strengths) && (
+              <section className="resume-section"><h3>Core Competencies</h3><p>{cv.strengths.join(" · ")}</p></section>
+            )}
           </div>
         </>
       )}
-      <small className="resume-page-number">John Doe · 01</small>
+      <small className="resume-page-number">{cv.name} · 01</small>
     </article>
   );
 }
 
-function TemplateCard({ template, design, selected, onPreview }) {
+function TemplateCard({ template, design, cv, selected, onPreview }) {
   return (
     <article className={`gallery-card ${selected ? "is-selected" : ""}`}>
       <button className="gallery-preview" type="button" onClick={() => onPreview(template.id)} aria-label={`Preview ${template.name}`}>
-        <ResumeDocument template={template} design={design} preview />
+        <ResumeDocument template={template} design={design} cv={cv} preview />
         <span className="gallery-overlay">Preview</span>
       </button>
       <div className="gallery-card-body">
@@ -921,33 +957,21 @@ function TemplateCard({ template, design, selected, onPreview }) {
   );
 }
 
-function TemplateDesigner({ template, design, onDesignChange, onBack, onChoose }) {
+function TemplateDesigner({ template, design, cv, onDesignChange, onBack, onChoose }) {
   const [photoError, setPhotoError] = useState("");
 
   function updateDesign(key, value) {
     onDesignChange({ ...design, [key]: value });
   }
 
-  function handlePhoto(event) {
+  async function handlePhoto(event) {
     const file = event.target.files?.[0];
     event.target.value = "";
     setPhotoError("");
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setPhotoError("Please choose a JPG, PNG or WebP image.");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      setPhotoError("The photo must be 5 MB or smaller.");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") updateDesign("photo", reader.result);
-      else setPhotoError("Could not read this image.");
-    };
-    reader.onerror = () => setPhotoError("Could not read this image.");
-    reader.readAsDataURL(file);
+    const { dataUrl, error } = await readPhotoFile(file);
+    if (error) setPhotoError(error);
+    else updateDesign("photo", dataUrl);
   }
 
   return (
@@ -968,9 +992,9 @@ function TemplateDesigner({ template, design, onDesignChange, onBack, onChoose }
 
       <div className="designer-v2-workspace">
         <section className="designer-v2-preview">
-          <div className="designer-v2-caption"><span>LIVE PREVIEW</span><span>John Doe · 1 page</span></div>
+          <div className="designer-v2-caption"><span>LIVE PREVIEW</span><span>{cv.name || "Your CV"} · 1 page</span></div>
           <div className="designer-v2-paper">
-            <ResumeDocument template={template} design={design} />
+            <ResumeDocument template={template} design={design} cv={cv} />
           </div>
         </section>
 
@@ -1036,6 +1060,7 @@ export default function TemplatePage({
   onConfirm,
   initialSelectedId = "modern-focus",
   initialDesigns = {},
+  cvData = SAMPLE_CV,
   embedded = false,
   isAuthed,
 }) {
@@ -1044,7 +1069,11 @@ export default function TemplatePage({
     : TEMPLATES[0].id;
   const [selectedId, setSelectedId] = useState(normalizedInitial);
   const [editingId, setEditingId] = useState(null);
-  const [designs, setDesigns] = useState(() => ({ ...makeInitialDesigns(), ...initialDesigns }));
+  const [designs, setDesigns] = useState(() => {
+    const sharedPhoto = initialDesigns[normalizedInitial]?.photo ?? "";
+    const merged = { ...makeInitialDesigns(), ...initialDesigns };
+    return Object.fromEntries(Object.entries(merged).map(([id, design]) => [id, { ...design, photo: sharedPhoto }]));
+  });
   const [filter, setFilter] = useState("All");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("Recommended");
@@ -1062,7 +1091,14 @@ export default function TemplatePage({
   }, [filter, query, sort]);
 
   function updateDesign(templateId, design) {
-    setDesigns((previous) => ({ ...previous, [templateId]: design }));
+    setDesigns((previous) => {
+      const next = { ...previous, [templateId]: design };
+      // La photo est la même pour tous les modèles : on la recopie partout
+      if (design.photo !== previous[templateId]?.photo) {
+        for (const id of Object.keys(next)) next[id] = { ...next[id], photo: design.photo };
+      }
+      return next;
+    });
   }
 
   function openTemplate(id) {
@@ -1097,6 +1133,7 @@ export default function TemplatePage({
           <TemplateDesigner
             template={editingTemplate}
             design={designs[editingTemplate.id]}
+            cv={cvData}
             onDesignChange={(design) => updateDesign(editingTemplate.id, design)}
             onBack={() => setEditingId(null)}
             onChoose={chooseTemplate}
@@ -1146,6 +1183,7 @@ export default function TemplatePage({
                       key={template.id}
                       template={template}
                       design={designs[template.id]}
+                      cv={cvData}
                       selected={template.id === selectedId}
                       onPreview={openTemplate}
                     />

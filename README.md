@@ -79,3 +79,19 @@ Puis ouvrez l'URL indiquée (en général http://localhost:5173).
 The CV template experience now includes 12 editable React/CSS designs: Atlantic Blue, Mercury Flow, Steady Form, Classic Serif, Leaves, Executive, Nova Minimal, Horizon, Monochrome, Corporate Pro, Creative Edge and Tech Focus. The gallery supports filtering, search, sorting, live previews, template customization, typography, spacing, page size, accent colors and optional profile photos.
 
 `node_modules` and the previous build output are intentionally excluded from the project archive. Run `npm install` before starting the project.
+
+## Du questionnaire au CV final (PDF)
+
+- `lib/cvData.js` : `buildCvData(form)` convertit les réponses du questionnaire (toutes les étapes) en données
+  affichées par les modèles. Tant que le questionnaire est vide, les modèles montrent `SAMPLE_CV` (John Doe).
+- `templates/TemplatePage.jsx` : la galerie et l'éditeur de modèle (« Customize ») affichent désormais les vraies
+  informations de l'utilisateur. Les sections vides sont masquées.
+- **Photo** : le CV n'utilise que la photo ajoutée via **Add photo** dans l'éditeur de modèle (`design.photo`,
+  réduite à 600 px par `lib/image.js`). Elle est partagée entre tous les modèles. La photo de l'étape
+  « Personal Information » reste stockée dans Supabase Storage mais n'apparaît pas sur le CV.
+- `FinalCv.jsx` : page finale — CV sur le modèle choisi, bouton **Download PDF**, et panneau d'édition qui
+  réutilise les 7 étapes du questionnaire (modifier / ajouter des informations, changer photo, police, couleur).
+- **PDF** : `window.print()` + règles `@media print` / `@page` (A5) dans `final-cv.css`. Dans la fenêtre
+  d'impression, choisir « Enregistrer au format PDF » (marges : aucune). Le texte du PDF reste sélectionnable.
+- Tout est sauvegardé automatiquement dans `cvs.content` (`form`, `templateDesigns`, `finished`) ; en rouvrant le
+  CV terminé, l'utilisateur revient directement sur la page finale.

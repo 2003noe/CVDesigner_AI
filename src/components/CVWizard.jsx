@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import TopNav from "./TopNav";
 import StepIndicator, { WIZARD_STEPS } from "./StepIndicator";
 import WizardFooter from "./WizardFooter";
@@ -11,7 +11,9 @@ import Education, { emptyEducationEntries } from "./steps/Education";
 import Experience, { emptyExperienceEntries } from "./steps/Experience";
 import Skills, { emptySkills } from "./steps/Skills";
 import Languages, { emptyLanguagesData } from "./steps/Languages";
-import TemplatePage from "./templates/TemplatePage";
+import TemplatePage, { makeInitialDesigns } from "./templates/TemplatePage";
+import FinalCv from "./FinalCv";
+import { buildCvData } from "../lib/cvData";
 import { useAuth } from "../context/AuthContext";
 import { useCvAutosave } from "../hooks/useCvAutosave";
 
@@ -36,6 +38,11 @@ function mergeSection(defaults, saved) {
   return { ...defaults, ...saved };
 }
 
+// La photo du CV est identique pour tous les modèles
+function withSharedPhoto(designs, photo) {
+  return Object.fromEntries(Object.entries(designs).map(([id, design]) => [id, { ...design, photo }]));
+}
+
 export default function CVWizard({ onNavigate, isAuthed }) {
   const [stepIndex, setStepIndex] = useState(-1); // -1 = intro screen
   const [form, setForm] = useState(initialFormData);
@@ -52,7 +59,7 @@ export default function CVWizard({ onNavigate, isAuthed }) {
   const snapshot = {
     templateId,
     status: everFinished ? "complete" : "draft",
-    content: { form, templateName, templateDesigns, lastStep: stepIndex },
+    content: { form, templateName, templateDesigns, lastStep: stepIndex, finished },
   };
 
   // Appelée une fois quand un CV existant est lu dans Supabase
@@ -67,6 +74,7 @@ export default function CVWizard({ onNavigate, isAuthed }) {
     if (content.templateName) setTemplateName(content.templateName);
     if (content.templateDesigns) setTemplateDesigns(content.templateDesigns);
     setEverFinished(row.status === "complete");
+    if (content.finished) setFinished(true); // revient directement sur le CV final
     if (typeof content.lastStep === "number") setStepIndex(content.lastStep); // reprend où l'utilisateur s'est arrêté
   }
 
@@ -77,6 +85,13 @@ export default function CVWizard({ onNavigate, isAuthed }) {
   });
 
   const isLastStep = stepIndex === WIZARD_STEPS.length - 1;
+  const cvData = useMemo(() => buildCvData(form), [form]);
+  const currentDesign = templateDesigns[templateId] ?? makeInitialDesigns()[templateId];
+
+  // section = clé de form ; value = nouvelle valeur ou fonction (état précédent) => nouvel état
+  function updateSection(section, value) {
+    setForm((f) => ({ ...f, [section]: typeof value === "function" ? value(f[section]) : value }));
+  }
 
   function goTo(index) {
     setStepIndex(Math.max(-1, Math.min(index, WIZARD_STEPS.length - 1)));
@@ -139,11 +154,12 @@ export default function CVWizard({ onNavigate, isAuthed }) {
         isAuthed={isAuthed}
         initialSelectedId={templateId}
         initialDesigns={templateDesigns}
+        cvData={cvData}
         onBack={() => setChoosingTemplate(false)}
         onConfirm={({ templateId: chosenTemplateId, templateName: chosenTemplateName, design }) => {
           setTemplateId(chosenTemplateId);
           setTemplateName(chosenTemplateName);
-          setTemplateDesigns((previous) => ({ ...previous, [chosenTemplateId]: design }));
+          setTemplateDesigns((previous) => withSharedPhoto({ ...previous, [chosenTemplateId]: design }, design.photo));
           setChoosingTemplate(false);
           setFinished(true);
           setEverFinished(true);
@@ -154,35 +170,23 @@ export default function CVWizard({ onNavigate, isAuthed }) {
 
   if (finished) {
     return (
-      <div className="app-shell">
-        <TopNav onNavigate={onNavigate} isAuthed={isAuthed} />
-        <div className="wizard-body">
-          <div className="wizard-card" style={{ textAlign: "center" }}>
-            <h1>Your CV is ready 🎉</h1>
-            <p className="subtitle">
-              We&rsquo;ve prepared {form.personalInfo.fullName || "your"} CV using the {templateName} design.
-            </p>
-            <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-              <button
-                className="btn btn-secondary"
-                type="button"
-                onClick={() => {
-                  setFinished(false);
-                  setChoosingTemplate(true);
-                }}
-              >
-                Change template
-              </button>
-              <button className="btn btn-secondary" type="button" onClick={() => setFinished(false)}>
-                Keep editing
-              </button>
-              <button className="btn btn-primary" type="button" onClick={() => onNavigate("landing")}>
-                Back to home
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <FinalCv
+        form={form}
+        onFormChange={updateSection}
+        templateId={templateId}
+        design={currentDesign}
+        onDesignChange={(design) =>
+          setTemplateDesigns((previous) => withSharedPhoto({ ...previous, [templateId]: design }, design.photo))
+        }
+        onChangeTemplate={() => {
+          setFinished(false);
+          setChoosingTemplate(true);
+        }}
+        onBackToQuestionnaire={() => setFinished(false)}
+        onNavigate={onNavigate}
+        isAuthed={isAuthed}
+        saveStatus={saveStatus}
+      />
     );
   }
 

@@ -4419,6 +4419,33 @@ body {
   margin-bottom: 11px;
 }
 
+/* Correctif : les règles « colonne principale » ci-dessus écrasaient celles de la barre latérale */
+.resume-takahashi-sidebar .resume-takahashi-section h3 {
+  padding-bottom: 0;
+  border-bottom: 0;
+  color: #fff;
+}
+
+.resume-takahashi-sidebar .resume-takahashi-section > p {
+  color: rgba(255, 255, 255, .92);
+  font-size: 6px;
+}
+
+/* Correctif : les puces de l'expérience étaient masquées par le style « barres de compétences » */
+.resume-takahashi-main .resume-job ul {
+  display: block;
+  margin: 3px 0 0;
+  padding-left: 11px;
+  list-style: disc;
+}
+
+.resume-takahashi-main .resume-job li {
+  display: list-item;
+  margin: 0 0 3px;
+  color: #4b4f56;
+  font-size: 6.2px;
+}
+
 /* Paterson Minimal */
 .resume-paterson {
   display: grid;
