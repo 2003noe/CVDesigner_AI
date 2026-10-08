@@ -6144,10 +6144,31 @@ body {
   text-transform: capitalize !important;
 }
 
-/* Police du nom */
-.resume-document[data-name-font] h2,
-.resume-document[data-name-font] .resume-marchesi-name {
-  font-family: var(--resume-name-font) !important;
+/* Police du corps choisie : elle s'applique à tout le CV, même aux éléments qui fixaient leur propre police */
+.resume-document[data-font-custom] * {
+  font-family: var(--resume-font) !important;
+}
+
+/* Police des titres (nom et titres de section) */
+.resume-document[data-heading-font] :is(h2, h3, h4),
+.resume-document[data-heading-font] .resume-marchesi-name {
+  font-family: var(--resume-heading-font) !important;
+}
+
+/* Couleurs choisies par l'utilisateur */
+.resume-document[data-bg] {
+  background: var(--resume-bg) !important;
+}
+.resume-document[data-text] :is(p, li, time, small, td):not(:is(aside, header, [class*="sidebar"], [class*="side"], [class*="-name"]) *) {
+  color: var(--resume-text) !important;
+}
+.resume-document[data-secondary] :is(.resume-job-heading > span, .resume-job b, time) {
+  color: var(--resume-secondary) !important;
+}
+
+/* Taille de la photo */
+.resume-document[data-photo-scale] :is(img[class*="photo"], [class*="avatar"]) {
+  zoom: var(--resume-photo-scale);
 }
 
 /* Forme de la photo */
@@ -6180,4 +6201,91 @@ body {
   color: #b4bbc7;
   font-weight: 500;
   pointer-events: none;
+}
+
+/* ========== Couleur principale : modèles « gris » qui l'ignoraient (titres, filets, accents) ========== */
+.resume-parvati-section h3 { color: var(--resume-accent) !important; border-bottom-color: var(--resume-accent) !important; }
+.resume-parvati-header > span { color: var(--resume-accent) !important; }
+.resume-parvati-header > div { border-top-color: var(--resume-accent) !important; border-bottom-color: var(--resume-accent) !important; }
+
+.resume-marchesi-topline { border-bottom-color: var(--resume-accent) !important; }
+.resume-marchesi-topline span:first-child,
+.resume-marchesi-section h3,
+.resume-marchesi-bottom h3,
+.resume-marchesi-about h3 { color: var(--resume-accent) !important; }
+.resume-marchesi-name { color: var(--resume-accent) !important; border-left-color: var(--resume-accent) !important; }
+.resume-marchesi-section { border-bottom-color: color-mix(in srgb, var(--resume-accent) 35%, #d9d9d4) !important; }
+
+.resume-feig-contact h3,
+.resume-feig-about h3,
+.resume-feig-education h3,
+.resume-feig-experience h3 { color: color-mix(in srgb, var(--resume-accent) 55%, #ffffff) !important; }
+.resume-feig-identity span { color: var(--resume-accent) !important; }
+.resume-feig-about,
+.resume-feig-education,
+.resume-feig-experience { border-top-color: color-mix(in srgb, var(--resume-accent) 55%, #3a3a3a) !important; }
+
+.resume-kaya-identity > span,
+.resume-kaya-section h3 { color: var(--resume-accent) !important; }
+.resume-kaya-section h3 { border-bottom-color: var(--resume-accent) !important; }
+.resume-kaya-header { border-bottom-color: var(--resume-accent) !important; }
+.resume-kaya-dots i.filled { background: var(--resume-accent) !important; }
+
+.resume-classic .resume-header { border-bottom-color: var(--resume-accent) !important; }
+.resume-classic .resume-section h3 { color: var(--resume-accent) !important; border-bottom-color: var(--resume-accent) !important; }
+.resume-classic .resume-heading > span { color: var(--resume-accent) !important; }
+
+.resume-mono .resume-header { border-bottom-color: var(--resume-accent) !important; }
+.resume-mono .resume-section h3,
+.resume-mono .resume-heading > span { color: var(--resume-accent) !important; }
+.resume-mono .resume-section h3 { border-bottom-color: var(--resume-accent) !important; }
+
+.resume-mercury .resume-heading > span,
+.resume-mercury .resume-section h3 { color: var(--resume-accent) !important; }
+.resume-mercury .resume-header { border-bottom-color: var(--resume-accent) !important; }
+.resume-mercury .resume-section h3 { border-bottom-color: var(--resume-accent) !important; }
+
+.resume-paterson-section h3 { color: var(--resume-accent) !important; border-bottom-color: var(--resume-accent) !important; }
+.resume-paterson-header span { color: var(--resume-accent) !important; }
+.resume-paterson-main { border-left-color: var(--resume-accent) !important; }
+
+/* ========== Questionnaire : pied de page fixe, bouton IA qui ne le recouvre pas ========== */
+.wizard-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  box-shadow: 0 -6px 18px rgba(16, 24, 40, 0.07);
+}
+.wizard-body { padding-bottom: 28px; }
+.ai-fab.is-lifted { bottom: 96px; }
+.ai-panel.is-lifted { bottom: 168px; }
+
+@media (max-width: 720px) {
+  .wizard-footer { flex-wrap: wrap; gap: 10px; padding: 12px 16px; }
+  .wizard-footer-left { gap: 12px; flex-wrap: wrap; }
+  .ai-fab.is-lifted { bottom: 116px; right: 16px; }
+  .ai-panel.is-lifted { right: 12px; left: 12px; width: auto; bottom: 188px; }
+}
+
+/* Sélection de modèle (après le questionnaire) */
+.wizard-templates { width: 100%; max-width: 1180px; margin: 0 auto; box-sizing: border-box; padding: 32px 24px 80px; }
+.wizard-templates-head { display: flex; align-items: center; gap: 20px; margin-bottom: 28px; flex-wrap: wrap; }
+.wizard-templates-head h1 { margin: 0 0 4px; font-size: 30px; }
+.wizard-templates-head p { margin: 0; color: var(--color-text-muted); }
+.wizard-templates-status { text-align: center; color: var(--color-text-muted); }
+
+/* Modèles sans photo : l'en-tête prend toute la largeur (pas de colonne vide à gauche) */
+.resume-kaya-header.is-plain { display: block !important; }
+.resume-kaya-header.is-plain .resume-kaya-identity { width: 100%; }
+.resume-kaya-header.is-plain .resume-kaya-contact { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* Données longues : une adresse, un e-mail ou une URL sans espace ne doit jamais déborder du modèle */
+.resume-document { overflow-wrap: anywhere; }
+.resume-document :is(aside, main, section, header, div, li, p, h2, h3, span) { min-width: 0; }
+
+/* Menu du haut sur petit écran : les liens passent sous le logo, en une rangée défilante */
+@media (max-width: 760px) {
+  .topnav { flex-wrap: wrap; gap: 8px 12px; padding: 10px 16px; }
+  .topnav-links { order: 3; flex: 1 1 100%; display: flex; gap: 18px; overflow-x: auto; white-space: nowrap; padding-bottom: 2px; }
+  .topnav-links button { flex: none; }
 }

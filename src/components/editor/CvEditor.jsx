@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PhotoCropper from "../PhotoCropper";
 import EditorPanels, { NAV_ITEMS } from "./EditorPanels";
 import EmptySheet from "./EmptySheet";
+import { TemplateModal } from "../templates/TemplatePicker";
 import { EditContext } from "./Editable";
 import { ResumeDocument, TEMPLATES, resolvePhoto } from "../templates/TemplatePage";
 import { buildCvData, isCvEmpty } from "../../lib/cvData";
@@ -53,17 +54,16 @@ function sectionForClick(target, cv) {
   return null;
 }
 
-export default function CvEditor({ cvId = null, onOpenDashboard, onCvCreated, registerAiApply }) {
+export default function CvEditor({ cvId = null, initialTemplateId = null, onOpenDashboard, onPreview, onCvCreated, registerAiApply }) {
   const { user } = useAuth();
-  const [initialCvId] = useState(cvId); // figé : l'id affiché ensuite par l'application ne doit pas recharger le CV
+  const [initialCvId] = useState(cvId);
+  const [createdId, setCreatedId] = useState(null); // id du CV une fois créé en base // figé : l'id affiché ensuite par l'application ne doit pas recharger le CV
 
   // ---- Document + historique (annuler / rétablir) ----
-  const [doc, setDocState] = useState(() => ({
-    form: initialFormData(),
-    templateId: DEFAULT_TEMPLATE,
-    design: normalizeDesign(null, DEFAULT_TEMPLATE),
-    customTitle: "",
-  }));
+  const [doc, setDocState] = useState(() => {
+    const templateId = TEMPLATES.some((item) => item.id === initialTemplateId) ? initialTemplateId : DEFAULT_TEMPLATE;
+    return { form: initialFormData(), templateId, design: normalizeDesign(null, templateId), customTitle: "" };
+  });
   const docRef = useRef(doc);
   const past = useRef([]);
   const future = useRef([]);
@@ -147,8 +147,12 @@ export default function CvEditor({ cvId = null, onOpenDashboard, onCvCreated, re
     cvId: initialCvId,
     snapshot,
     onLoaded: handleLoaded,
-    onCreated: onCvCreated,
+    onCreated: (id) => {
+      setCreatedId(id);
+      onCvCreated?.(id);
+    },
   });
+  const currentId = createdId ?? initialCvId;
 
   // ---- Données dérivées ----
   const { form, design } = doc;
@@ -201,8 +205,10 @@ export default function CvEditor({ cvId = null, onOpenDashboard, onCvCreated, re
       update((d) => {
         const f = d.form;
         switch (field) {
-          case "name":
-            return { ...d, form: { ...f, personalInfo: { ...f.personalInfo, fullName: text } } };
+          case "name": {
+            const [first = "", ...rest] = text.trim().split(/\s+/).filter(Boolean);
+            return { ...d, form: { ...f, personalInfo: { ...f.personalInfo, fullName: text, firstName: first, lastName: rest.join(" ") } } };
+          }
           case "role":
             return { ...d, form: { ...f, careerGoal: { ...f.careerGoal, targetJobTitle: text } } };
           case "summary":
@@ -265,8 +271,11 @@ export default function CvEditor({ cvId = null, onOpenDashboard, onCvCreated, re
 
   // ---- Photo, titre, PDF, IA ----
   const [pendingPhoto, setPendingPhoto] = useState(null);
+  const [templatesOpen, setTemplatesOpen] = useState(false);
+  const [mobileView, setMobileView] = useState("edit"); // petit écran : « edit » (réglages) ou « preview » (page)
   const [zoom, setZoom] = useState(100);
   const paperRef = useRef(null);
+  const previewRef = useRef(null);
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState("");
   const [renaming, setRenaming] = useState(false);
@@ -295,6 +304,15 @@ export default function CvEditor({ cvId = null, onOpenDashboard, onCvCreated, re
     }
   }
 
+  async function handleSave() {
+    await saveNow();
+  }
+
+  async function handlePreview() {
+    const { ok } = await saveNow();
+    if (ok && currentId) onPreview?.(currentId);
+  }
+
   async function handleBack() {
     await saveNow(); // ne rien perdre de la dernière saisie
     onOpenDashboard?.();
@@ -308,6 +326,18 @@ export default function CvEditor({ cvId = null, onOpenDashboard, onCvCreated, re
     );
     return () => registerAiApply(null);
   }, [registerAiApply, update]);
+
+  // Petit écran : la page A4 s'ajuste à la largeur disponible (pas de défilement latéral)
+  useEffect(() => {
+    const fit = () => {
+      const element = previewRef.current;
+      if (!element || window.innerWidth > 1100 || element.clientWidth === 0) return;
+      setZoom(Math.max(40, Math.min(100, Math.floor(((element.clientWidth - 20) / 559) * 100))));
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, [mobileView, loading]);
 
   // ---- Écrans d'attente ----
   if (loadError) {
@@ -340,6 +370,18 @@ export default function CvEditor({ cvId = null, onOpenDashboard, onCvCreated, re
           }}
         />
       )}
+
+      <TemplateModal
+        open={templatesOpen}
+        onClose={() => setTemplatesOpen(false)}
+        design={design}
+        cv={thumbCv}
+        selectedId={doc.templateId}
+        onUse={(id) => {
+          chooseTemplate(id);
+          setLayoutFilter("all");
+        }}
+      />
 
       {/* Barre du haut */}
       <header className="ed-topbar">
@@ -400,6 +442,12 @@ export default function CvEditor({ cvId = null, onOpenDashboard, onCvCreated, re
             <path d="M15 14l5-5-5-5M20 9H10a6 6 0 0 0 0 12h3" />
           </svg>
         </button>
+        <button className="ed-btn-ghost" type="button" onClick={handleSave} disabled={saveStatus === "saving"}>
+          Save
+        </button>
+        <button className="ed-btn-ghost" type="button" onClick={handlePreview} disabled={empty || (!currentId && saveStatus !== "saved")}>
+          Preview
+        </button>
         <button className="ed-download" type="button" onClick={handleDownload} disabled={empty || downloading} title={empty ? "Add some content first" : undefined}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M12 4v11M7 11l5 5 5-5M5 20h14" />
@@ -408,7 +456,12 @@ export default function CvEditor({ cvId = null, onOpenDashboard, onCvCreated, re
         </button>
       </header>
 
-      <div className="ed-body">
+      <div className="ed-mobile-tabs" role="tablist" aria-label="Editor view">
+        <button type="button" role="tab" aria-selected={mobileView === "edit"} className={mobileView === "edit" ? "is-on" : ""} onClick={() => setMobileView("edit")}>Customize</button>
+        <button type="button" role="tab" aria-selected={mobileView === "preview"} className={mobileView === "preview" ? "is-on" : ""} onClick={() => setMobileView("preview")}>Preview</button>
+      </div>
+
+      <div className={`ed-body view-${mobileView}`}>
         {/* Barre verticale : on la fait défiler ou on clique une entrée */}
         <nav className="ed-nav" aria-label="Editor sections">
           <div className="ed-nav-scroll" ref={navRef}>
@@ -447,20 +500,22 @@ export default function CvEditor({ cvId = null, onOpenDashboard, onCvCreated, re
             templateId={doc.templateId}
             thumbCv={thumbCv}
             photoShown={photoShown}
+            template={template}
             layoutFilter={layoutFilter}
             setSection={setSection}
             setDesign={setDesign}
             onTemplate={chooseTemplate}
             onLayoutFilter={chooseLayout}
             onPickPhoto={setPendingPhoto}
+            onBrowseTemplates={() => setTemplatesOpen(true)}
           />
         </section>
 
         {/* Page en direct */}
-        <section className="ed-preview" aria-label="CV preview">
+        <section className="ed-preview" aria-label="CV preview" ref={previewRef}>
           <div className="ed-preview-bar">
-            <button type="button" className="ed-chip ed-chip-btn" onClick={() => goTo("templates")}>
-              {template.name}
+            <button type="button" className="ed-chip ed-chip-btn" onClick={() => setTemplatesOpen(true)} aria-label="Change template">
+              Change template · {template.name}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M6 9l6 6 6-6" />
               </svg>

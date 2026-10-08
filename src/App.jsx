@@ -5,15 +5,16 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import ImportFlow from "./components/ImportFlow";
 import CVWizard from "./components/CVWizard";
-import TemplatePage from "./components/templates/TemplatePage";
 import ResetPassword from "./components/ResetPassword";
 import Dashboard from "./components/Dashboard";
 import CvEditor from "./components/editor/CvEditor";
+import CvPreview from "./components/CvPreview";
+import TemplateLibrary from "./components/TemplateLibrary";
 import AIPanel from "./components/AIPanel";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { useAuth } from "./context/AuthContext";
 
-const PAGES = ["landing", "templates", "signin", "signup", "reset-password", "import", "wizard", "dashboard", "editor"];
+const PAGES = ["landing", "templates", "signin", "signup", "reset-password", "import", "wizard", "dashboard", "editor", "preview"];
 
 function pageFromLocation() {
   const requestedPage = window.location.hash.slice(1);
@@ -30,12 +31,15 @@ export default function App() {
   const [cvTarget, setCvTarget] = useState(() => {
     try {
       const saved = JSON.parse(window.sessionStorage.getItem("cvTarget") ?? "null");
-      if (saved && (saved.mode === "editor" || saved.mode === "wizard")) return { id: saved.id ?? null, mode: saved.mode, nonce: 0 };
+      if (saved && ["editor", "wizard", "preview"].includes(saved.mode)) return { id: saved.id ?? null, mode: saved.mode, nonce: 0 };
     } catch {
       /* stockage indisponible : on repart d'un CV vierge */
     }
-    return { id: null, mode: "editor", nonce: 0 };
+    const fromUrl = pageFromLocation();
+    return { id: null, mode: ["editor", "wizard", "preview"].includes(fromUrl) ? fromUrl : "editor", nonce: 0 };
   });
+  const cvTargetRef = useRef(cvTarget);
+  cvTargetRef.current = cvTarget;
   const rememberTarget = useCallback((target) => {
     try {
       window.sessionStorage.setItem("cvTarget", JSON.stringify({ id: target.id, mode: target.mode }));
@@ -84,10 +88,18 @@ export default function App() {
     if (loading) return;
     if (passwordRecovery && page !== "reset-password") {
       navigate("reset-password", { replace: true }); // lien "mot de passe oublié" cliqué
-    } else if (!user && (page === "wizard" || page === "dashboard" || page === "editor")) {
+    } else if (!user && (page === "wizard" || page === "dashboard" || page === "editor" || page === "preview")) {
       navigate("signin", { replace: true });          // pages protégées
     } else if (user && (page === "signin" || page === "signup")) {
-      navigate("dashboard", { replace: true });       // déjà connecté : on arrive sur « My CVs »
+      let pending = null;
+      try {
+        pending = window.sessionStorage.getItem("pendingTemplate");
+        window.sessionStorage.removeItem("pendingTemplate");
+      } catch {
+        /* sans importance */
+      }
+      if (pending) openCv(null, "editor", { templateId: pending }); // modèle choisi avant la connexion
+      else navigate("dashboard", { replace: true });  // on arrive sur « My CVs »
     }
   }, [loading, user, passwordRecovery, page]);
 
@@ -96,19 +108,36 @@ export default function App() {
     navigate(user && nextPage === "wizard" ? "dashboard" : nextPage, options);
   }
 
-  function openCv(id, mode = "editor") {
+  // extra : { templateId } (nouveau CV avec un modèle choisi) · { download } (télécharger dès l'ouverture de l'aperçu)
+  function openCv(id, mode = "editor", extra = {}) {
     const target = { id, mode };
     rememberTarget(target);
-    setCvTarget((previous) => ({ ...target, nonce: previous.nonce + 1 }));
+    const next = { ...target, ...extra, nonce: cvTargetRef.current.nonce + 1 };
+    cvTargetRef.current = next;
+    setCvTarget(next);
     navigate(mode);
+  }
+
+  // « Use Template » : connecté -> éditeur avec ce modèle ; sinon on retient le choix et on passe par la connexion
+  function useTemplate(templateId) {
+    if (user) {
+      openCv(null, "editor", { templateId });
+      return;
+    }
+    try {
+      window.sessionStorage.setItem("pendingTemplate", templateId);
+    } catch {
+      /* sans importance */
+    }
+    navigate("signin");
   }
 
   // Un nouveau CV vient d'être créé en base : on retient son id (sans recharger l'écran)
   function handleCvCreated(id) {
-    setCvTarget((previous) => {
-      rememberTarget({ id, mode: previous.mode });
-      return { ...previous, id };
-    });
+    const next = { ...cvTargetRef.current, id };
+    cvTargetRef.current = next; // lu tout de suite par « onFinish » du questionnaire
+    rememberTarget({ id, mode: next.mode });
+    setCvTarget(next);
   }
 
   function navigateBack(fallbackPage = "landing") {
@@ -133,13 +162,7 @@ export default function App() {
       case "import":
         return <ImportFlow onNavigate={go} onBack={() => navigateBack()} />;
       case "templates":
-        return (
-          <TemplatePage
-            onNavigate={go}
-            onBack={() => navigateBack()}
-            isAuthed={Boolean(user)}
-          />
-        );
+        return <TemplateLibrary onNavigate={go} isAuthed={Boolean(user)} onUseTemplate={useTemplate} />;
       case "wizard":
         return user && cvTarget.mode === "wizard" ? (
           <CVWizard
@@ -147,6 +170,8 @@ export default function App() {
             cvId={cvTarget.id}
             onNavigate={go}
             onOpenDashboard={() => navigate("dashboard")}
+            onCvCreated={handleCvCreated}
+            onFinish={() => openCv(cvTargetRef.current.id, "editor")}
             registerAiApply={registerAiApply}
             isAuthed
           />
@@ -156,9 +181,21 @@ export default function App() {
           <CvEditor
             key={cvTarget.nonce}
             cvId={cvTarget.id}
+            initialTemplateId={cvTarget.templateId}
             onOpenDashboard={() => navigate("dashboard")}
+            onPreview={(id) => openCv(id, "preview")}
             onCvCreated={handleCvCreated}
             registerAiApply={registerAiApply}
+          />
+        ) : null;
+      case "preview":
+        return user && cvTarget.mode === "preview" ? (
+          <CvPreview
+            key={cvTarget.nonce}
+            cvId={cvTarget.id}
+            autoDownload={Boolean(cvTarget.download)}
+            onBack={() => navigate("dashboard")}
+            onEdit={(id) => openCv(id, "editor")}
           />
         ) : null;
       case "dashboard":
@@ -166,9 +203,11 @@ export default function App() {
           <Dashboard
             active={page === "dashboard"}
             onNavigate={go}
-            onOpen={(id) => openCv(id, "editor")}
-            onCreate={() => openCv(null, "editor")}
-            onCreateGuided={() => openCv(null, "wizard")}
+            onPreview={(id) => openCv(id, "preview")}
+            onEdit={(id) => openCv(id, "editor")}
+            onDownload={(id) => openCv(id, "preview", { download: true })}
+            onCreate={() => openCv(null, "wizard")}
+            onUseTemplate={() => navigate("templates")}
           />
         ) : null;
       case "landing":
@@ -188,6 +227,7 @@ export default function App() {
         <AIPanel
           open={aiOpen}
           onToggle={() => setAiOpen((open) => !open)}
+          lifted={page === "wizard"}
           canApply={(page === "wizard" || page === "editor") && Boolean(applyHandler)}
           onApplySuggestion={(text) => applyHandler?.(text)}
         />

@@ -1,0 +1,34 @@
+/* ---------- Aperçu d'un CV ---------- */
+.cp-shell { display: flex; flex-direction: column; min-height: 100vh; background: #f1f2f6; font-family: "DM Sans", var(--font-sans); color: #14171f; }
+.cp-shell button { font-family: inherit; }
+.cp-state { display: grid; place-content: center; justify-items: center; gap: 12px; min-height: 60vh; padding: 24px; text-align: center; color: #5b6472; }
+.cp-state h1 { margin: 0; color: #14171f; }
+.cp-bar { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 12px 24px; background: #fff; border-bottom: 1px solid #e4e7ec; position: sticky; top: 0; z-index: 20; }
+.cp-back { display: flex; align-items: center; gap: 8px; padding: 8px 12px 8px 8px; border: 0; border-radius: 10px; background: transparent; font-size: 15px; font-weight: 600; color: #14171f; cursor: pointer; }
+.cp-back:hover { background: #f1f3f6; }
+.cp-title { flex: 1 1 220px; min-width: 0; }
+.cp-title h1 { margin: 0; font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cp-title p { margin: 2px 0 0; font-size: 13px; color: #5b6472; }
+.cp-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.cp-btn { height: 42px; padding: 0 18px; border: 1.5px solid #d5dae1; border-radius: 10px; background: #fff; color: #14171f; font-size: 14px; font-weight: 600; cursor: pointer; }
+.cp-btn:hover:not(:disabled) { border-color: #9db8f2; }
+.cp-btn.primary { border-color: #2f6fed; background: #2f6fed; color: #fff; }
+.cp-btn.primary:hover { background: #1f55c8; }
+.cp-btn.ghost { border-color: transparent; background: transparent; }
+.cp-btn.ghost:hover { background: #f1f3f6; }
+.cp-btn.danger { border-color: #dc2626; background: #dc2626; color: #fff; }
+.cp-btn.danger-text { color: #b91c1c; }
+.cp-btn:disabled { opacity: .6; cursor: wait; }
+.cp-confirm { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+.cp-alert { margin: 12px 24px 0; padding: 10px 14px; border-radius: 10px; background: #fef2f2; color: #b91c1c; font-size: 14px; }
+.cp-stage { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 22px 16px 60px; }
+.cp-zoom { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #4b5563; }
+.cp-zoom button { width: 32px; height: 32px; border: 1px solid #d5dae1; border-radius: 8px; background: #fff; font-size: 16px; cursor: pointer; }
+.cp-paper { flex: none; padding: 0; overflow: visible; max-width: none; }
+.cp-paper .resume-document { box-shadow: 0 14px 40px rgba(20, 23, 31, .18); }
+@media (max-width: 720px) {
+  .cp-bar { padding: 10px 12px; gap: 10px; }
+  .cp-actions { width: 100%; }
+  .cp-actions .cp-btn { flex: 1 1 auto; padding: 0 12px; }
+  .cp-stage { overflow-x: auto; }
+}

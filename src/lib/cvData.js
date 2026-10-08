@@ -50,7 +50,7 @@ export const SAMPLE_CV = {
   isSample: true,
 };
 
-import { presentWord } from "./cvLabels";
+import { presentWord, ageWord } from "./cvLabels";
 
 const clean = (value) => (typeof value === "string" ? value.trim() : "");
 
@@ -153,7 +153,11 @@ export function buildCvData(form, options = {}) {
   const skills = obj(f.skills);
   const langData = obj(f.languages);
 
-  const location = head("location") ? [clean(p.city), clean(p.country)].filter(Boolean).join(", ") : "";
+  const addressText = head("address") ? clean(p.address) : "";
+  const location = head("location") ? [addressText, clean(p.city), clean(p.country)].filter(Boolean).join(", ") : addressText;
+  const ageNumber = clean(String(p.age ?? ""));
+  const age = head("age") && ageNumber ? ageWord(language, ageNumber) : "";
+  const [firstGuess = "", ...restGuess] = clean(p.fullName).split(/\s+/);
   const links = head("links") ? [clean(p.linkedin), clean(p.portfolio)].filter(Boolean) : [];
 
   const experience = list(f.experience)
@@ -197,8 +201,12 @@ export function buildCvData(form, options = {}) {
 
   return {
     name: clean(p.fullName),
+    firstName: clean(p.firstName) || firstGuess,
+    lastName: clean(p.lastName) || restGuess.join(" "),
     role: clean(goal.targetJobTitle),
     location,
+    age,
+    address: addressText,
     email: head("email") ? clean(p.email) : "",
     phone: head("phone") ? clean(p.phone) : "",
     website: links[0] ?? "",
@@ -223,8 +231,34 @@ export function buildCvData(form, options = {}) {
 // CV sans aucune donnée (affichage de l'éditeur avant la première saisie)
 function buildEmptyCv() {
   return {
-    name: "", role: "", location: "", email: "", phone: "", website: "", extraLinks: [], initials: "CV", photo: "",
+    name: "", firstName: "", lastName: "", role: "", location: "", age: "", address: "", email: "", phone: "", website: "", extraLinks: [], initials: "CV", photo: "",
     summary: "", experience: [], education: [], skills: [], strengths: [], languages: [], certifications: [],
     interests: [], awards: "", projects: "", volunteering: "", isSample: false,
   };
+}
+
+/**
+ * Pour les aperçus de modèles : si le CV est encore peu rempli (moins de 3 sections), les sections
+ * vides sont complétées par le CV d'exemple afin de montrer le vrai rendu du modèle.
+ * Le nom, le titre, les coordonnées et la photo restent ceux de l'utilisateur.
+ */
+export function withSampleFill(cv) {
+  if (!cv || cv.isSample) return cv;
+  const sections = ["summary", "experience", "education", "skills", "languages"];
+  const filled = sections.filter((key) => (Array.isArray(cv[key]) ? cv[key].length : cv[key])).length;
+  if (filled >= 3) return cv;
+  const next = { ...cv };
+  sections.forEach((key) => {
+    const empty = Array.isArray(cv[key]) ? cv[key].length === 0 : !cv[key];
+    if (empty) next[key] = SAMPLE_CV[key];
+  });
+  if (!next.certifications.length) next.certifications = SAMPLE_CV.certifications;
+  if (!next.name) next.name = SAMPLE_CV.name;
+  if (!next.role) next.role = SAMPLE_CV.role;
+  if (!next.email && !next.phone && !next.location) {
+    next.email = SAMPLE_CV.email;
+    next.phone = SAMPLE_CV.phone;
+    next.location = SAMPLE_CV.location;
+  }
+  return next;
 }

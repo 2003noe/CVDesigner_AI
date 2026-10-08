@@ -9,7 +9,8 @@ const SUGGESTION =
   '"Senior UX Designer with 5+ years of experience crafting user-centered SaaS workflows and mobile apps. Proven track record of reducing drop-offs by 24%."';
 
 // canApply : vrai seulement quand un CV est ouvert (le texte peut alors être appliqué au résumé)
-export default function AIPanel({ open, onToggle, onApplySuggestion, canApply = false }) {
+// lifted : remonte le bouton quand un pied de page fixe occupe le bas de l'écran (questionnaire)
+export default function AIPanel({ open, onToggle, onApplySuggestion, canApply = false, lifted = false }) {
   const [messages, setMessages] = useState(SEED_MESSAGES);
   const [draft, setDraft] = useState("");
 
@@ -22,7 +23,7 @@ export default function AIPanel({ open, onToggle, onApplySuggestion, canApply = 
 
   if (!open) {
     return (
-      <button className="ai-fab" type="button" onClick={onToggle} aria-label="Open AI assistant">
+      <button className={`ai-fab ${lifted ? "is-lifted" : ""}`} type="button" onClick={onToggle} aria-label="Open AI assistant">
         <span className="ai-fab-star">✦</span>
         <span className="ai-fab-label">AI</span>
       </button>
@@ -30,7 +31,7 @@ export default function AIPanel({ open, onToggle, onApplySuggestion, canApply = 
   }
 
   return (
-    <div className="ai-panel">
+    <div className={`ai-panel ${lifted ? "is-lifted" : ""}`}>
       <div className="ai-panel-header">
         <span>✦ AI Assistant</span>
         <button type="button" onClick={onToggle} aria-label="Close AI assistant">

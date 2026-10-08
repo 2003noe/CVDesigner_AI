@@ -5,7 +5,7 @@ import Education from "../steps/Education";
 import Experience from "../steps/Experience";
 import Skills from "../steps/Skills";
 import Languages from "../steps/Languages";
-import { ResumeDocument, TEMPLATES, ACCENTS, TYPOGRAPHIES } from "../templates/TemplatePage";
+import { ResumeDocument, TEMPLATES, TYPOGRAPHIES, DEFAULT_SECTION_ORDER } from "../templates/TemplatePage";
 import { CV_LANGUAGES } from "../../lib/cvLabels";
 import { designForTemplate, templateKind } from "../../lib/editorDesign";
 import { Choice, PanelCard, RangeRow, Toggle } from "./controls";
@@ -34,6 +34,28 @@ export const NAV_ITEMS = [
   { key: "footer", label: "Footer" },
   { key: "sections", label: "Sections" },
 ];
+
+const PALETTES = [
+  { name: "Classic Blue", primary: "#2563eb", secondary: "#64748b" },
+  { name: "Navy", primary: "#1e3a5f", secondary: "#5b7a99" },
+  { name: "Emerald", primary: "#047857", secondary: "#6b8f81" },
+  { name: "Burgundy", primary: "#7f1d2d", secondary: "#9a6b73" },
+  { name: "Charcoal", primary: "#374151", secondary: "#6b7280" },
+  { name: "Purple", primary: "#6d28d9", secondary: "#8b7fb0" },
+  { name: "Teal", primary: "#0f766e", secondary: "#5f9a94" },
+  { name: "Black & White", primary: "#111111", secondary: "#555555" },
+];
+
+// Associations de polices cohérentes : titres + corps
+const FONT_PAIRS = [
+  { id: "clean", label: "Clean · Inter", heading: "Inter", body: "Inter" },
+  { id: "modern", label: "Modern · Montserrat + Open Sans", heading: "Montserrat", body: "Open Sans" },
+  { id: "classic", label: "Classic · Playfair + Lato", heading: "Playfair Display", body: "Lato" },
+  { id: "editorial", label: "Editorial · Merriweather + Roboto", heading: "Merriweather", body: "Roboto" },
+  { id: "friendly", label: "Friendly · Poppins + Open Sans", heading: "Poppins", body: "Open Sans" },
+];
+
+const ORDER_LABELS = { summary: "Summary", experience: "Experience", education: "Education", skills: "Skills", languages: "Languages", certifications: "Certificates" };
 
 const SECTION_TOGGLES = [
   ["summary", "Summary"],
@@ -68,33 +90,37 @@ export default function EditorPanels({
   templateId,
   thumbCv,
   photoShown,
+  template,
   layoutFilter,
   setSection,
   setDesign,
   onTemplate,
   onLayoutFilter,
   onPickPhoto,
+  onBrowseTemplates,
 }) {
   const deferredCv = useDeferredValue(thumbCv);
   const set = (section) => (value) => setSection(section, value);
   const visibleTemplates = TEMPLATES.filter((template) => layoutFilter === "all" || templateKind(template) === layoutFilter);
-  const textPt = (10 * design.fontScale) / 100;
+  const textPt = (6.9 * design.fontScale) / 100; // taille réelle imprimée (pt) du texte courant
+  const order = (design.sectionOrder ?? DEFAULT_SECTION_ORDER).filter((key) => ORDER_LABELS[key]);
+  function moveSection(index, delta) {
+    const next = [...order];
+    [next[index], next[index + delta]] = [next[index + delta], next[index]];
+    setDesign("sectionOrder", next);
+  }
 
   return (
     <>
       {/* ----- CONTENT ----- */}
       <PanelCard id="personal" title="Personal details">
-        <div className="field">
-          <label htmlFor="ed-job-title">Job title</label>
-          <input
-            id="ed-job-title"
-            type="text"
-            placeholder="e.g. Agronomist"
-            value={form.careerGoal.targetJobTitle ?? ""}
-            onChange={(event) => setSection("careerGoal", (previous) => ({ ...previous, targetJobTitle: event.target.value }))}
-          />
-        </div>
-        <PersonalInfo data={form.personalInfo} onChange={set("personalInfo")} compact />
+        <PersonalInfo
+          data={form.personalInfo}
+          onChange={set("personalInfo")}
+          title={form.careerGoal.targetJobTitle ?? ""}
+          onTitleChange={(value) => setSection("careerGoal", (previous) => ({ ...previous, targetJobTitle: value }))}
+          compact
+        />
       </PanelCard>
 
       <PanelCard id="summary" title="Summary">
@@ -148,6 +174,7 @@ export default function EditorPanels({
             />
           ))}
         </div>
+        <button className="ed-link" type="button" onClick={onBrowseTemplates}>Browse all templates…</button>
       </PanelCard>
 
       <PanelCard id="layout" title="Layout">
@@ -264,7 +291,17 @@ export default function EditorPanels({
         />
       </PanelCard>
 
-      <PanelCard id="font" title="Font">
+      <PanelCard id="font" title="Font" note="Pick a ready-made pairing, or choose each font yourself.">
+        <Choice
+          label="Font pairs"
+          columns={2}
+          options={FONT_PAIRS.map((pair) => ({ value: pair.id, label: pair.label }))}
+          value={FONT_PAIRS.find((pair) => pair.heading === design.headingFont && pair.body === design.typography)?.id ?? ""}
+          onChange={(id) => {
+            const pair = FONT_PAIRS.find((item) => item.id === id);
+            setDesign({ typography: pair.body, headingFont: pair.heading, typographyCustom: true });
+          }}
+        />
         <div className="field">
           <label htmlFor="ed-body-font">Body font</label>
           <select id="ed-body-font" value={design.typography} onChange={(event) => setDesign({ typography: event.target.value, typographyCustom: true })}>
@@ -274,8 +311,8 @@ export default function EditorPanels({
           </select>
         </div>
         <div className="field">
-          <label htmlFor="ed-name-font">Name font</label>
-          <select id="ed-name-font" value={design.nameFont} onChange={(event) => setDesign("nameFont", event.target.value)}>
+          <label htmlFor="ed-heading-font">Heading font</label>
+          <select id="ed-heading-font" value={design.headingFont ?? "same"} onChange={(event) => setDesign("headingFont", event.target.value)}>
             <option value="same">Same as body font</option>
             {TYPOGRAPHIES.map((font) => (
               <option key={font}>{font}</option>
@@ -284,37 +321,60 @@ export default function EditorPanels({
         </div>
       </PanelCard>
 
-      <PanelCard id="colors" title="Colors">
-        <div className="ed-swatches">
-          {ACCENTS.map((accent) => (
+      <PanelCard id="colors" title="Colors" note="Primary colors titles, lines and accents. The other colors are optional.">
+        <div className="ed-label">Palettes</div>
+        <div className="ed-palettes">
+          {PALETTES.map((palette) => (
             <button
-              key={accent.color}
+              key={palette.name}
               type="button"
-              className={`ed-swatch ${design.accent === accent.color ? "is-on" : ""}`}
-              style={{ background: accent.color }}
-              aria-label={accent.name}
-              aria-pressed={design.accent === accent.color}
-              onClick={() => setDesign({ accent: accent.color, accentCustom: true })}
-            />
+              className={`ed-palette ${design.accent === palette.primary ? "is-on" : ""}`}
+              aria-pressed={design.accent === palette.primary}
+              onClick={() => setDesign({ accent: palette.primary, secondary: palette.secondary, accentCustom: true })}
+            >
+              <span className="ed-palette-dots"><i style={{ background: palette.primary }} /><i style={{ background: palette.secondary }} /></span>
+              {palette.name}
+            </button>
           ))}
-          <label className="ed-swatch ed-swatch-custom" title="Custom color">
-            <input type="color" value={design.accent} onChange={(event) => setDesign({ accent: event.target.value, accentCustom: true })} aria-label="Custom color" />
-          </label>
+        </div>
+        <div className="ed-colors">
+          {[
+            ["Primary", "accent", design.accent, "#2563eb"],
+            ["Secondary", "secondary", design.secondary, "#64748b"],
+            ["Text", "textColor", design.textColor, "#1f2937"],
+            ["Background", "background", design.background, "#ffffff"],
+          ].map(([label, key, value, fallback]) => (
+            <div className="ed-color" key={key}>
+              <label className="ed-color-pick">
+                <input type="color" value={value || fallback} aria-label={`${label} color`} onChange={(event) => setDesign(key === "accent" ? { accent: event.target.value, accentCustom: true } : { [key]: event.target.value })} />
+                <span style={{ background: value || fallback }} />
+              </label>
+              <span className="ed-color-text">
+                <strong>{label}</strong>
+                <small>{value ? value.toUpperCase() : "Template"}</small>
+              </span>
+              {key !== "accent" && value && (
+                <button className="ed-link" type="button" onClick={() => setDesign(key, null)}>Reset</button>
+              )}
+            </div>
+          ))}
         </div>
       </PanelCard>
 
-      <PanelCard id="header" title="Header" note="Choose which contact details appear on the CV.">
+      <PanelCard id="header" title="Header" note="Choose which details appear on the CV. They are all kept, whatever you hide.">
         {[
           ["email", "Email"],
           ["phone", "Phone"],
-          ["location", "Location"],
-          ["links", "Links (LinkedIn, portfolio)"],
-        ].map(([key, label]) => (
-          <Toggle key={key} label={label} checked={design.header[key] !== false} onChange={(checked) => setDesign("header", { ...design.header, [key]: checked })} />
+          ["address", "Address"],
+          ["location", "City & country"],
+          ["age", "Age", "Only templates designed for it show the age."],
+          ["links", "Links (LinkedIn, website)"],
+        ].map(([key, label, hint]) => (
+          <Toggle key={key} label={label} hint={hint} checked={design.header[key] !== false} onChange={(checked) => setDesign("header", { ...design.header, [key]: checked })} />
         ))}
       </PanelCard>
 
-      <PanelCard id="photo" title="Photo">
+      <PanelCard id="photo" title="Photo" note={template.photo === false ? `${template.name} is a no-photo template: it never shows a photo. Switch template to use one.` : undefined}>
         <div className="ed-photo">
           <span className="ed-photo-frame">{photoShown ? <img src={photoShown} alt="Your photo" /> : <span aria-hidden="true">+</span>}</span>
           <div className="ed-photo-actions">
@@ -337,7 +397,8 @@ export default function EditorPanels({
             )}
           </div>
         </div>
-        <p className="ed-note">You can crop the photo after choosing it. It only changes this CV’s photo, not your profile photo.</p>
+        <Toggle label="Show the photo" checked={design.showPhoto !== false} onChange={(checked) => setDesign("showPhoto", checked)} />
+        <RangeRow label="Photo size" display={`${design.photoScale ?? 100}%`} value={design.photoScale ?? 100} min={70} max={140} step={5} onChange={(value) => setDesign("photoScale", value)} />
         <Choice
           label="Shape"
           options={[
@@ -360,6 +421,17 @@ export default function EditorPanels({
         {SECTION_TOGGLES.map(([key, label]) => (
           <Toggle key={key} label={label} checked={design.sections[key] !== false} onChange={(checked) => setDesign("sections", { ...design.sections, [key]: checked })} />
         ))}
+        <div className="ed-label">Order</div>
+        <ol className="ed-order">
+          {order.map((key, index) => (
+            <li key={key}>
+              <span>{ORDER_LABELS[key]}</span>
+              <button type="button" aria-label={`Move ${ORDER_LABELS[key]} up`} disabled={index === 0} onClick={() => moveSection(index, -1)}>↑</button>
+              <button type="button" aria-label={`Move ${ORDER_LABELS[key]} down`} disabled={index === order.length - 1} onClick={() => moveSection(index, 1)}>↓</button>
+            </li>
+          ))}
+        </ol>
+        <p className="ed-note">The order applies to single-column templates. Sidebar templates keep their own structure.</p>
       </PanelCard>
     </>
   );

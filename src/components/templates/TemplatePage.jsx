@@ -1,12 +1,13 @@
-import { useContext, useMemo, useState } from "react";
+import { Fragment, useContext, useMemo, useState } from "react";
 import TopNav from "../TopNav";
 import StepIndicator, { IMPORT_STEPS } from "../StepIndicator";
 import { SAMPLE_CV } from "../../lib/cvData";
 import PhotoCropper from "../PhotoCropper";
 import { E, EditContext } from "../editor/Editable";
 import { labelsFor } from "../../lib/cvLabels";
+import { TEMPLATE_META } from "../../lib/templateMeta";
 
-export const TEMPLATES = [
+const BASE_TEMPLATES = [
   {
     id: "atlantic-blue",
     name: "Atlantic Blue",
@@ -289,6 +290,8 @@ export const TEMPLATES = [
   },
 ];
 
+export const TEMPLATES = BASE_TEMPLATES.map((template) => ({ ...template, ...TEMPLATE_META[template.id] }));
+
 const FILTERS = ["All", "Professional", "Modern", "Classic", "Minimal", "Creative", "ATS-friendly"];
 export const ACCENTS = [
   { name: "Atlantic", color: "#173b4d" },
@@ -302,6 +305,13 @@ export const ACCENTS = [
 
 export const TYPOGRAPHIES = [
   "Inter",
+  "Poppins",
+  "Montserrat",
+  "Roboto",
+  "Lato",
+  "Open Sans",
+  "Merriweather",
+  "Playfair Display",
   "Arial",
   "Georgia",
   "Georgia + Inter",
@@ -314,8 +324,15 @@ export const TYPOGRAPHIES = [
   "Courier New",
 ];
 
-const FONT_FAMILIES = {
+export const FONT_FAMILIES = {
   Inter: 'Inter, Arial, sans-serif',
+  Poppins: 'Poppins, "Segoe UI", sans-serif',
+  Montserrat: 'Montserrat, "Segoe UI", sans-serif',
+  Roboto: 'Roboto, Arial, sans-serif',
+  Lato: 'Lato, "Segoe UI", sans-serif',
+  "Open Sans": '"Open Sans", "Segoe UI", sans-serif',
+  Merriweather: 'Merriweather, Georgia, serif',
+  "Playfair Display": '"Playfair Display", Georgia, serif',
   Arial: 'Arial, Helvetica, sans-serif',
   Georgia: 'Georgia, "Times New Roman", serif',
   "Georgia + Inter": 'Georgia, "Times New Roman", serif',
@@ -345,7 +362,7 @@ const DEFAULT_DESIGN = {
 
 // Photo réellement affichée sur le CV
 export function resolvePhoto(design, cv) {
-  if (design.photo === false) return "";
+  if (design.photo === false || design.showPhoto === false) return "";
   return design.photo || cv?.photo || "";
 }
 
@@ -367,27 +384,44 @@ const has = (list) => Array.isArray(list) && list.length > 0;
 const langText = (language) => (language.level ? `${language.name} (${language.level})` : language.name);
 const educationText = (entry) =>
   [entry.degree, entry.school].filter(Boolean).join(" — ") + (entry.dates ? ` (${entry.dates})` : "");
+export const DEFAULT_SECTION_ORDER = ["summary", "experience", "education", "skills", "languages", "certifications"];
 const SECTION_CLASS_VARIANTS = ["andrade", "parvati", "takahashi", "paterson", "kaya", "herrera"];
 
-export function ResumeDocument({ template, design, cv = SAMPLE_CV, preview = false }) {
+export function ResumeDocument({ template, design, cv: cvProp = SAMPLE_CV, preview = false }) {
+  let cv = cvProp;
   const edit = useContext(EditContext);
   const labels = labelsFor(design.language);
   const L = (text) => labels[text] ?? text;
-  const photo = resolvePhoto(design, cv);
+  // Le modèle prévoit-il une photo ? (sinon : jamais de photo ni de pastille vide)
+  const photoAllowed = template.photo !== false;
+  const photo = photoAllowed ? resolvePhoto(design, cv) : "";
   const hasPhoto = Boolean(photo);
+  // L'âge n'apparaît que dans les modèles qui le prévoient (la donnée, elle, est toujours conservée)
+  cv = { ...cv, location: [cv.location, template.showAge ? cv.age : ""].filter(Boolean).join(" · ") };
   const pageSize = PAGE_SIZES.find((size) => size.label === design.pageSize) || PAGE_SIZES[0];
+  // Un nom très long réduit un peu sa taille pour ne pas se casser en plein mot
+  const nameLength = (cv.name || "").length;
+  const nameFit = nameLength > 34 ? 0.68 : nameLength > 26 ? 0.78 : nameLength > 20 ? 0.88 : 1;
   const spacingGap = design.spacing === "Compact" ? 8 : design.spacing === "Relaxed" ? 18 : 12;
+  // Police des titres : celle choisie à part, sinon (si l'utilisateur a choisi la police du corps) la même,
+  // sinon celle propre au modèle.
+  const chosenHeading = design.headingFont ?? design.nameFont;
+  const headingFont = chosenHeading && chosenHeading !== "same" ? chosenHeading : design.typographyCustom ? design.typography : "same";
   const resumeStyle = {
     "--resume-accent": design.accent,
+    "--resume-secondary": design.secondary || undefined,
+    "--resume-text": design.textColor || undefined,
+    "--resume-bg": design.background || undefined,
     "--resume-font": FONT_FAMILIES[design.typography] || FONT_FAMILIES.Inter,
-    "--resume-name-font": FONT_FAMILIES[design.nameFont] || undefined,
+    "--resume-heading-font": FONT_FAMILIES[headingFont] || undefined,
     "--resume-gap": `${design.sectionGap ?? spacingGap}px`,
     "--resume-page-width": pageSize.width,
     "--resume-page-height": pageSize.height,
     "--resume-zoom": Number(design.zoom || 85) / 100,
     "--resume-font-scale": Number(design.fontScale || 100) / 100,
-    "--resume-name-scale": Number(design.nameScale || 100) / 100,
+    "--resume-name-scale": (Number(design.nameScale || 100) / 100) * nameFit,
     "--resume-heading-scale": Number(design.headingScale || 100) / 100,
+    "--resume-photo-scale": Number(design.photoScale || 100) / 100,
     "--resume-line-height": design.lineHeight || undefined,
     "--resume-entry-gap": design.entryGap != null ? `${design.entryGap}px` : undefined,
   };
@@ -397,8 +431,13 @@ export function ResumeDocument({ template, design, cv = SAMPLE_CV, preview = fal
     "data-date-pos": design.datePos && design.datePos !== "right" ? design.datePos : undefined,
     "data-bullets": design.bullets && design.bullets !== "disc" ? design.bullets : undefined,
     "data-heading-case": design.headingCase && design.headingCase !== "default" ? design.headingCase : undefined,
-    "data-name-font": design.nameFont && design.nameFont !== "same" ? "1" : undefined,
+    "data-font-custom": design.typographyCustom ? "1" : undefined,
+    "data-heading-font": headingFont && headingFont !== "same" ? "1" : undefined,
     "data-photo-shape": design.photoShape && design.photoShape !== "default" ? design.photoShape : undefined,
+    "data-photo-scale": design.photoScale && design.photoScale !== 100 ? "1" : undefined,
+    "data-secondary": design.secondary ? "1" : undefined,
+    "data-text": design.textColor ? "1" : undefined,
+    "data-bg": design.background ? "1" : undefined,
   };
   const footerOptions = { pageNumber: true, name: true, email: false, ...(design.footer || {}) };
   const footerText = [footerOptions.name && cv.name, footerOptions.email && cv.email, footerOptions.pageNumber && "01"]
@@ -455,11 +494,12 @@ export function ResumeDocument({ template, design, cv = SAMPLE_CV, preview = fal
 
   const header = (
     <header className="resume-header">
-      {hasPhoto ? (
-        <img className="resume-photo" src={photo} alt="" />
-      ) : (
-        <div className="resume-avatar" aria-hidden="true">{cv.initials}</div>
-      )}
+      {photoAllowed &&
+        (hasPhoto ? (
+          <img className="resume-photo" src={photo} alt="" />
+        ) : (
+          <div className="resume-avatar" aria-hidden="true">{cv.initials}</div>
+        ))}
       <div className="resume-heading">
         <span><E f="role" v={cv.role} ph="Job title" /></span>
         <h2><E f="name" v={cv.name} ph="Your name" /></h2>
@@ -470,7 +510,7 @@ export function ResumeDocument({ template, design, cv = SAMPLE_CV, preview = fal
   );
 
   const avatar = (className) =>
-    hasPhoto ? (
+    !photoAllowed ? null : hasPhoto ? (
       <img className={className.photo} src={photo} alt="" />
     ) : (
       <div className={className.placeholder} aria-hidden="true">{cv.initials}</div>
@@ -786,7 +826,7 @@ export function ResumeDocument({ template, design, cv = SAMPLE_CV, preview = fal
 
       {template.variant === "kaya" && (
         <>
-          <header className="resume-kaya-header">
+          <header className={`resume-kaya-header ${photoAllowed ? "" : "is-plain"}`}>
             {avatar({ photo: "resume-kaya-photo", placeholder: "resume-kaya-photo-placeholder" })}
             <div className="resume-kaya-identity">
               <h2><E f="name" v={cv.name} ph="Your name" /></h2>
@@ -937,21 +977,25 @@ export function ResumeDocument({ template, design, cv = SAMPLE_CV, preview = fal
             {template.variant === "technical" && has(skills) && (
               <section className="resume-section tech-skills"><h3>{L("Technical Skills")}</h3><p>{skillsText}</p></section>
             )}
-            {!["executive", "nova"].includes(template.variant) && cv.summary && (
-              <section className="resume-section"><h3>{L("Profile")}</h3><p><E f="summary" v={cv.summary} ph="Write a short summary" /></p></section>
-            )}
-            {experience}
-            {has(education) && (
-              <section className="resume-section">
-                <h3>{L(template.variant === "executive" ? "Education & Credentials" : "Education")}</h3>
-                {educationBlock}
-              </section>
-            )}
-            {template.variant !== "technical" && has(skills) && (
-              <section className="resume-section"><h3>{L("Skills")}</h3><p>{skillsText}</p></section>
-            )}
-            {has(languages) && <section className="resume-section"><h3>{L("Languages")}</h3><p>{languagesText}</p></section>}
-            {has(certifications) && <section className="resume-section"><h3>{L("Certifications")}</h3><p>{certifications.join(" · ")}</p></section>}
+            {(design.sectionOrder ?? DEFAULT_SECTION_ORDER).map((key) => (
+              <Fragment key={key}>
+                {key === "summary" && !["executive", "nova"].includes(template.variant) && cv.summary && (
+                  <section className="resume-section"><h3>{L("Profile")}</h3><p><E f="summary" v={cv.summary} ph="Write a short summary" /></p></section>
+                )}
+                {key === "experience" && experience}
+                {key === "education" && has(education) && (
+                  <section className="resume-section">
+                    <h3>{L(template.variant === "executive" ? "Education & Credentials" : "Education")}</h3>
+                    {educationBlock}
+                  </section>
+                )}
+                {key === "skills" && template.variant !== "technical" && has(skills) && (
+                  <section className="resume-section"><h3>{L("Skills")}</h3><p>{skillsText}</p></section>
+                )}
+                {key === "languages" && has(languages) && <section className="resume-section"><h3>{L("Languages")}</h3><p>{languagesText}</p></section>}
+                {key === "certifications" && has(certifications) && <section className="resume-section"><h3>{L("Certifications")}</h3><p>{certifications.join(" · ")}</p></section>}
+              </Fragment>
+            ))}
             {template.variant === "steady" && has(cv.strengths) && (
               <section className="resume-section"><h3>{L("Core Competencies")}</h3><p>{cv.strengths.join(" · ")}</p></section>
             )}

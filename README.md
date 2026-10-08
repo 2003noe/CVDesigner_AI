@@ -101,24 +101,26 @@ The CV template experience now includes 12 editable React/CSS designs: Atlantic 
   page A4, sans marge ni en-tête de navigateur ; un CV long est découpé sur plusieurs pages. Une couche de texte
   invisible garde le texte sélectionnable et lisible par les ATS.
 
-## Plusieurs CV (« My CVs ») et éditeur
+## Parcours de l'application
 
-- `components/Dashboard.jsx` : liste des CV (miniature, statut, date, filtres). La **première carte est un CV vierge « + »** qui
-  ouvre l'éditeur ; « Prefer questions? » ouvre l'ancien questionnaire guidé (`CVWizard`), conservé en option.
-- `components/editor/CvEditor.jsx` : l'éditeur — barre du haut (retour, nom du CV, état de sauvegarde, annuler/rétablir,
-  Download PDF), **barre verticale défilante** (Content : infos, résumé, expérience, formation, compétences, langues ·
-  Design : document, modèles, mise en page, taille du texte, espacement, entrées, titres, police, couleurs, en-tête, photo,
-  pied de page, sections), panneaux de réglages (`EditorPanels.jsx`) et page A4 en direct.
-- **Modification sur la page** : nom, titre, résumé, poste et entreprise se tapent directement sur le CV
-  (`Editable.jsx`) ; un clic sur un autre texte ouvre le panneau correspondant. Tant que le CV est vide, `EmptySheet.jsx`
-  affiche la page vierge ; la première lettre tapée fait apparaître le vrai modèle.
-- **Réglages de design** (`lib/editorDesign.js`) : stockés dans `content.design` (et recopiés dans
-  `content.templateDesigns[<modèle>]` pour la compatibilité). Ils s'appliquent aux 20 modèles par variables CSS et attributs
-  `data-*` (fin de `App.css`). `null` = valeur propre au modèle. Langue du CV : `lib/cvLabels.js`.
-- `lib/cvs.js` : accès à la table `cvs` (une ligne par CV). `hooks/useCvAutosave.js` ouvre un CV par son `id` ; un nouveau CV
-  n'est créé en base qu'à sa première modification. Le nom choisi est dans `content.customTitle`.
-- **Suppression** : la table `cvs` doit autoriser le DELETE à son propriétaire. Si la suppression est refusée, exécuter
-  dans l'éditeur SQL de Supabase :
+Landing → connexion → **My CVs** → *Create a CV* → questionnaire → **choix du modèle** → **éditeur** → preview → téléchargement.
+Cliquer un CV existant ouvre sa **Preview** (Edit CV / Download PDF / Change Template / Duplicate / Delete).
+
+- `Dashboard.jsx` : liste des CV, « Create a CV », « Use a template », état vide (aucun CV n'est créé automatiquement).
+- `CVWizard.jsx` : questionnaire (pied de page fixe). À la fin : `TemplatePicker` puis ouverture de l'éditeur sur le même CV.
+- `CvPreview.jsx` : aperçu en grand d'un CV existant.
+- `editor/CvEditor.jsx` : éditeur (barre verticale défilante, panneaux, page A4 en direct, texte modifiable sur la page,
+  annuler/rétablir, Save, Preview, Download PDF). Sur petit écran : onglets Customize / Preview.
+- `templates/TemplatePicker.jsx` : 4 modèles vedettes + fenêtre « More Templates » (recherche, styles, photo / sans photo).
+  Réutilisée par la page Templates, le questionnaire, l'éditeur et la preview ; changer de modèle ne touche jamais au contenu.
+- **Un seul contenu + plusieurs présentations** : le CV (`content.form`) ne dépend d'aucun modèle ; `buildCvData` le met en forme
+  (`lib/cvData.js`). Identité de chaque modèle : `lib/templateMeta.js` (style, photo ou non, âge affiché, 4 vedettes).
+- **Design** (`lib/editorDesign.js`, stocké dans `content.design`) : couleurs primaire / secondaire / texte / fond, palettes, polices
+  (corps + titres, paires), tailles, espacements, dates, puces, photo (taille, forme), en-tête (âge, adresse…), pied de page PDF,
+  sections (afficher / masquer / ordre pour les modèles à une colonne). Appliqué aux 20 modèles par variables CSS et attributs
+  `data-*` (fin de `App.css`).
+- `lib/cvs.js` : table `cvs` (une ligne par CV). Nom choisi : `content.customTitle`.
+- **Suppression** : la table `cvs` doit autoriser le DELETE à son propriétaire :
 
 ```sql
 drop policy if exists "Users can delete their own cvs" on public.cvs;

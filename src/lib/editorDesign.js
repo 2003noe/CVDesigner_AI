@@ -4,7 +4,7 @@ import { TEMPLATES, makeInitialDesigns } from "../components/templates/TemplateP
 // null = « valeur du modèle » : tant que l'utilisateur n'y touche pas, le modèle garde son propre style.
 export const EDITOR_DESIGN_DEFAULTS = {
   language: "en",
-  fontScale: 100,
+  fontScale: 130, // le texte brut des modèles est petit (≈ 7 pt une fois imprimé) : 130 % donne ≈ 9 pt
   nameScale: 100,
   headingScale: 100,
   lineHeight: null,
@@ -17,7 +17,14 @@ export const EDITOR_DESIGN_DEFAULTS = {
   photoShape: "default",
   accentCustom: false,
   typographyCustom: false,
-  header: { email: true, phone: true, location: true, links: true },
+  headingFont: "same",
+  secondary: null,
+  textColor: null,
+  background: null,
+  photoScale: 100,
+  showPhoto: true,
+  sectionOrder: ["summary", "experience", "education", "skills", "languages", "certifications"],
+  header: { email: true, phone: true, address: true, location: true, age: true, links: true },
   footer: { pageNumber: true, name: true, email: false },
   sections: { summary: true, experience: true, education: true, skills: true, languages: true, certifications: true, interests: true, awards: true },
 };

@@ -4,7 +4,7 @@
 .dash2-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .dash2-header h1 { margin: 0 0 6px; font-size: 34px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; }
 .dash2-header p { margin: 0; font-size: 15px; color: #6b7280; }
-.dash2-filters { display: flex; gap: 6px; padding: 4px; background: #fff; border: 1px solid #e4e7ec; border-radius: 12px; }
+.dash2-filters { align-self: flex-start; display: flex; gap: 6px; padding: 4px; background: #fff; border: 1px solid #e4e7ec; border-radius: 12px; }
 .dash2-filters button { padding: 8px 14px; border: 0; border-radius: 9px; background: transparent; color: #6b7280; font-size: 14px; font-weight: 500; cursor: pointer; }
 .dash2-filters button.is-on { background: #eef4ff; color: #1f55c8; font-weight: 600; }
 
@@ -56,3 +56,22 @@
 .dash2-rename, .dash2-confirm { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 13px; }
 .dash2-rename input { flex: 1 1 100%; padding: 8px 10px; border: 1px solid #cbd1da; border-radius: 8px; font: inherit; font-size: 14px; }
 .dash2-confirm span { flex: 1 1 100%; font-weight: 600; }
+
+/* Navigation : en-tête, état vide, menu « ⋯ » */
+.dash2-head-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.dash2-cta { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 22px; border: 0; border-radius: 12px; background: #2f6fed; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 16px rgba(47, 111, 237, .28); }
+.dash2-cta:hover { background: #1f55c8; }
+.dash2-cta.ghost { border: 1.5px solid #c9d3e8; background: #fff; color: #14171f; box-shadow: none; }
+.dash2-cta.ghost:hover { border-color: #2f6fed; }
+.dash2-empty { display: grid; justify-items: center; gap: 10px; padding: 64px 24px; border: 1.5px dashed #c9d3e8; border-radius: 20px; background: #fff; text-align: center; }
+.dash2-empty-art { display: grid; place-items: center; width: 96px; height: 96px; border-radius: 50%; background: #eef4ff; color: #2f6fed; }
+.dash2-empty h2 { margin: 6px 0 0; font-size: 24px; }
+.dash2-empty p { margin: 0 0 12px; max-width: 420px; color: #5b6472; }
+.dash2-btn.soft { background: #eef4ff; color: #1f55c8; }
+.dash2-btn.soft:hover:not(:disabled) { background: #dde9ff; }
+.dash2-actions .dash2-btn { padding: 9px 16px; }
+.dash2-more { position: relative; }
+.dash2-menu { position: absolute; right: 0; bottom: 46px; z-index: 10; display: flex; flex-direction: column; min-width: 150px; padding: 6px; border: 1px solid #e4e7ec; border-radius: 12px; background: #fff; box-shadow: 0 12px 30px rgba(20, 23, 31, .16); }
+.dash2-menu button { padding: 9px 12px; border: 0; border-radius: 8px; background: none; text-align: left; font-size: 14px; cursor: pointer; }
+.dash2-menu button:hover { background: #f1f3f6; }
+.dash2-menu .danger { color: #b91c1c; }

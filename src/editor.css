@@ -198,3 +198,62 @@
 .ed-card-body > .field { display: flex; flex-direction: column; gap: 7px; }
 .ed-card .field label { font-size: 14px; font-weight: 600; }
 .ed-card .field input, .ed-card .field select, .ed-card .field textarea { width: 100%; box-sizing: border-box; }
+
+/* Personal Information : groupes Identity / Contact */
+.pi-group { margin-bottom: 26px; }
+.pi-group-title { margin: 0 0 14px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-muted, #6b7280); }
+.pi-group .pi-photo-row { margin-bottom: 20px; }
+.pi-group .field-row { margin-bottom: 20px; }
+.pi-group.is-compact .field-row { grid-template-columns: 1fr; gap: 0; margin-bottom: 0; }
+.pi-group.is-compact .field { margin-bottom: 14px; }
+@media (min-width: 1400px) { .pi-group.is-compact .field-row { grid-template-columns: 1fr 1fr; gap: 14px; } }
+@media (max-width: 640px) { .pi-group .field-row { grid-template-columns: 1fr; gap: 0; } .pi-group .field-row .field { margin-bottom: 20px; } }
+
+/* Barre du haut : Save / Preview */
+.ed-btn-ghost { height: 44px; padding: 0 16px; border: 1.5px solid #d5dae1; border-radius: 10px; background: #fff; color: var(--ed-ink); font-size: 14px; font-weight: 600; cursor: pointer; }
+.ed-btn-ghost:hover:not(:disabled) { border-color: #9db8f2; }
+.ed-btn-ghost:disabled { color: #9ca3af; cursor: not-allowed; }
+
+/* Onglets Customize / Preview (petits écrans uniquement) */
+.ed-mobile-tabs { display: none; }
+@media (max-width: 1100px) {
+  .ed-mobile-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px 12px; background: #fff; border-bottom: 1px solid var(--ed-line); position: sticky; top: 0; z-index: 15; }
+  .ed-mobile-tabs button { height: 42px; border: 0; border-radius: 10px; background: #f1f3f6; font-size: 15px; font-weight: 600; color: #4b5563; cursor: pointer; }
+  .ed-mobile-tabs button.is-on { background: #eef4ff; color: var(--ed-blue-dark); }
+  .ed-body.view-edit .ed-preview { display: none; }
+  .ed-body.view-preview .ed-nav, .ed-body.view-preview .ed-panel { display: none; }
+  .ed-body.view-preview .ed-preview { padding: 12px 8px 40px; }
+  .ed-panel { max-height: none; }
+  .ed-topbar { padding: 8px 12px; gap: 8px; }
+  .ed-title { max-width: 160px; }
+  .ed-save { display: none; }
+}
+@media (max-width: 720px) {
+  .ed-back { padding: 8px; }
+  .ed-btn-ghost, .ed-download { height: 40px; padding: 0 12px; font-size: 13px; }
+  .ed-card { padding: 20px; border-radius: 16px; }
+}
+
+/* Couleurs : palettes et pastilles */
+.ed-palettes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.ed-palette { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 12px; border: 1.5px solid #d5dae1; border-radius: 12px; background: #fff; font-size: 14px; font-weight: 500; color: var(--ed-ink); cursor: pointer; text-align: left; }
+.ed-palette:hover { border-color: #9db8f2; }
+.ed-palette.is-on { border-color: var(--ed-blue); background: #eef4ff; font-weight: 600; }
+.ed-palette-dots { display: inline-flex; }
+.ed-palette-dots i { width: 22px; height: 22px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #d5dae1; }
+.ed-palette-dots i + i { margin-left: -8px; }
+.ed-colors { display: flex; flex-direction: column; gap: 12px; }
+.ed-color { display: flex; align-items: center; gap: 14px; }
+.ed-color-pick { position: relative; flex: none; width: 46px; height: 46px; overflow: hidden; border: 1.5px solid #d5dae1; border-radius: 12px; cursor: pointer; }
+.ed-color-pick input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.ed-color-pick span { display: block; width: 100%; height: 100%; }
+.ed-color-text { flex: 1; display: flex; flex-direction: column; font-size: 15px; }
+.ed-color-text small { font-size: 12px; color: var(--ed-muted); }
+.ed-order { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ed-order li { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 14px; border: 1px solid var(--ed-line); border-radius: 10px; background: #fafbfc; font-size: 15px; }
+.ed-order li span { flex: 1; }
+.ed-order button { width: 34px; height: 34px; border: 1px solid #d5dae1; border-radius: 8px; background: #fff; cursor: pointer; }
+.ed-order button:disabled { opacity: .35; cursor: default; }
+
+/* Titres de groupe (Identity / Contact) : plus discrets que les titres de carte */
+.ed-card h2.pi-group-title, h2.pi-group-title { margin: 0 0 14px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-muted, #6b7280); }

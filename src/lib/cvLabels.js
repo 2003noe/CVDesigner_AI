@@ -46,3 +46,7 @@ export function labelsFor(language) {
 export function presentWord(language) {
   return language === "fr" ? "Présent" : "Present";
 }
+
+export function ageWord(language, age) {
+  return language === "fr" ? `${age} ans` : `${age} years old`;
+}

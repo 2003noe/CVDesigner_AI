@@ -46,10 +46,10 @@ const FILTERS = [
 ];
 
 /**
- * « My CVs » : le CV vierge (« + ») en premier, puis tous les CV de l'utilisateur.
+ * « My CVs » : tous les CV de l'utilisateur, « Create a CV » (questionnaire) et « Use a template ».
  * active : vrai quand la page est affichée — la liste est relue à chaque affichage.
  */
-export default function Dashboard({ onNavigate, onOpen, onCreate, onCreateGuided, active }) {
+export default function Dashboard({ onNavigate, onPreview, onEdit, onDownload, onCreate, onUseTemplate, active }) {
   const { user } = useAuth();
   const [rows, setRows] = useState(null); // null = chargement
   const [error, setError] = useState("");
@@ -58,6 +58,7 @@ export default function Dashboard({ onNavigate, onOpen, onCreate, onCreateGuided
   const [renameValue, setRenameValue] = useState("");
   const [deletingId, setDeletingId] = useState(null);
   const [busyId, setBusyId] = useState(null);
+  const [menuId, setMenuId] = useState(null); // menu « ⋯ » ouvert
   const [filter, setFilter] = useState("all");
 
   const load = useCallback(async () => {
@@ -117,16 +118,18 @@ export default function Dashboard({ onNavigate, onOpen, onCreate, onCreateGuided
             <h1>My CVs</h1>
             <p>
               {rows
-                ? `${count} CV${count === 1 ? "" : "s"} saved. Keep editing one, or start a new one from a blank page.`
+                ? count === 0
+                  ? "Your CVs will appear here."
+                  : `${count} CV${count === 1 ? "" : "s"} saved. Open one to preview it, edit it or download it.`
                 : "Loading your CVs…"}
             </p>
           </div>
-          <div className="dash2-filters" role="group" aria-label="Filter CVs">
-            {FILTERS.map(([value, label]) => (
-              <button key={value} type="button" className={filter === value ? "is-on" : ""} aria-pressed={filter === value} onClick={() => setFilter(value)}>
-                {label}
-              </button>
-            ))}
+          <div className="dash2-head-actions">
+            <button className="dash2-cta" type="button" onClick={onCreate}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+              Create a CV
+            </button>
+            <button className="dash2-cta ghost" type="button" onClick={onUseTemplate}>Use a template</button>
           </div>
         </header>
 
@@ -138,32 +141,28 @@ export default function Dashboard({ onNavigate, onOpen, onCreate, onCreateGuided
         )}
         {actionError && <div className="dash2-alert">{actionError}</div>}
 
-        <section className="dash2-grid">
-          {/* 1 · CV vierge */}
-          <article className="dash2-card dash2-new">
-            <button type="button" className="dash2-new-main" onClick={onCreate} aria-label="Create a new blank CV">
-              <span className="dash2-new-stage">
-                <span className="dash2-new-paper">
-                  <span className="dash2-plus">
-                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
-                      <path d="M12 5v14M5 12h14" />
-                    </svg>
-                  </span>
-                  <span className="dash2-new-label">Blank CV</span>
-                </span>
-              </span>
-              <span className="dash2-card-body">
-                <strong>Create a new CV</strong>
-                <span>Start from an empty page and write straight onto it. Pick the template later.</span>
-              </span>
-            </button>
-            {onCreateGuided && (
-              <button type="button" className="dash2-guided" onClick={onCreateGuided}>
-                Prefer questions? Fill it step by step
+        {rows && rows.length > 0 && (
+          <div className="dash2-filters" role="group" aria-label="Filter CVs">
+            {FILTERS.map(([value, label]) => (
+              <button key={value} type="button" className={filter === value ? "is-on" : ""} aria-pressed={filter === value} onClick={() => setFilter(value)}>
+                {label}
               </button>
-            )}
-          </article>
+            ))}
+          </div>
+        )}
 
+        {rows && rows.length === 0 && !error && (
+          <div className="dash2-empty">
+            <div className="dash2-empty-art" aria-hidden="true">
+              <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5M9 13h6M9 17h4" /></svg>
+            </div>
+            <h2>You don’t have a CV yet</h2>
+            <p>Answer a few questions, pick a template and download a polished PDF in minutes.</p>
+            <button className="dash2-cta" type="button" onClick={onCreate}>Create your first CV</button>
+          </div>
+        )}
+
+        <section className="dash2-grid">
           {/* 2 · CV existants */}
           {shown.map((row) => {
             const template = TEMPLATES.find((item) => item.id === row.template_id);
@@ -171,7 +170,7 @@ export default function Dashboard({ onNavigate, onOpen, onCreate, onCreateGuided
             const complete = row.status === "complete";
             return (
               <article className="dash2-card" key={row.id}>
-                <button className="dash2-preview" type="button" onClick={() => onOpen(row.id)} aria-label={`Open ${row.title}`}>
+                <button className="dash2-preview" type="button" onClick={() => onPreview(row.id)} aria-label={`Preview ${row.title}`}>
                   <CvThumbnail row={row} />
                 </button>
 
@@ -212,25 +211,24 @@ export default function Dashboard({ onNavigate, onOpen, onCreate, onCreateGuided
                     </div>
                   ) : (
                     <div className="dash2-actions">
-                      <button className="dash2-btn" type="button" onClick={() => onOpen(row.id)}>Open</button>
+                      <button className="dash2-btn" type="button" onClick={() => onPreview(row.id)}>Preview</button>
+                      <button className="dash2-btn soft" type="button" onClick={() => onEdit(row.id)}>Edit</button>
+                      <button className="dash2-icon" type="button" aria-label="Download PDF" title="Download PDF" onClick={() => onDownload(row.id)}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14" /></svg>
+                      </button>
                       <span className="dash2-grow" />
-                      <button
-                        className="dash2-icon"
-                        type="button"
-                        aria-label="Rename"
-                        onClick={() => {
-                          setRenamingId(row.id);
-                          setRenameValue(row.title ?? "");
-                        }}
-                      >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z" /></svg>
-                      </button>
-                      <button className="dash2-icon" type="button" aria-label="Duplicate" disabled={isBusy} onClick={() => runAction(row.id, () => duplicateCv(user.id, row))}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a2 2 0 0 1 2-2h8" /></svg>
-                      </button>
-                      <button className="dash2-icon danger" type="button" aria-label="Delete" onClick={() => setDeletingId(row.id)}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3" /></svg>
-                      </button>
+                      <div className="dash2-more">
+                        <button className="dash2-icon" type="button" aria-label="More actions" aria-expanded={menuId === row.id} onClick={() => setMenuId(menuId === row.id ? null : row.id)}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8" /><circle cx="12" cy="12" r="1.8" /><circle cx="19" cy="12" r="1.8" /></svg>
+                        </button>
+                        {menuId === row.id && (
+                          <div className="dash2-menu" role="menu" onMouseLeave={() => setMenuId(null)}>
+                            <button type="button" role="menuitem" onClick={() => { setMenuId(null); setRenamingId(row.id); setRenameValue(row.title ?? ""); }}>Rename</button>
+                            <button type="button" role="menuitem" disabled={isBusy} onClick={() => { setMenuId(null); runAction(row.id, () => duplicateCv(user.id, row)); }}>Duplicate</button>
+                            <button type="button" role="menuitem" className="danger" onClick={() => { setMenuId(null); setDeletingId(row.id); }}>Delete</button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
