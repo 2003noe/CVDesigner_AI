@@ -1,29 +1,34 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchLatestCv, createCv, updateCv } from "../lib/cvs";
+import { fetchCvById, createCv, updateCv } from "../lib/cvs";
 
 const AUTOSAVE_DELAY_MS = 1500;
 
 /**
- * Charge le CV le plus récent de l'utilisateur au montage, puis sauvegarde
- * automatiquement chaque modification (avec un délai anti-rafale).
+ * Charge le CV `cvId` au montage (ou démarre un nouveau CV si cvId est null : la ligne n'est
+ * créée en base qu'à la première modification), puis sauvegarde automatiquement chaque
+ * modification (avec un délai anti-rafale).
  *
+ * - cvId : identifiant du CV à ouvrir, ou null pour un nouveau CV
  * - snapshot : { templateId, status, content } — l'état complet à sauvegarder
  * - onLoaded(row) : appelée une fois quand un CV existant a été lu
+ * - onCreated(id) : appelée une fois, quand un nouveau CV vient d'être créé en base
  *
  * Renvoie { loading, loadError, retryLoad, saveStatus, saveNow }
  * saveStatus : "idle" | "dirty" | "saving" | "saved" | "error"
  */
-export function useCvAutosave({ userId, snapshot, onLoaded }) {
+export function useCvAutosave({ userId, cvId = null, snapshot, onLoaded, onCreated }) {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const [saveStatus, setSaveStatus] = useState("idle");
 
-  const cvIdRef = useRef(null); // id du CV en base (null tant qu'il n'est pas créé)
+  const cvIdRef = useRef(cvId); // id du CV en base (null tant qu'il n'est pas créé)
   const lastSavedRef = useRef(null); // JSON de la dernière version sauvegardée (ou lue)
   const chainRef = useRef(Promise.resolve()); // file d'attente : une sauvegarde à la fois
   const snapshotRef = useRef(snapshot);
   const onLoadedRef = useRef(onLoaded);
+  const onCreatedRef = useRef(onCreated);
+  onCreatedRef.current = onCreated;
   snapshotRef.current = snapshot;
   onLoadedRef.current = onLoaded;
 
@@ -34,21 +39,34 @@ export function useCvAutosave({ userId, snapshot, onLoaded }) {
     setLoadError("");
     lastSavedRef.current = null;
 
-    fetchLatestCv().then(({ data, error }) => {
+    // Nouveau CV : rien à charger
+    if (!cvId) {
+      cvIdRef.current = null;
+      setLoading(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    fetchCvById(cvId).then(({ data, error }) => {
       if (cancelled) return;
       if (error) {
         setLoadError(error.message);
         return;
       }
-      cvIdRef.current = data?.id ?? null;
-      if (data) onLoadedRef.current(data);
+      if (!data) {
+        setLoadError("This CV no longer exists. Go back to My CVs and choose another one.");
+        return;
+      }
+      cvIdRef.current = data.id;
+      onLoadedRef.current(data);
       setLoading(false);
     });
 
     return () => {
       cancelled = true;
     };
-  }, [userId, reloadKey]);
+  }, [userId, cvId, reloadKey]);
 
   // 2) Sauvegarde (les appels sont mis en file pour ne jamais créer deux lignes)
   const save = useCallback(() => {
@@ -64,7 +82,10 @@ export function useCvAutosave({ userId, snapshot, onLoaded }) {
           ? await updateCv(cvIdRef.current, snap)
           : await createCv(userId, snap);
         if (result.error) throw result.error;
-        if (!cvIdRef.current && result.data) cvIdRef.current = result.data.id;
+        if (!cvIdRef.current && result.data) {
+          cvIdRef.current = result.data.id;
+          onCreatedRef.current?.(result.data.id); // ex. mémoriser l'id pour rouvrir ce CV après un rechargement
+        }
         lastSavedRef.current = json;
         setSaveStatus("saved");
         return { ok: true };
@@ -98,6 +119,11 @@ export function useCvAutosave({ userId, snapshot, onLoaded }) {
     };
     document.addEventListener("visibilitychange", onHide);
     return () => document.removeEventListener("visibilitychange", onHide);
+  }, [save]);
+
+  // 5) Sauvegarde ce qui reste à enregistrer quand on quitte l'écran (ex. ouverture d'un autre CV)
+  useEffect(() => () => {
+    save();
   }, [save]);
 
   return {

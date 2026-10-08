@@ -14,6 +14,7 @@ export default function TopNav({ onNavigate, isAuthed }) {
     <header className="topnav">
       <BrandMark onClick={() => onNavigate("landing")} />
       <nav className="topnav-links">
+        {authed && <button type="button" onClick={() => onNavigate("dashboard")}>My CVs</button>}
         <button type="button" onClick={() => onNavigate("templates")}>Templates</button>
         <button type="button">AI Features</button>
         <button type="button">Pricing</button>
@@ -29,9 +30,11 @@ export default function TopNav({ onNavigate, isAuthed }) {
             Sign In
           </button>
         )}
-        <button className="btn btn-primary" type="button" onClick={() => onNavigate("wizard")}>
-          Create my CV
-        </button>
+        {!authed && (
+          <button className="btn btn-primary" type="button" onClick={() => onNavigate("wizard")}>
+            Create my CV
+          </button>
+        )}
       </div>
     </header>
   );

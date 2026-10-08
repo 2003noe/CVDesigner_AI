@@ -1,58 +1,71 @@
 import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { removeAvatar, uploadAvatar, useAvatarUrl, validateAvatar } from "../../lib/avatars";
+import PhotoCropper from "../PhotoCropper";
 
 // hidePhoto : masque l'envoi de photo (page finale : la photo du CV se gère avec le modèle)
-export default function PersonalInfo({ data, onChange, hidePhoto = false }) {
+// compact : mise en page de l'éditeur (photo en rangée au-dessus des champs, champs pleine largeur)
+export default function PersonalInfo({ data, onChange, hidePhoto = false, compact = false }) {
   const [showOptional, setShowOptional] = useState(false);
-  const { user } = useAuth();
-  const photoUrl = useAvatarUrl(data.photoPath);
-  const [uploading, setUploading] = useState(false);
-  const [photoError, setPhotoError] = useState("");
+  const [pendingPhoto, setPendingPhoto] = useState(null); // fichier en cours de cadrage
+  const photoUrl = data.photo || null;
 
   function set(field, value) {
     onChange({ ...data, [field]: value });
   }
 
-  async function handlePhotoChange(e) {
+  // La photo cadrée est enregistrée avec le CV (colonne JSON de la table cvs), sans stockage séparé
+  function handlePhotoChange(e) {
     const file = e.target.files?.[0];
     e.target.value = ""; // permet de re-sélectionner le même fichier ensuite
-    if (!file) return;
-
-    setPhotoError("");
-    const problem = validateAvatar(file);
-    if (problem) {
-      setPhotoError(problem);
-      return;
-    }
-
-    setUploading(true);
-    const { path, error } = await uploadAvatar(user.id, file);
-    setUploading(false);
-    if (error) {
-      setPhotoError(`Upload failed: ${error.message}`);
-      return;
-    }
-
-    const oldPath = data.photoPath;
-    // Forme "fonction" : on part de l'état le plus récent (l'utilisateur a pu taper pendant l'envoi)
-    onChange((previous) => ({ ...previous, photoPath: path }));
-    if (oldPath) removeAvatar(oldPath); // supprime l'ancienne photo du stockage
+    if (file) setPendingPhoto(file);
   }
 
   function handleRemovePhoto() {
-    const oldPath = data.photoPath;
-    setPhotoError("");
-    onChange((previous) => ({ ...previous, photoPath: "" }));
-    if (oldPath) removeAvatar(oldPath);
+    onChange((previous) => ({ ...previous, photo: "" }));
   }
 
   return (
     <>
+      {pendingPhoto && (
+        <PhotoCropper
+          file={pendingPhoto}
+          onCancel={() => setPendingPhoto(null)}
+          onDone={(dataUrl) => {
+            onChange((previous) => ({ ...previous, photo: dataUrl }));
+            setPendingPhoto(null);
+          }}
+        />
+      )}
       <h1>Personal Information</h1>
       <p className="subtitle">Enter your basic contact details so recruiters know how to reach you.</p>
 
-      <div style={{ display: "grid", gridTemplateColumns: hidePhoto ? "1fr" : "1fr 200px", gap: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: hidePhoto || compact ? "1fr" : "1fr 200px", gap: compact ? 20 : 32 }}>
+        {compact && !hidePhoto && (
+          <div className="pi-photo-row">
+            <label className="pi-photo-circle" aria-label="Upload photo">
+              {photoUrl ? (
+                <img src={photoUrl} alt="Profile" />
+              ) : (
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M4 8h3l2-3h6l2 3h3v11H4z" />
+                  <circle cx="12" cy="13" r="3.5" />
+                </svg>
+              )}
+              <input type="file" accept="image/jpeg,image/png" style={{ display: "none" }} onChange={handlePhotoChange} />
+            </label>
+            <div className="pi-photo-text">
+              <label className="ed-btn">
+                {photoUrl ? "Change photo" : "Add photo"}
+                <input type="file" accept="image/jpeg,image/png" style={{ display: "none" }} onChange={handlePhotoChange} />
+              </label>
+              <span>JPG or PNG, up to 5 MB. You can crop it right after.</span>
+              {photoUrl && (
+                <button className="link-btn" type="button" onClick={handleRemovePhoto}>
+                  Remove photo
+                </button>
+              )}
+            </div>
+          </div>
+        )}
         <div>
           <div className="field">
             <label htmlFor="fullName">Full Name</label>
@@ -106,7 +119,7 @@ export default function PersonalInfo({ data, onChange, hidePhoto = false }) {
           </div>
         </div>
 
-        {!hidePhoto && (
+        {!hidePhoto && !compact && (
           <div>
             <label>Profile Photo</label>
             <label
@@ -119,7 +132,7 @@ export default function PersonalInfo({ data, onChange, hidePhoto = false }) {
                 border: photoUrl ? "1px solid var(--color-border)" : "1px dashed var(--color-border)",
                 borderRadius: 12,
                 overflow: "hidden",
-                cursor: uploading ? "wait" : "pointer",
+                cursor: "pointer",
                 color: "var(--color-primary)",
                 fontSize: 13,
                 fontWeight: 600,
@@ -130,7 +143,7 @@ export default function PersonalInfo({ data, onChange, hidePhoto = false }) {
               ) : (
                 <>
                   <span style={{ fontSize: 22 }}>👤</span>
-                  {uploading ? "Uploading…" : "Upload photo"}
+                  Upload photo
                 </>
               )}
               <input
@@ -138,19 +151,14 @@ export default function PersonalInfo({ data, onChange, hidePhoto = false }) {
                 accept="image/jpeg,image/png"
                 style={{ display: "none" }}
                 onChange={handlePhotoChange}
-                disabled={uploading}
               />
             </label>
-            {data.photoPath && (
+            {data.photo && (
               <button className="link-btn" type="button" onClick={handleRemovePhoto} style={{ marginTop: 8 }}>
                 Remove photo
               </button>
             )}
-            {photoError ? (
-              <p className="hint" style={{ color: "var(--color-danger)" }}>{photoError}</p>
-            ) : (
-              <p className="hint">Optional. Max size 5MB. JPG or PNG.</p>
-            )}
+            <p className="hint">Optional. Max size 5MB. JPG or PNG. You can crop it, and change it later in “Customize template”.</p>
           </div>
         )}
       </div>
@@ -191,5 +199,5 @@ export const emptyPersonalInfo = {
   portfolio: "",
   age: "",
   address: "",
-  photoPath: "", // chemin du fichier dans le bucket "avatars"
+  photo: "", // photo cadrée (data URL), enregistrée avec le CV
 };

@@ -1024,12 +1024,17 @@ body {
   cursor: pointer;
 }
 
+.ai-fab-star { font-size: 17px; line-height: 1; }
+.ai-fab-label { font-size: 10px; font-weight: 800; letter-spacing: .04em; line-height: 1; }
+
 .ai-fab {
   position: fixed;
   right: 24px;
   bottom: 24px;
-  width: 48px;
-  height: 48px;
+  width: 54px;
+  height: 54px;
+  gap: 2px;
+  align-content: center;
   border-radius: 50%;
   background: var(--color-primary);
   color: white;
@@ -1853,17 +1858,17 @@ body {
 
 .resume-heading strong {
   color: var(--resume-accent);
-  font-size: 10px;
+  font-size: calc(10px * var(--resume-font-scale, 1));
   text-transform: uppercase;
 }
 
 .resume-heading > span {
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1));
 }
 
 .resume-heading small {
   color: #687080;
-  font-size: 4px;
+  font-size: calc(4px * var(--resume-font-scale, 1));
 }
 
 .resume-sections {
@@ -1880,12 +1885,12 @@ body {
 .resume-section h4 {
   margin: 0;
   color: var(--resume-accent);
-  font-size: 5px;
+  font-size: calc(5px * var(--resume-font-scale, 1));
   text-transform: uppercase;
 }
 
 .resume-section b {
-  font-size: 5px;
+  font-size: calc(5px * var(--resume-font-scale, 1));
 }
 
 .resume-line {
@@ -1908,7 +1913,7 @@ body {
   right: 12px;
   bottom: 8px;
   color: #9299a4;
-  font-size: 4px;
+  font-size: calc(4px * var(--resume-font-scale, 1));
 }
 
 .resume-paper-compact {
@@ -1932,7 +1937,7 @@ body {
 .resume-paper-classic .resume-heading strong {
   color: #303744;
   font-family: Georgia, serif;
-  font-size: 11px;
+  font-size: calc(11px * var(--resume-font-scale, 1));
   font-weight: 400;
   text-transform: none;
 }
@@ -2255,7 +2260,7 @@ body {
   box-shadow: 0 2px 12px rgb(16 24 40 / 14%);
   color: #242a33;
   font-family: var(--resume-font, Inter, Arial, sans-serif);
-  font-size: 9px;
+  font-size: calc(9px * var(--resume-font-scale, 1));
   line-height: 1.5;
 }
 
@@ -2284,7 +2289,7 @@ body {
   display: block;
   margin-bottom: 2px;
   color: var(--resume-accent);
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1));
   font-weight: 700;
   letter-spacing: 0.035em;
 }
@@ -2292,7 +2297,7 @@ body {
 .resume-identity h2 {
   margin: 0 0 3px;
   color: #20252d;
-  font-size: 25px;
+  font-size: calc(25px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 600;
   line-height: 1.15;
 }
@@ -2300,7 +2305,7 @@ body {
 .resume-identity p {
   margin: 0;
   color: #667080;
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1));
 }
 
 .resume-profile-photo {
@@ -2332,7 +2337,7 @@ body {
   padding-bottom: 3px;
   border-bottom: 1px solid #e3e7ed;
   color: var(--resume-accent);
-  font-size: 11px;
+  font-size: calc(11px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 600;
 }
 
@@ -2341,7 +2346,7 @@ body {
 }
 
 .resume-document-section b {
-  font-size: 9px;
+  font-size: calc(9px * var(--resume-font-scale, 1));
 }
 
 .resume-document-section ul {
@@ -2360,7 +2365,7 @@ body {
   right: 26px;
   bottom: 14px;
   color: #818996;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
 }
 
 .resume-document-spacing-compact .resume-document-layout,
@@ -2374,7 +2379,7 @@ body {
 }
 
 .resume-document-compact {
-  font-size: 8px;
+  font-size: calc(8px * var(--resume-font-scale, 1));
   padding-top: 26px;
 }
 
@@ -2383,11 +2388,11 @@ body {
 }
 
 .resume-document-compact .resume-identity h2 {
-  font-size: 20px;
+  font-size: calc(20px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
 }
 
 .resume-document-compact .resume-document-section h3 {
-  font-size: 9px;
+  font-size: calc(9px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   text-transform: uppercase;
 }
 
@@ -2399,7 +2404,7 @@ body {
 
 .resume-document-classic .resume-identity h2 {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 27px;
+  font-size: calc(27px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 400;
 }
 
@@ -2420,14 +2425,14 @@ body {
 
 .resume-document-editorial .resume-identity h2 {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 35px;
+  font-size: calc(35px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 400;
 }
 
 .resume-document-editorial .resume-document-section h3 {
   color: #30343a;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 14px;
+  font-size: calc(14px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
 }
 
 .resume-document-grid .resume-document-layout,
@@ -2450,7 +2455,7 @@ body {
 }
 
 .resume-document-grid .resume-column-secondary .resume-document-section h3 {
-  font-size: 9px;
+  font-size: calc(9px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   text-transform: uppercase;
 }
 
@@ -2491,7 +2496,7 @@ body {
   flex: 0 0 255px;
   overflow: hidden;
   padding: 17px 15px 26px;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   line-height: 1.4;
 }
 
@@ -2501,15 +2506,15 @@ body {
 }
 
 .design-card-preview .resume-occupation {
-  font-size: 5px;
+  font-size: calc(5px * var(--resume-font-scale, 1));
 }
 
 .design-card-preview .resume-identity h2 {
-  font-size: 14px;
+  font-size: calc(14px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
 }
 
 .design-card-preview .resume-identity p {
-  font-size: 5px;
+  font-size: calc(5px * var(--resume-font-scale, 1));
 }
 
 .design-card-preview .resume-profile-photo {
@@ -2526,11 +2531,11 @@ body {
 .design-card-preview .resume-document-section h3 {
   margin-bottom: 3px;
   padding-bottom: 2px;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
 }
 
 .design-card-preview .resume-document-section b {
-  font-size: 5px;
+  font-size: calc(5px * var(--resume-font-scale, 1));
 }
 
 .design-card-preview .resume-document-section ul {
@@ -2540,13 +2545,13 @@ body {
 }
 
 .design-card-preview .resume-document-section li {
-  font-size: 5px;
+  font-size: calc(5px * var(--resume-font-scale, 1));
 }
 
 .design-card-preview .resume-document-page {
   right: 10px;
   bottom: 8px;
-  font-size: 4px;
+  font-size: calc(4px * var(--resume-font-scale, 1));
 }
 
 .designer-controls {
@@ -2882,19 +2887,19 @@ body {
 }
 
 .resume-page h2 {
-  font-size: 22px;
+  font-size: calc(22px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   margin: 0 0 2px;
 }
 
 .resume-page .role {
   color: var(--color-primary);
   font-weight: 700;
-  font-size: 13px;
+  font-size: calc(13px * var(--resume-font-scale, 1));
   margin-bottom: 4px;
 }
 
 .resume-page .contact-line {
-  font-size: 12px;
+  font-size: calc(12px * var(--resume-font-scale, 1));
   color: var(--color-text-muted);
   margin-bottom: 14px;
   border-bottom: 1px solid var(--color-border);
@@ -2904,13 +2909,13 @@ body {
 .resume-page .resume-section-label {
   color: var(--color-primary);
   font-weight: 700;
-  font-size: 12px;
+  font-size: calc(12px * var(--resume-font-scale, 1));
   letter-spacing: 0.03em;
   margin: 16px 0 6px;
 }
 
 .resume-page .resume-section-body {
-  font-size: 13px;
+  font-size: calc(13px * var(--resume-font-scale, 1));
   line-height: 1.6;
   color: var(--color-text);
 }
@@ -3800,7 +3805,7 @@ body {
   background: #fff;
   color: #252a32;
   font-family: var(--resume-font);
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1));
   line-height: 1.45;
   text-align: left;
   box-shadow: 0 8px 25px rgba(24, 32, 45, .10);
@@ -3841,7 +3846,7 @@ body {
   place-items: center;
   background: #e9edf2;
   color: var(--resume-accent);
-  font-size: 15px;
+  font-size: calc(15px * var(--resume-font-scale, 1));
   font-weight: 800;
 }
 
@@ -3849,7 +3854,7 @@ body {
   display: block;
   margin-bottom: 2px;
   color: var(--resume-accent);
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1));
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: .11em;
@@ -3858,7 +3863,7 @@ body {
 .resume-heading h2 {
   margin: 0 0 3px;
   color: #18202a;
-  font-size: 20px;
+  font-size: calc(20px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   line-height: 1;
   letter-spacing: -.03em;
 }
@@ -3868,7 +3873,7 @@ body {
   display: block;
   margin: 2px 0 0;
   color: #737b86;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
 }
 
 .resume-body {
@@ -3885,7 +3890,7 @@ body {
   padding-bottom: 4px;
   border-bottom: 2px solid var(--resume-accent);
   color: var(--resume-accent);
-  font-size: 7.5px;
+  font-size: calc(7.5px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: .09em;
@@ -3896,7 +3901,7 @@ body {
 .resume-secondary strong {
   margin: 0;
   color: #626a76;
-  font-size: 6.8px;
+  font-size: calc(6.8px * var(--resume-font-scale, 1));
 }
 
 .resume-job {
@@ -3911,20 +3916,20 @@ body {
 
 .resume-job-heading strong {
   color: #252b34;
-  font-size: 7.6px;
+  font-size: calc(7.6px * var(--resume-font-scale, 1));
 }
 
 .resume-job-heading span {
   color: #8a929e;
   white-space: nowrap;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
 }
 
 .resume-job > b {
   display: block;
   margin: 1px 0 3px;
   color: #6c7480;
-  font-size: 6.6px;
+  font-size: calc(6.6px * var(--resume-font-scale, 1));
   font-weight: 600;
 }
 
@@ -3936,7 +3941,7 @@ body {
 
 .resume-job li {
   margin-bottom: 2px;
-  font-size: 6.5px;
+  font-size: calc(6.5px * var(--resume-font-scale, 1));
 }
 
 .resume-page-number {
@@ -3944,7 +3949,7 @@ body {
   right: 25px;
   bottom: 12px;
   color: #9aa1ab;
-  font-size: 5.5px;
+  font-size: calc(5.5px * var(--resume-font-scale, 1));
 }
 
 .resume-secondary {
@@ -3984,14 +3989,14 @@ body {
   display: grid;
   place-items: center;
   background: rgba(255,255,255,.16);
-  font-size: 14px;
+  font-size: calc(14px * var(--resume-font-scale, 1));
   font-weight: 800;
 }
 
 .resume-atlantic .resume-sidebar h2 {
   margin: 0 0 3px;
   font-family: Georgia, serif;
-  font-size: 16px;
+  font-size: calc(16px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   line-height: 1.05;
 }
 
@@ -3999,21 +4004,21 @@ body {
   display: block;
   margin-bottom: 18px;
   opacity: .8;
-  font-size: 6.5px;
+  font-size: calc(6.5px * var(--resume-font-scale, 1));
 }
 
 .resume-atlantic .resume-sidebar-contact {
   padding-bottom: 16px;
   margin-bottom: 14px;
   border-bottom: 1px solid rgba(255,255,255,.25);
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   line-height: 1.9;
   opacity: .9;
 }
 
 .resume-atlantic .resume-sidebar h4 {
   margin: 13px 0 5px;
-  font-size: 6.5px;
+  font-size: calc(6.5px * var(--resume-font-scale, 1));
   text-transform: uppercase;
   letter-spacing: .1em;
 }
@@ -4021,7 +4026,7 @@ body {
 .resume-atlantic .resume-sidebar p {
   margin: 0;
   color: rgba(255,255,255,.78);
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   line-height: 1.6;
 }
 
@@ -4063,7 +4068,7 @@ body {
   display: grid;
   place-items: center;
   background: rgba(255, 255, 255, .16);
-  font-size: 17px;
+  font-size: calc(17px * var(--resume-font-scale, 1));
   font-weight: 800;
 }
 
@@ -4078,7 +4083,7 @@ body {
   border-radius: 20px;
   background: white;
   color: var(--resume-accent);
-  font-size: 6.5px;
+  font-size: calc(6.5px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 800;
   text-align: center;
   text-transform: uppercase;
@@ -4089,7 +4094,7 @@ body {
 .resume-andrade-sidebar-section li {
   margin: 0 0 4px;
   color: rgba(255, 255, 255, .9);
-  font-size: 5.8px;
+  font-size: calc(5.8px * var(--resume-font-scale, 1));
   line-height: 1.55;
   overflow-wrap: anywhere;
 }
@@ -4114,14 +4119,14 @@ body {
   display: block;
   margin-bottom: 3px;
   color: #293c5c;
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1));
   letter-spacing: .04em;
 }
 
 .resume-andrade-header h2 {
   margin: 0;
   color: #223b60;
-  font-size: 23px;
+  font-size: calc(23px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 800;
   line-height: 1.05;
   text-transform: uppercase;
@@ -4140,7 +4145,7 @@ body {
   border-radius: 20px;
   background: var(--resume-accent);
   color: white;
-  font-size: 6.8px;
+  font-size: calc(6.8px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 800;
   letter-spacing: .06em;
 }
@@ -4154,7 +4159,7 @@ body {
 
 .resume-andrade-section > p {
   color: #657083;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   line-height: 1.55;
 }
 
@@ -4188,7 +4193,7 @@ body {
 .resume-parvati-header h2 {
   margin: 0;
   color: #252a32;
-  font-size: 23px;
+  font-size: calc(23px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 800;
   text-transform: uppercase;
 }
@@ -4197,7 +4202,7 @@ body {
   display: block;
   margin: 1px 0 13px;
   color: #606771;
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1));
   letter-spacing: .12em;
   text-transform: uppercase;
 }
@@ -4210,7 +4215,7 @@ body {
   border-top: 1px solid #9ba0a7;
   border-bottom: 1px solid #9ba0a7;
   color: #535a64;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
 }
 
 .resume-parvati-section {
@@ -4223,14 +4228,14 @@ body {
   border: 0;
   border-bottom: 1px solid #92979e;
   color: #292e35;
-  font-size: 8px;
+  font-size: calc(8px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 800;
   letter-spacing: .04em;
 }
 
 .resume-parvati-section > p {
   color: #555c65;
-  font-size: 6.3px;
+  font-size: calc(6.3px * var(--resume-font-scale, 1));
   line-height: 1.55;
 }
 
@@ -4250,7 +4255,7 @@ body {
 .resume-parvati-section .resume-job-heading span {
   display: block;
   white-space: normal;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
 }
 
 .resume-parvati-section .resume-job > b {
@@ -4272,7 +4277,7 @@ body {
 }
 
 .resume-parvati-skills li {
-  font-size: 6.2px;
+  font-size: calc(6.2px * var(--resume-font-scale, 1));
 }
 
 /* Takahashi */
@@ -4311,7 +4316,7 @@ body {
   display: grid;
   place-items: center;
   background: #5d4b3b;
-  font-size: 18px;
+  font-size: calc(18px * var(--resume-font-scale, 1));
   font-weight: 800;
 }
 
@@ -4322,7 +4327,7 @@ body {
 .resume-takahashi-header h2 {
   margin: 0;
   color: white;
-  font-size: 20px;
+  font-size: calc(20px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 800;
   line-height: 1.08;
   text-transform: uppercase;
@@ -4333,7 +4338,7 @@ body {
   display: block;
   margin-top: 4px;
   color: rgba(255, 255, 255, .9);
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1));
   text-transform: uppercase;
 }
 
@@ -4351,7 +4356,7 @@ body {
 .resume-takahashi-section h3 {
   margin: 0 0 8px;
   color: white;
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
@@ -4361,7 +4366,7 @@ body {
 .resume-takahashi-section li {
   margin: 0 0 5px;
   color: rgba(255, 255, 255, .9);
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   line-height: 1.55;
   overflow-wrap: anywhere;
 }
@@ -4404,14 +4409,14 @@ body {
   padding-bottom: 4px;
   border-bottom: 1px solid #a9a29b;
   color: #3c3935;
-  font-size: 7.5px;
+  font-size: calc(7.5px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 800;
   text-transform: uppercase;
 }
 
 .resume-takahashi-section > p {
   color: #62605d;
-  font-size: 6.2px;
+  font-size: calc(6.2px * var(--resume-font-scale, 1));
   line-height: 1.55;
 }
 
@@ -4428,7 +4433,7 @@ body {
 
 .resume-takahashi-sidebar .resume-takahashi-section > p {
   color: rgba(255, 255, 255, .92);
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
 }
 
 /* Correctif : les puces de l'expérience étaient masquées par le style « barres de compétences » */
@@ -4443,7 +4448,7 @@ body {
   display: list-item;
   margin: 0 0 3px;
   color: #4b4f56;
-  font-size: 6.2px;
+  font-size: calc(6.2px * var(--resume-font-scale, 1));
 }
 
 /* Paterson Minimal */
@@ -4473,7 +4478,7 @@ body {
   place-items: center;
   background: #eceef0;
   color: var(--resume-accent);
-  font-size: 22px;
+  font-size: calc(22px * var(--resume-font-scale, 1));
   font-weight: 800;
 }
 
@@ -4487,7 +4492,7 @@ body {
   border: 0;
   border-bottom: 1px solid #b5b8bc;
   color: #373b40;
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 800;
   text-transform: uppercase;
 }
@@ -4496,7 +4501,7 @@ body {
 .resume-paterson-section li {
   margin: 0 0 5px;
   color: #535961;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
@@ -4542,7 +4547,7 @@ body {
 .resume-paterson-header h2 {
   margin: 0;
   color: #30343a;
-  font-size: 21px;
+  font-size: calc(21px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 800;
   line-height: 1.06;
   text-transform: uppercase;
@@ -4552,7 +4557,7 @@ body {
 .resume-paterson-header span {
   margin-top: 4px;
   color: #676d75;
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1));
   font-style: italic;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -4563,14 +4568,14 @@ body {
   padding: 0 0 4px;
   border: 0;
   color: #393d43;
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 800;
   text-transform: uppercase;
 }
 
 .resume-paterson-section > p {
   color: #5a6068;
-  font-size: 6.1px;
+  font-size: calc(6.1px * var(--resume-font-scale, 1));
   line-height: 1.5;
 }
 
@@ -4602,7 +4607,7 @@ body {
   padding: 0 15px 9px 0;
   border-bottom: 1px solid #b8b8b3;
   color: #30302e;
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1));
   text-transform: uppercase;
 }
 
@@ -4622,14 +4627,14 @@ body {
 .resume-marchesi-bottom h3 {
   margin: 0 0 8px;
   color: #30302e;
-  font-size: 8px;
+  font-size: calc(8px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 800;
 }
 
 .resume-marchesi-about p {
   margin: 0;
   color: #555650;
-  font-size: 6.5px;
+  font-size: calc(6.5px * var(--resume-font-scale, 1));
   line-height: 1.55;
 }
 
@@ -4648,7 +4653,7 @@ body {
   place-items: center;
   background: #e7e6e0;
   color: #44443f;
-  font-size: 20px;
+  font-size: calc(20px * var(--resume-font-scale, 1));
   font-weight: 800;
 }
 
@@ -4668,7 +4673,7 @@ body {
   gap: 8px;
   margin-bottom: 9px;
   color: #373833;
-  font-size: 6.2px;
+  font-size: calc(6.2px * var(--resume-font-scale, 1));
 }
 
 .resume-marchesi-entry div {
@@ -4697,7 +4702,7 @@ body {
 .resume-marchesi-bottom p {
   margin: 0;
   color: #51524d;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   line-height: 1.55;
 }
 
@@ -4707,7 +4712,7 @@ body {
   gap: 8px;
   padding: 13px 15px 0 0;
   color: #4d4e49;
-  font-size: 5.5px;
+  font-size: calc(5.5px * var(--resume-font-scale, 1));
   overflow-wrap: anywhere;
 }
 
@@ -4723,7 +4728,7 @@ body {
   padding: 18px 8px;
   border-left: 1px solid #b8b8b3;
   color: #181918;
-  font-size: 28px;
+  font-size: calc(28px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 900;
   line-height: .95;
   text-align: center;
@@ -4763,7 +4768,7 @@ body {
   place-items: center;
   background: #454545;
   color: white;
-  font-size: 25px;
+  font-size: calc(25px * var(--resume-font-scale, 1));
   font-weight: 800;
 }
 
@@ -4778,7 +4783,7 @@ body {
 
 .resume-feig-identity h2 {
   margin: 0;
-  font-size: 25px;
+  font-size: calc(25px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 900;
   line-height: .95;
   overflow-wrap: anywhere;
@@ -4787,7 +4792,7 @@ body {
 
 .resume-feig-identity span {
   margin-top: 5px;
-  font-size: 8px;
+  font-size: calc(8px * var(--resume-font-scale, 1));
 }
 
 .resume-feig-contact,
@@ -4812,7 +4817,7 @@ body {
 .resume-feig-experience h3 {
   margin: 0 0 8px;
   color: #e7e7e4;
-  font-size: 8px;
+  font-size: calc(8px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 700;
   letter-spacing: .04em;
 }
@@ -4821,13 +4826,13 @@ body {
   display: grid;
   gap: 2px;
   margin: 0;
-  font-size: 6.2px;
+  font-size: calc(6.2px * var(--resume-font-scale, 1));
   overflow-wrap: anywhere;
 }
 
 .resume-feig-contact p strong {
   color: #bcbcb8;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   text-transform: uppercase;
 }
 
@@ -4843,7 +4848,7 @@ body {
 .resume-feig-experience span {
   margin: 0;
   color: #d3d3d0;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   line-height: 1.5;
 }
 
@@ -4862,13 +4867,13 @@ body {
 .resume-feig-education > p span,
 .resume-feig-experience > div span {
   color: #bdbdb9;
-  font-size: 5.8px;
+  font-size: calc(5.8px * var(--resume-font-scale, 1));
 }
 
 .resume-feig-education > p strong,
 .resume-feig-experience > div strong {
   color: #f1f1ef;
-  font-size: 6.2px;
+  font-size: calc(6.2px * var(--resume-font-scale, 1));
 }
 
 .resume-feig-education ul {
@@ -4881,7 +4886,7 @@ body {
 
 .resume-feig-education li {
   color: #d3d3d0;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
 }
 
 .resume-feig-experience {
@@ -4930,14 +4935,14 @@ body {
   place-items: center;
   background: #eceef1;
   color: #373a3f;
-  font-size: 18px;
+  font-size: calc(18px * var(--resume-font-scale, 1));
   font-weight: 700;
 }
 
 .resume-kaya-identity h2 {
   margin: 0;
   color: #202124;
-  font-size: 18px;
+  font-size: calc(18px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 500;
 }
 
@@ -4945,7 +4950,7 @@ body {
   display: block;
   margin: 2px 0 9px;
   color: #45464a;
-  font-size: 9px;
+  font-size: calc(9px * var(--resume-font-scale, 1));
   font-style: italic;
 }
 
@@ -4958,7 +4963,7 @@ body {
 .resume-kaya-contact span {
   min-width: 0;
   color: #34363a;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   overflow-wrap: anywhere;
 }
 
@@ -4971,7 +4976,7 @@ body {
   padding-bottom: 3px;
   border-bottom: 1px solid #555;
   color: #292a2c;
-  font-size: 8px;
+  font-size: calc(8px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 700;
 }
 
@@ -4979,7 +4984,7 @@ body {
 .resume-kaya-entry,
 .resume-kaya-section .resume-job {
   color: #3f4145;
-  font-size: 6.2px;
+  font-size: calc(6.2px * var(--resume-font-scale, 1));
 }
 
 .resume-kaya-section > p {
@@ -4999,18 +5004,18 @@ body {
 }
 
 .resume-kaya-section .resume-job-heading strong {
-  font-size: 6.4px;
+  font-size: calc(6.4px * var(--resume-font-scale, 1));
 }
 
 .resume-kaya-section .resume-job-heading span {
   grid-column: 2;
   grid-row: 1;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
 }
 
 .resume-kaya-section .resume-job > b {
   margin: 0;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   font-style: italic;
 }
 
@@ -5022,7 +5027,7 @@ body {
 
 .resume-kaya-section .resume-job li {
   margin-bottom: 1px;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
 }
 
 .resume-kaya-entry {
@@ -5051,7 +5056,7 @@ body {
   justify-content: space-between;
   gap: 7px;
   color: #3f4145;
-  font-size: 6.2px;
+  font-size: calc(6.2px * var(--resume-font-scale, 1));
 }
 
 .resume-kaya-dots {
@@ -5081,7 +5086,7 @@ body {
 }
 
 .resume-kaya-certificates li {
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
 }
 
 /* Herrera Sales */
@@ -5108,7 +5113,7 @@ body {
   margin: 0;
   color: #f7f4ef;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 19px;
+  font-size: calc(19px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 700;
 }
 
@@ -5117,7 +5122,7 @@ body {
   margin: 2px 0 10px;
   color: #e4ded4;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 9px;
+  font-size: calc(9px * var(--resume-font-scale, 1));
   font-style: italic;
 }
 
@@ -5130,7 +5135,7 @@ body {
 .resume-herrera-header section span {
   min-width: 0;
   color: #f0ece6;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   overflow-wrap: anywhere;
 }
 
@@ -5149,7 +5154,7 @@ body {
   background: #31546a;
   color: white;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 18px;
+  font-size: calc(18px * var(--resume-font-scale, 1));
   font-weight: 700;
 }
 
@@ -5169,14 +5174,14 @@ body {
   border-bottom: 2px solid var(--resume-accent);
   color: var(--resume-accent);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 8px;
+  font-size: calc(8px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   font-weight: 700;
 }
 
 .resume-herrera-section > p {
   margin: 0;
   color: #33383d;
-  font-size: 6.5px;
+  font-size: calc(6.5px * var(--resume-font-scale, 1));
   line-height: 1.55;
 }
 
@@ -5204,7 +5209,7 @@ body {
   gap: 3px 8px;
   color: #292e33;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 6.5px;
+  font-size: calc(6.5px * var(--resume-font-scale, 1));
 }
 
 .resume-herrera-entry span {
@@ -5226,7 +5231,7 @@ body {
 }
 
 .resume-herrera-section li {
-  font-size: 6.2px;
+  font-size: calc(6.2px * var(--resume-font-scale, 1));
 }
 
 /* Mercury Flow */
@@ -5236,7 +5241,7 @@ body {
 }
 
 .resume-mercury .resume-heading h2 {
-  font-size: 24px;
+  font-size: calc(24px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
 }
 
 .resume-mercury .resume-header .resume-avatar {
@@ -5264,7 +5269,7 @@ body {
 }
 
 .resume-steady .resume-heading h2 {
-  font-size: 19px;
+  font-size: calc(19px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
 }
 
 .resume-steady .resume-section h3 {
@@ -5294,7 +5299,7 @@ body {
 
 .resume-classic .resume-heading h2 {
   font-family: Georgia, serif;
-  font-size: 23px;
+  font-size: calc(23px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
 }
 
 .resume-classic .resume-heading p {
@@ -5305,7 +5310,7 @@ body {
   color: #333;
   border-bottom: 1px solid #b8b8b8;
   font-family: Georgia, serif;
-  font-size: 8px;
+  font-size: calc(8px * var(--resume-font-scale, 1) * var(--resume-heading-scale, 1));
   letter-spacing: .04em;
 }
 
@@ -5326,7 +5331,7 @@ body {
   padding: 25px 6px;
   color: white;
   letter-spacing: .18em;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
 }
 
 .resume-leaves-main {
@@ -5369,7 +5374,7 @@ body {
 .resume-executive .resume-heading h2 {
   margin-bottom: 7px;
   font-family: Georgia, serif;
-  font-size: 28px;
+  font-size: calc(28px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
 }
 
 .resume-executive .resume-heading > span {
@@ -5384,7 +5389,7 @@ body {
 }
 
 .executive-intro span {
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   font-weight: 800;
   letter-spacing: .15em;
 }
@@ -5392,7 +5397,7 @@ body {
 .executive-intro p {
   margin: 5px 0 0;
   color: #5d6269;
-  font-size: 7px;
+  font-size: calc(7px * var(--resume-font-scale, 1));
 }
 
 /* Nova Minimal */
@@ -5409,7 +5414,7 @@ body {
 }
 
 .resume-nova .resume-heading h2 {
-  font-size: 27px;
+  font-size: calc(27px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   font-weight: 500;
 }
 
@@ -5431,7 +5436,7 @@ body {
 }
 
 .resume-horizon .resume-heading h2 {
-  font-size: 22px;
+  font-size: calc(22px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
 }
 
 .horizon-rule {
@@ -5457,7 +5462,7 @@ body {
 }
 
 .resume-mono .resume-heading h2 {
-  font-size: 24px;
+  font-size: calc(24px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
   text-transform: uppercase;
   letter-spacing: .05em;
 }
@@ -5474,7 +5479,7 @@ body {
 .mono-contact {
   margin: -5px 0 15px;
   color: #555b63;
-  font-size: 6.5px;
+  font-size: calc(6.5px * var(--resume-font-scale, 1));
 }
 
 /* Corporate Pro */
@@ -5514,38 +5519,38 @@ body {
   margin-bottom: 16px;
   border: 1px solid rgba(255,255,255,.65);
   border-radius: 12px;
-  font-size: 12px;
+  font-size: calc(12px * var(--resume-font-scale, 1));
   font-weight: 800;
 }
 
 .resume-creative-side h2 {
   margin: 0 0 4px;
-  font-size: 15px;
+  font-size: calc(15px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
 }
 
 .resume-creative-side > span {
   display: block;
   margin-bottom: 18px;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   opacity: .8;
 }
 
 .resume-creative-side > div:not(.creative-mark) {
   margin-bottom: 5px;
-  font-size: 5.7px;
+  font-size: calc(5.7px * var(--resume-font-scale, 1));
   opacity: .85;
 }
 
 .resume-creative-side h4 {
   margin: 18px 0 5px;
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   text-transform: uppercase;
   letter-spacing: .1em;
 }
 
 .resume-creative-side p {
   margin: 0;
-  font-size: 5.8px;
+  font-size: calc(5.8px * var(--resume-font-scale, 1));
   line-height: 1.6;
   opacity: .84;
 }
@@ -5560,7 +5565,7 @@ body {
 
 .creative-title > span {
   color: var(--resume-accent);
-  font-size: 6px;
+  font-size: calc(6px * var(--resume-font-scale, 1));
   font-weight: 800;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -5568,13 +5573,13 @@ body {
 
 .creative-title h2 {
   margin: 4px 0;
-  font-size: 19px;
+  font-size: calc(19px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
 }
 
 .creative-title p {
   margin: 0;
   color: #666e79;
-  font-size: 6.5px;
+  font-size: calc(6.5px * var(--resume-font-scale, 1));
 }
 
 /* Technical */
@@ -5590,7 +5595,7 @@ body {
 
 .resume-technical .resume-heading h2 {
   font-family: "SFMono-Regular", Consolas, monospace;
-  font-size: 18px;
+  font-size: calc(18px * var(--resume-font-scale, 1) * var(--resume-name-scale, 1));
 }
 
 .resume-technical .resume-section h3 {
@@ -6093,4 +6098,86 @@ body {
   background: #8e98a8;
   border: 2px solid transparent;
   background-clip: padding-box;
+}
+
+/* ========== Réglages de design de l'éditeur (s'appliquent à tous les modèles) ========== */
+
+/* Interligne : seulement quand l'utilisateur l'a réglé */
+.resume-document[data-lh] p,
+.resume-document[data-lh] li {
+  line-height: var(--resume-line-height) !important;
+}
+
+/* Espace entre les expériences */
+.resume-document[data-entry-gap] .resume-job {
+  margin-bottom: var(--resume-entry-gap) !important;
+}
+
+/* Position des dates : à gauche du titre, ou sous le titre */
+.resume-document[data-date-pos="left"] .resume-job-heading {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.resume-document[data-date-pos="below"] .resume-job-heading {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+
+/* Style des puces */
+.resume-document[data-bullets="dash"] .resume-job ul {
+  list-style-type: "– ";
+}
+.resume-document[data-bullets="none"] .resume-job ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* Casse des titres de section */
+.resume-document[data-heading-case="upper"] h3,
+.resume-document[data-heading-case="upper"] h4 {
+  text-transform: uppercase !important;
+}
+.resume-document[data-heading-case="capitalize"] h3,
+.resume-document[data-heading-case="capitalize"] h4 {
+  text-transform: capitalize !important;
+}
+
+/* Police du nom */
+.resume-document[data-name-font] h2,
+.resume-document[data-name-font] .resume-marchesi-name {
+  font-family: var(--resume-name-font) !important;
+}
+
+/* Forme de la photo */
+.resume-document[data-photo-shape="rounded"] img[class*="photo"],
+.resume-document[data-photo-shape="rounded"] [class*="avatar"] {
+  border-radius: 14px !important;
+}
+.resume-document[data-photo-shape="square"] img[class*="photo"],
+.resume-document[data-photo-shape="square"] [class*="avatar"] {
+  border-radius: 0 !important;
+}
+
+/* Modification sur place (éditeur) */
+.resume-document.cv-edit-mode .cv-e {
+  cursor: text;
+  outline: none;
+  border-radius: 3px;
+  transition: outline-color .12s ease;
+}
+.resume-document.cv-edit-mode .cv-e:hover {
+  outline: 1.5px dashed #2f6fed;
+  outline-offset: 2px;
+}
+.resume-document.cv-edit-mode .cv-e:focus {
+  outline: 2px solid #2f6fed;
+  outline-offset: 2px;
+}
+.resume-document.cv-edit-mode .cv-e:empty::before {
+  content: attr(data-ph);
+  color: #b4bbc7;
+  font-weight: 500;
+  pointer-events: none;
 }

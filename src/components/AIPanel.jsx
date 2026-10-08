@@ -8,7 +8,8 @@ const SEED_MESSAGES = [
 const SUGGESTION =
   '"Senior UX Designer with 5+ years of experience crafting user-centered SaaS workflows and mobile apps. Proven track record of reducing drop-offs by 24%."';
 
-export default function AIPanel({ open, onToggle, onApplySuggestion }) {
+// canApply : vrai seulement quand un CV est ouvert (le texte peut alors être appliqué au résumé)
+export default function AIPanel({ open, onToggle, onApplySuggestion, canApply = false }) {
   const [messages, setMessages] = useState(SEED_MESSAGES);
   const [draft, setDraft] = useState("");
 
@@ -22,7 +23,8 @@ export default function AIPanel({ open, onToggle, onApplySuggestion }) {
   if (!open) {
     return (
       <button className="ai-fab" type="button" onClick={onToggle} aria-label="Open AI assistant">
-        ✦
+        <span className="ai-fab-star">✦</span>
+        <span className="ai-fab-label">AI</span>
       </button>
     );
   }
@@ -45,9 +47,11 @@ export default function AIPanel({ open, onToggle, onApplySuggestion }) {
           <div className="label">✦ SUGGESTED REVISION</div>
           <p style={{ margin: "0 0 10px" }}>{SUGGESTION}</p>
           <div style={{ display: "flex", gap: 8 }}>
-            <button className="btn btn-primary" type="button" onClick={() => onApplySuggestion?.(SUGGESTION)}>
-              Apply to my CV
-            </button>
+            {canApply && (
+              <button className="btn btn-primary" type="button" onClick={() => onApplySuggestion?.(SUGGESTION)}>
+                Apply to my CV
+              </button>
+            )}
             <button className="link-btn" type="button">
               Regenerate
             </button>

@@ -1,52 +1,33 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TopNav from "./TopNav";
 import StepIndicator, { WIZARD_STEPS } from "./StepIndicator";
 import WizardFooter from "./WizardFooter";
 import WizardIntro from "./WizardIntro";
-import AIPanel from "./AIPanel";
-import PersonalInfo, { emptyPersonalInfo } from "./steps/PersonalInfo";
-import CareerGoal, { emptyCareerGoal } from "./steps/CareerGoal";
-import Summary, { emptySummary } from "./steps/Summary";
-import Education, { emptyEducationEntries } from "./steps/Education";
-import Experience, { emptyExperienceEntries } from "./steps/Experience";
-import Skills, { emptySkills } from "./steps/Skills";
-import Languages, { emptyLanguagesData } from "./steps/Languages";
+import PersonalInfo from "./steps/PersonalInfo";
+import CareerGoal from "./steps/CareerGoal";
+import Summary from "./steps/Summary";
+import Education from "./steps/Education";
+import Experience from "./steps/Experience";
+import Skills from "./steps/Skills";
+import Languages from "./steps/Languages";
 import TemplatePage, { makeInitialDesigns } from "./templates/TemplatePage";
 import FinalCv from "./FinalCv";
 import { buildCvData } from "../lib/cvData";
+import { initialFormData, mergeForm } from "../lib/formDefaults";
 import { useAuth } from "../context/AuthContext";
 import { useCvAutosave } from "../hooks/useCvAutosave";
-
-function initialFormData() {
-  return {
-    personalInfo: emptyPersonalInfo,
-    careerGoal: emptyCareerGoal,
-    summary: emptySummary,
-    education: emptyEducationEntries,
-    experienceType: "Work experience",
-    experience: emptyExperienceEntries,
-    skills: emptySkills,
-    languages: emptyLanguagesData,
-  };
-}
-
-// Fusionne une section sauvegardée avec ses valeurs par défaut
-// (si on ajoute un champ plus tard, les anciens CV restent valides)
-function mergeSection(defaults, saved) {
-  if (saved === undefined || saved === null) return defaults;
-  if (Array.isArray(defaults) || typeof defaults !== "object") return saved;
-  return { ...defaults, ...saved };
-}
 
 // La photo du CV est identique pour tous les modèles
 function withSharedPhoto(designs, photo) {
   return Object.fromEntries(Object.entries(designs).map(([id, design]) => [id, { ...design, photo }]));
 }
 
-export default function CVWizard({ onNavigate, isAuthed }) {
+// cvId : CV à ouvrir (null = nouveau CV) · onOpenDashboard : retour à « My CVs »
+// registerAiApply : permet à l'assistant IA global d'appliquer une suggestion au résumé
+export default function CVWizard({ onNavigate, isAuthed, cvId = null, onOpenDashboard, registerAiApply }) {
   const [stepIndex, setStepIndex] = useState(-1); // -1 = intro screen
   const [form, setForm] = useState(initialFormData);
-  const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const [customTitle, setCustomTitle] = useState("");
   const [finished, setFinished] = useState(false);
   const [choosingTemplate, setChoosingTemplate] = useState(false);
   const [templateId, setTemplateId] = useState("modern-focus");
@@ -59,18 +40,15 @@ export default function CVWizard({ onNavigate, isAuthed }) {
   const snapshot = {
     templateId,
     status: everFinished ? "complete" : "draft",
-    content: { form, templateName, templateDesigns, lastStep: stepIndex, finished },
+    content: { form, templateName, templateDesigns, lastStep: stepIndex, finished, customTitle },
   };
 
   // Appelée une fois quand un CV existant est lu dans Supabase
   function handleLoaded(row) {
     const content = row.content ?? {};
-    const saved = content.form ?? {};
-    const defaults = initialFormData();
-    setForm(
-      Object.fromEntries(Object.entries(defaults).map(([key, value]) => [key, mergeSection(value, saved[key])]))
-    );
+    setForm(mergeForm(content.form));
     if (row.template_id) setTemplateId(row.template_id);
+    if (content.customTitle) setCustomTitle(content.customTitle);
     if (content.templateName) setTemplateName(content.templateName);
     if (content.templateDesigns) setTemplateDesigns(content.templateDesigns);
     setEverFinished(row.status === "complete");
@@ -80,6 +58,7 @@ export default function CVWizard({ onNavigate, isAuthed }) {
 
   const { loading, loadError, retryLoad, saveStatus, saveNow } = useCvAutosave({
     userId: user.id,
+    cvId,
     snapshot,
     onLoaded: handleLoaded,
   });
@@ -113,9 +92,23 @@ export default function CVWizard({ onNavigate, isAuthed }) {
     }
   }
 
+  // L'assistant IA global peut appliquer son texte au résumé de ce CV
+  useEffect(() => {
+    if (!registerAiApply) return undefined;
+    registerAiApply((text) =>
+      setForm((f) => ({ ...f, summary: { ...f.summary, about: text.replace(/(^"|"$)/g, "") } }))
+    );
+    return () => registerAiApply(null);
+  }, [registerAiApply]);
+
+  async function handleOpenDashboard() {
+    await saveNow(); // ne rien perdre de la dernière saisie
+    onOpenDashboard?.();
+  }
+
   async function handleSaveProgress() {
     const { ok } = await saveNow();
-    if (ok) onNavigate("landing");
+    if (ok) (onOpenDashboard ?? (() => onNavigate("landing")))();
   }
 
   if (loadError) {
@@ -183,6 +176,7 @@ export default function CVWizard({ onNavigate, isAuthed }) {
           setChoosingTemplate(true);
         }}
         onBackToQuestionnaire={() => setFinished(false)}
+        onOpenDashboard={onOpenDashboard ? handleOpenDashboard : undefined}
         onNavigate={onNavigate}
         isAuthed={isAuthed}
         saveStatus={saveStatus}
@@ -248,15 +242,6 @@ export default function CVWizard({ onNavigate, isAuthed }) {
         />
       </div>
 
-      {stepIndex === 2 && (
-        <AIPanel
-          open={aiPanelOpen}
-          onToggle={() => setAiPanelOpen((o) => !o)}
-          onApplySuggestion={(text) =>
-            setForm((f) => ({ ...f, summary: { ...f.summary, about: text.replace(/(^"|"$)/g, "") } }))
-          }
-        />
-      )}
     </div>
   );
 }

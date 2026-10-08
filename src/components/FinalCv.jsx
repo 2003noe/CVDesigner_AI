@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import TopNav from "./TopNav";
 import PersonalInfo from "./steps/PersonalInfo";
 import CareerGoal from "./steps/CareerGoal";
@@ -7,9 +7,10 @@ import Education from "./steps/Education";
 import Experience from "./steps/Experience";
 import Skills from "./steps/Skills";
 import Languages from "./steps/Languages";
-import { ResumeDocument, TEMPLATES, ACCENTS, TYPOGRAPHIES } from "./templates/TemplatePage";
+import { ResumeDocument, TEMPLATES, ACCENTS, TYPOGRAPHIES, resolvePhoto } from "./templates/TemplatePage";
 import { buildCvData } from "../lib/cvData";
-import { readPhotoFile } from "../lib/image";
+import PhotoCropper from "./PhotoCropper";
+import { downloadCvPdf } from "../lib/pdf";
 import "../final-cv.css";
 
 const TABS = [
@@ -38,41 +39,45 @@ export default function FinalCv({
   onDesignChange,
   onChangeTemplate,
   onBackToQuestionnaire,
+  onOpenDashboard,
   onNavigate,
   isAuthed,
   saveStatus,
 }) {
   const [tab, setTab] = useState("personal");
-  const [photoError, setPhotoError] = useState("");
+  const [pendingPhoto, setPendingPhoto] = useState(null);
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState("");
+  const paperRef = useRef(null);
   const template = TEMPLATES.find((item) => item.id === templateId) ?? TEMPLATES[0];
   const cv = useMemo(() => buildCvData(form), [form]);
   const zoom = Number(design.zoom || 85);
+  const photoShown = resolvePhoto(design, cv);
+  const fontScale = Number(design.fontScale || 100);
 
   function setDesign(key, value) {
     onDesignChange({ ...design, [key]: value });
   }
 
-  async function handlePhoto(event) {
+  function handlePhoto(event) {
     const file = event.target.files?.[0];
     event.target.value = "";
-    setPhotoError("");
-    if (!file) return;
-    const { dataUrl, error } = await readPhotoFile(file);
-    if (error) setPhotoError(error);
-    else setDesign("photo", dataUrl);
+    if (file) setPendingPhoto(file); // ouvre la fenêtre de cadrage
   }
 
-  // Le navigateur propose « Enregistrer au format PDF » : le PDF obtenu garde le texte
-  // sélectionnable (important pour les logiciels de recrutement / ATS).
-  function handleDownload() {
-    const previousTitle = document.title;
-    document.title = cv.isSample ? "CV" : `CV - ${cv.name || "CV"}`;
-    const restore = () => {
-      document.title = previousTitle;
-      window.removeEventListener("afterprint", restore);
-    };
-    window.addEventListener("afterprint", restore);
-    window.print();
+  async function handleDownload() {
+    const element = paperRef.current?.querySelector(".resume-document");
+    if (!element || downloading) return;
+    setDownloading(true);
+    setDownloadError("");
+    try {
+      await downloadCvPdf(element, cv.isSample ? "CV" : `CV - ${cv.name || "CV"}`);
+    } catch (error) {
+      console.error("Création du PDF impossible :", error);
+      setDownloadError("Couldn’t create the PDF. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
   }
 
   const set = (section) => (value) => onFormChange(section, value);
@@ -81,30 +86,47 @@ export default function FinalCv({
     <div className="app-shell final-cv-shell">
       <TopNav onNavigate={onNavigate} isAuthed={isAuthed} />
 
+      {pendingPhoto && (
+        <PhotoCropper
+          file={pendingPhoto}
+          onCancel={() => setPendingPhoto(null)}
+          onDone={(dataUrl) => {
+            setDesign("photo", dataUrl);
+            setPendingPhoto(null);
+          }}
+        />
+      )}
+
       <div className="final-cv-bar">
         <div>
           <h1>Your CV is ready 🎉</h1>
           <p>
             {template.name} template · edit anything on the right and the CV updates instantly.
+            {downloadError && <span className="final-cv-save error"> {downloadError}</span>}
             {SAVE_LABELS[saveStatus] ? <span className={`final-cv-save ${saveStatus}`}> {SAVE_LABELS[saveStatus]}</span> : null}
           </p>
         </div>
         <div className="final-cv-actions">
+          {onOpenDashboard && (
+            <button className="btn btn-secondary" type="button" onClick={onOpenDashboard}>
+              My CVs
+            </button>
+          )}
           <button className="btn btn-secondary" type="button" onClick={onBackToQuestionnaire}>
             Back to questionnaire
           </button>
           <button className="btn btn-secondary" type="button" onClick={onChangeTemplate}>
             Change template
           </button>
-          <button className="btn btn-primary" type="button" onClick={handleDownload}>
-            ⬇ Download PDF
+          <button className="btn btn-primary" type="button" onClick={handleDownload} disabled={downloading}>
+            {downloading ? "Creating PDF…" : "⬇ Download PDF"}
           </button>
         </div>
       </div>
 
       <div className="final-cv-workspace">
         <section className="final-cv-preview">
-          <div className="final-cv-paper" style={{ "--final-zoom": zoom / 100 }}>
+          <div className="final-cv-paper" ref={paperRef} style={{ "--final-zoom": zoom / 100 }}>
             <div className="final-cv-print-target">
               <ResumeDocument template={template} design={design} cv={cv} />
             </div>
@@ -127,21 +149,20 @@ export default function FinalCv({
         <aside className="final-cv-editor">
           <div className="final-cv-design">
             <div className="final-cv-photo">
-              {design.photo ? <img src={design.photo} alt="" /> : <span>+</span>}
+              {photoShown ? <img src={photoShown} alt="" /> : <span>+</span>}
               <div>
                 <strong>Profile photo</strong>
                 <label className="photo-button">
-                  {design.photo ? "Change" : "Add photo"}
+                  {photoShown ? "Change" : "Add photo"}
                   <input type="file" accept="image/png,image/jpeg,image/webp" onChange={handlePhoto} />
                 </label>
-                {design.photo && (
-                  <button className="link-btn" type="button" onClick={() => setDesign("photo", "")}>
+                {photoShown && (
+                  <button className="link-btn" type="button" onClick={() => setDesign("photo", false)}>
                     Remove
                   </button>
                 )}
               </div>
             </div>
-            {photoError && <p className="photo-error">{photoError}</p>}
 
             <div className="final-cv-design-row">
               <label>
@@ -159,6 +180,21 @@ export default function FinalCv({
                 </select>
               </label>
             </div>
+            <label className="final-cv-textsize">
+              <span>Text size</span>
+              <button type="button" aria-label="Smaller text" onClick={() => setDesign("fontScale", Math.max(70, fontScale - 5))}>A−</button>
+              <input
+                type="range"
+                min="70"
+                max="140"
+                step="5"
+                value={fontScale}
+                onChange={(e) => setDesign("fontScale", Number(e.target.value))}
+                aria-label="Text size"
+              />
+              <button type="button" aria-label="Bigger text" onClick={() => setDesign("fontScale", Math.min(140, fontScale + 5))}>A+</button>
+              <output>{fontScale}%</output>
+            </label>
             <div className="designer-v2-colors">
               {ACCENTS.map((color) => (
                 <button

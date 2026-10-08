@@ -165,39 +165,21 @@
   .final-cv-editor { position: static; max-height: none; }
 }
 
-/* ---------- Export PDF (impression navigateur → « Enregistrer au format PDF ») ---------- */
-@page {
-  size: 148mm 210mm; /* A5, comme le modèle */
-  margin: 0;
+.final-cv-textsize {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #5b6472;
 }
-
-@media print {
-  body { background: #fff !important; }
-
-  /* On ne garde que le CV : tout le reste de la page finale disparaît */
-  .final-cv-shell > :not(.final-cv-workspace),
-  .final-cv-editor,
-  .final-cv-zoom {
-    display: none !important;
-  }
-
-  .final-cv-shell,
-  .final-cv-workspace,
-  .final-cv-preview,
-  .final-cv-paper {
-    display: block !important;
-    min-height: 0 !important;
-    height: auto !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: visible !important;
-    zoom: 1 !important;
-  }
-
-  .final-cv-paper .resume-document {
-    box-shadow: none !important;
-    margin: 0 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact; /* garde les fonds colorés des barres latérales */
-  }
+.final-cv-textsize > span { min-width: 58px; }
+.final-cv-textsize input { flex: 1; }
+.final-cv-textsize button {
+  padding: 3px 8px;
+  border: 1px solid var(--color-border, #d5dae1);
+  border-radius: 8px;
+  background: #fff;
+  font-weight: 700;
+  cursor: pointer;
 }
+.final-cv-textsize output { min-width: 36px; text-align: right; }

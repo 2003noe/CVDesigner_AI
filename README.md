@@ -82,16 +82,52 @@ The CV template experience now includes 12 editable React/CSS designs: Atlantic 
 
 ## Du questionnaire au CV final (PDF)
 
-- `lib/cvData.js` : `buildCvData(form)` convertit les réponses du questionnaire (toutes les étapes) en données
-  affichées par les modèles. Tant que le questionnaire est vide, les modèles montrent `SAMPLE_CV` (John Doe).
-- `templates/TemplatePage.jsx` : la galerie et l'éditeur de modèle (« Customize ») affichent désormais les vraies
-  informations de l'utilisateur. Les sections vides sont masquées.
-- **Photo** : le CV n'utilise que la photo ajoutée via **Add photo** dans l'éditeur de modèle (`design.photo`,
-  réduite à 600 px par `lib/image.js`). Elle est partagée entre tous les modèles. La photo de l'étape
-  « Personal Information » reste stockée dans Supabase Storage mais n'apparaît pas sur le CV.
-- `FinalCv.jsx` : page finale — CV sur le modèle choisi, bouton **Download PDF**, et panneau d'édition qui
-  réutilise les 7 étapes du questionnaire (modifier / ajouter des informations, changer photo, police, couleur).
-- **PDF** : `window.print()` + règles `@media print` / `@page` (A5) dans `final-cv.css`. Dans la fenêtre
-  d'impression, choisir « Enregistrer au format PDF » (marges : aucune). Le texte du PDF reste sélectionnable.
-- Tout est sauvegardé automatiquement dans `cvs.content` (`form`, `templateDesigns`, `finished`) ; en rouvrant le
-  CV terminé, l'utilisateur revient directement sur la page finale.
+- `lib/cvData.js` : `buildCvData(form)` convertit les réponses du questionnaire en données affichées par les
+  modèles. Tant que le questionnaire est vide, les modèles montrent `SAMPLE_CV` (John Doe).
+- `templates/TemplatePage.jsx` : la galerie et l'éditeur de modèle affichent les vraies informations de
+  l'utilisateur ; les sections vides sont masquées.
+- **Photo** : deux endroits, tous deux avec cadrage (`PhotoCropper.jsx` : déplacer + zoomer, sortie carrée 600 px).
+  1) la page « Personal Information » du questionnaire : la photo cadrée est enregistrée dans la base avec le CV
+     (`content.form.personalInfo.photo`, pas de Supabase Storage) ;
+  2) « Customize template » / page finale : remplace la photo pour ce CV (`design.photo`). Sans choix, le CV
+     reprend la photo du questionnaire ; « Remove » (`design.photo = false`) retire la photo du CV.
+- **Taille du texte** : curseur « Text size » (70–140 %) dans « Customize template » et sur la page finale
+  (`design.fontScale`). Les règles de police des modèles utilisent `var(--resume-font-scale)` ; la page garde sa taille.
+- **Robustesse** : `buildCvData` normalise toutes les données (compétences `{ name, level }`, tags, listes absentes…)
+  et `ErrorBoundary.jsx` affiche un message avec un bouton « Reload » au lieu d'une page blanche en cas d'erreur.
+- `FinalCv.jsx` : page finale — CV sur le modèle choisi, panneau d'édition (réutilise les 7 étapes), photo,
+  police, couleur, bouton **Download PDF**.
+- **PDF** (`lib/pdf.js`) : généré directement (html2canvas-pro + jsPDF, chargés à la demande). Le CV remplit toute la
+  page A4, sans marge ni en-tête de navigateur ; un CV long est découpé sur plusieurs pages. Une couche de texte
+  invisible garde le texte sélectionnable et lisible par les ATS.
+
+## Plusieurs CV (« My CVs ») et éditeur
+
+- `components/Dashboard.jsx` : liste des CV (miniature, statut, date, filtres). La **première carte est un CV vierge « + »** qui
+  ouvre l'éditeur ; « Prefer questions? » ouvre l'ancien questionnaire guidé (`CVWizard`), conservé en option.
+- `components/editor/CvEditor.jsx` : l'éditeur — barre du haut (retour, nom du CV, état de sauvegarde, annuler/rétablir,
+  Download PDF), **barre verticale défilante** (Content : infos, résumé, expérience, formation, compétences, langues ·
+  Design : document, modèles, mise en page, taille du texte, espacement, entrées, titres, police, couleurs, en-tête, photo,
+  pied de page, sections), panneaux de réglages (`EditorPanels.jsx`) et page A4 en direct.
+- **Modification sur la page** : nom, titre, résumé, poste et entreprise se tapent directement sur le CV
+  (`Editable.jsx`) ; un clic sur un autre texte ouvre le panneau correspondant. Tant que le CV est vide, `EmptySheet.jsx`
+  affiche la page vierge ; la première lettre tapée fait apparaître le vrai modèle.
+- **Réglages de design** (`lib/editorDesign.js`) : stockés dans `content.design` (et recopiés dans
+  `content.templateDesigns[<modèle>]` pour la compatibilité). Ils s'appliquent aux 20 modèles par variables CSS et attributs
+  `data-*` (fin de `App.css`). `null` = valeur propre au modèle. Langue du CV : `lib/cvLabels.js`.
+- `lib/cvs.js` : accès à la table `cvs` (une ligne par CV). `hooks/useCvAutosave.js` ouvre un CV par son `id` ; un nouveau CV
+  n'est créé en base qu'à sa première modification. Le nom choisi est dans `content.customTitle`.
+- **Suppression** : la table `cvs` doit autoriser le DELETE à son propriétaire. Si la suppression est refusée, exécuter
+  dans l'éditeur SQL de Supabase :
+
+```sql
+drop policy if exists "Users can delete their own cvs" on public.cvs;
+create policy "Users can delete their own cvs"
+  on public.cvs for delete
+  using (auth.uid() = user_id);
+```
+
+## Assistant IA
+
+`AIPanel` est monté dans `App.jsx` : le bouton ✦ AI est visible sur toutes les pages. Les réponses restent simulées
+(pas encore de backend IA). Dans l'éditeur ou le questionnaire, « Apply to my CV » écrit le texte dans le résumé.

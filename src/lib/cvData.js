@@ -50,7 +50,34 @@ export const SAMPLE_CV = {
   isSample: true,
 };
 
+import { presentWord } from "./cvLabels";
+
 const clean = (value) => (typeof value === "string" ? value.trim() : "");
+
+// Les données enregistrées peuvent être incomplètes ou d'une ancienne version :
+// on normalise tout pour ne jamais faire planter l'affichage du CV.
+const list = (value) => (Array.isArray(value) ? value : []);
+const obj = (value) => (value && typeof value === "object" && !Array.isArray(value) ? value : {});
+
+// Texte d'un élément de liste : « Excel » (tag) ou { name: "Excel", level: "Expert" } (compétence)
+function label(item) {
+  if (typeof item === "string") return item.trim();
+  if (typeof item === "number") return String(item);
+  const entry = obj(item);
+  return clean(entry.name ?? entry.label ?? entry.title);
+}
+
+function labels(items) {
+  const seen = new Set();
+  return list(items)
+    .map(label)
+    .filter((text) => {
+      const key = text.toLowerCase();
+      if (!text || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
 
 function initialsOf(name) {
   const letters = clean(name)
@@ -66,9 +93,9 @@ function shortLevel(level) {
   return clean(level).replace(/\s*\(.*?\)\s*$/, "");
 }
 
-function dateRange(start, end, current) {
+function dateRange(start, end, current, present = "Present") {
   const from = clean(start);
-  const to = current ? "Present" : clean(end);
+  const to = current ? present : clean(end);
   if (from && to) return `${from} — ${to}`;
   return from || to || "";
 }
@@ -81,60 +108,90 @@ function splitLines(text) {
 }
 
 function hasContent(form) {
-  if (!form) return false;
-  const p = form.personalInfo ?? {};
+  const f = obj(form);
+  const p = obj(f.personalInfo);
+  const sk = obj(f.skills);
+  const lg = obj(f.languages);
   return Boolean(
     clean(p.fullName) ||
       clean(p.email) ||
-      clean(form.summary?.about) ||
-      (form.experience ?? []).some((e) => clean(e.jobTitle) || clean(e.company)) ||
-      (form.education ?? []).some((e) => clean(e.institution) || clean(e.fieldOfStudy)),
+      clean(p.phone) ||
+      clean(p.city) ||
+      clean(p.photo) ||
+      clean(obj(f.careerGoal).targetJobTitle) ||
+      clean(obj(f.summary).about) ||
+      list(f.experience).some((e) => clean(obj(e).jobTitle) || clean(obj(e).company)) ||
+      list(f.education).some((e) => clean(obj(e).institution) || clean(obj(e).fieldOfStudy)) ||
+      [sk.technical, sk.soft, sk.tools, sk.programming].some((items) => list(items).length > 0) ||
+      list(lg.languages).some((l) => clean(obj(l).name)) ||
+      list(lg.certifications).some((c) => clean(obj(c).name)),
   );
 }
 
-export function buildCvData(form) {
-  if (!hasContent(form)) return SAMPLE_CV;
+// Vrai tant que l'utilisateur n'a rien saisi (l'éditeur affiche alors la page vierge)
+export function isCvEmpty(form) {
+  return !hasContent(form);
+}
 
-  const p = form.personalInfo ?? {};
-  const goal = form.careerGoal ?? {};
-  const summary = form.summary ?? {};
-  const skills = form.skills ?? {};
-  const langData = form.languages ?? {};
+/**
+ * options (tous facultatifs) :
+ *  - language : "en" | "fr" (mot « Present »)
+ *  - sections : { summary, experience, education, skills, languages, certifications, interests, awards } — false = masquée
+ *  - header   : { email, phone, location, links } — false = masqué
+ *  - allowSample : false pour ne jamais retomber sur le CV d'exemple (éditeur)
+ */
+export function buildCvData(form, options = {}) {
+  const { language = "en", sections = {}, header = {}, allowSample = true } = options;
+  if (!hasContent(form)) return allowSample ? SAMPLE_CV : buildEmptyCv(language);
+  const show = (key) => sections[key] !== false;
+  const head = (key) => header[key] !== false;
 
-  const location = [clean(p.city), clean(p.country)].filter(Boolean).join(", ");
-  const links = [clean(p.linkedin), clean(p.portfolio)].filter(Boolean);
+  const f = obj(form);
+  const p = obj(f.personalInfo);
+  const goal = obj(f.careerGoal);
+  const summary = obj(f.summary);
+  const skills = obj(f.skills);
+  const langData = obj(f.languages);
 
-  const experience = (form.experience ?? [])
+  const location = head("location") ? [clean(p.city), clean(p.country)].filter(Boolean).join(", ") : "";
+  const links = head("links") ? [clean(p.linkedin), clean(p.portfolio)].filter(Boolean) : [];
+
+  const experience = list(f.experience)
+    .map(obj)
     .filter((e) => clean(e.jobTitle) || clean(e.company))
     .map((e) => ({
+      id: e.id,
       company: clean(e.company),
       role: clean(e.jobTitle),
-      dates: dateRange(e.startDate, e.endDate, e.current),
+      dates: dateRange(e.startDate, e.endDate, e.current, presentWord(language)),
       bullets: [...splitLines(e.responsibilities), ...splitLines(e.achievements)],
-      tools: e.tools ?? [],
+      tools: labels(e.tools),
     }));
 
-  const education = (form.education ?? [])
+  const education = list(f.education)
+    .map(obj)
     .filter((e) => clean(e.institution) || clean(e.fieldOfStudy))
     .map((e) => ({
       degree: [clean(e.degreeType), clean(e.fieldOfStudy)].filter(Boolean).join(" — "),
       school: clean(e.institution),
-      dates: dateRange(e.startDate, e.endDate, e.current),
+      dates: dateRange(e.startDate, e.endDate, e.current, presentWord(language)),
       details: clean(e.achievements),
     }));
 
-  const allSkills = [
-    ...(skills.technical ?? []),
-    ...(skills.programming ?? []),
-    ...(skills.tools ?? []),
-    ...(skills.soft ?? []),
-  ].filter(Boolean);
+  const allSkills = labels([
+    ...list(skills.technical),
+    ...list(skills.programming),
+    ...list(skills.tools),
+    ...list(skills.soft),
+  ]);
 
-  const languages = (langData.languages ?? [])
+  const languages = list(langData.languages)
+    .map(obj)
     .filter((l) => clean(l.name))
     .map((l) => ({ name: clean(l.name), level: shortLevel(l.level) }));
 
-  const certifications = (langData.certifications ?? [])
+  const certifications = list(langData.certifications)
+    .map(obj)
     .filter((c) => clean(c.name))
     .map((c) => [clean(c.name), clean(c.issuer)].filter(Boolean).join(" — "));
 
@@ -142,22 +199,32 @@ export function buildCvData(form) {
     name: clean(p.fullName),
     role: clean(goal.targetJobTitle),
     location,
-    email: clean(p.email),
-    phone: clean(p.phone),
+    email: head("email") ? clean(p.email) : "",
+    phone: head("phone") ? clean(p.phone) : "",
     website: links[0] ?? "",
     extraLinks: links.slice(1),
     initials: initialsOf(p.fullName),
-    summary: [clean(summary.about), clean(summary.objective)].filter(Boolean).join("\n\n"),
-    experience,
-    education,
-    skills: allSkills,
-    strengths: summary.strengths ?? [],
-    languages,
-    certifications,
-    interests: langData.interests ?? [],
-    awards: clean(langData.awards),
+    photo: typeof p.photo === "string" ? p.photo : "", // photo du questionnaire
+    summary: show("summary") ? [clean(summary.about), clean(summary.objective)].filter(Boolean).join("\n\n") : "",
+    experience: show("experience") ? experience : [],
+    education: show("education") ? education : [],
+    skills: show("skills") ? allSkills : [],
+    strengths: labels(summary.strengths),
+    languages: show("languages") ? languages : [],
+    certifications: show("certifications") ? certifications : [],
+    interests: show("interests") ? labels(langData.interests) : [],
+    awards: show("awards") ? clean(langData.awards) : "",
     projects: clean(langData.projects),
     volunteering: clean(langData.volunteering),
     isSample: false,
+  };
+}
+
+// CV sans aucune donnée (affichage de l'éditeur avant la première saisie)
+function buildEmptyCv() {
+  return {
+    name: "", role: "", location: "", email: "", phone: "", website: "", extraLinks: [], initials: "CV", photo: "",
+    summary: "", experience: [], education: [], skills: [], strengths: [], languages: [], certifications: [],
+    interests: [], awards: "", projects: "", volunteering: "", isSample: false,
   };
 }
